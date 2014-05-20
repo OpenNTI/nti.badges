@@ -8,12 +8,6 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 	<include package="zope.security" />
-
-	<!-- Generations -->
-	
-	<utility factory=".generations.install._NTIBadgesSchemaManager"
-			 name="nti.dataserver-badges"
-			 provides="zope.generations.interfaces.IInstallableSchemaManager"/>
 	
 	<!-- Adpaters -->
 	
@@ -22,7 +16,7 @@
 			 factory=".views.NTIBadgesPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 
-	<include package="." file="open_configure.zcml" />
-	<include package="." file="tahrir_configure.zcml" />
+	<include package=".tahrir" file="configure.zcml" />
+	<include package=".openbadges" file="configure.zcml" />
 	
 </configure>
