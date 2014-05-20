@@ -17,16 +17,16 @@ class ITahrirModel(interface.Interface):
 
 class IIssuer(ITahrirModel):
 	id = nti_schema.Int(title=" Issuer id")
-	origin = nti_schema.ValidTextLine(title=" Issuer origin")
+	origin = nti_schema.ValidTextLine(title="Issuer origin")
 	name = nti_schema.ValidTextLine(title=" Issuer name")
 	org = nti_schema.ValidTextLine(title=" Issuer organization")
 	contact = nti_schema.ValidTextLine(title=" Issuer contact")
 	created_on =  nti_schema.ValidDatetime(title="Created time")
 
 class IBadge(ITahrirModel):
-	id = nti_schema.ValidTextLine(title=" Badge id")
+	id = nti_schema.ValidTextLine(title="Badge id")
 
-	name = nti_schema.ValidTextLine(title=" Badge name")
+	name = nti_schema.ValidTextLine(title="Badge name")
 
 	image = nti_schema.Variant((
 					nti_schema.ValidTextLine(title="Image URL"),
@@ -86,6 +86,10 @@ class IAssertion(ITahrirModel):
 	issued_on = nti_schema.ValidDatetime(title="Issue date")
 	issued_for = nti_schema.ValidTextLine(title="Issue for", required=False)
 	recipient = nti_schema.ValidTextLine(title="Recipient ", required=False)
+
+class ITahrirBadge(badge_interfaces.INTIBadge):
+	issuer = nti_schema.ValidTextLine(title="Issuer URL")
+	data = nti_schema.Object(IBadge, title="Badge data")
 
 class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""

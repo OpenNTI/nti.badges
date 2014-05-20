@@ -8,6 +8,19 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
+class INTIIssuer(interface.Interface):
+	"""
+	marker interface for a badge issuer
+	"""
+	url = interface.Attribute("issuer url")
+
+class INTIBadge(interface.Interface):
+	"""
+	marker interface for a badge
+	"""
+	issuer = interface.Attribute("issuer url")
+	data = interface.Attribute("badge data")
+
 class IBadgeManager(interface.Interface):
 	
 	def get_all_badges():

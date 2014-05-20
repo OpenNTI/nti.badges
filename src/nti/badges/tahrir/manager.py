@@ -8,6 +8,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from  collections import namedtuple
+
 from zope import interface
 
 from sqlalchemy import create_engine
@@ -21,6 +23,8 @@ from tahrir_api.model import DeclarativeBase as tahrir_base
 from nti.utils.property import Lazy
 
 from . import interfaces
+
+TahrirBadge = namedtuple("TahrirBadge", ["issuer", "data"])
 
 class NTITahrirDatabase(TahrirDatabase):
 	pass
@@ -62,7 +66,11 @@ class TahrirBadgeManager(object):
 		return self.db.delete_person(userid)
 
 	def get_all_badges(self):
-		result = self.session.get_all_badges()
+		result = []
+		for badge in self.db.get_all_badges():
+			issuer = self.db.get_issuer(badge.issuer_id)
+			obj = TahrirBadge(issuer.origin, badge)
+			result.append(obj)
 		return result
 
 def create_badge_manager(dburi, twophase=False, autocommit=True):
