@@ -100,5 +100,8 @@ class IBadgeAssertion(interface.Interface):
 
 
 class IBadgeManager(interface.Interface):
-	pass
-
+	
+	def delete_user(userid):
+		"""
+		delete the user w/ the specified userid
+		"""
