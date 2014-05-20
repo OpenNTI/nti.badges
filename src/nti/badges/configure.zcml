@@ -22,20 +22,7 @@
 			 factory=".views.NTIBadgesPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 	
-	<!-- Externalization -->
-	
-	<include package="nti.externalization" file="meta.zcml" />
-	<include package="nti.externalization" />
-	<ext:registerAutoPackageIO
-		root_interfaces=".interfaces.IVerificationObject
-						 .interfaces.IIdentityObject
-						 .interfaces.IAlignmentObject
-						 .interfaces.IBadgeClass
-						 .interfaces.IBadgeAssertion"
-		modules=".openbadges" />
-	
-	<!-- tahrir-api -->
-	
+	<include package="." file="open_configure.zcml" />
 	<include package="." file="tahrir_configure.zcml" />
 	
 </configure>

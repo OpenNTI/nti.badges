@@ -18,11 +18,11 @@ from nti.externalization.externalization import make_repr
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
-from . import interfaces as badges_interfaces
+from . import open_interfaces
 
-@interface.implementer(badges_interfaces.IVerificationObject)
+@interface.implementer(open_interfaces.IVerificationObject)
 class VerificationObject(SchemaConfigured, persistent.Persistent, contained.Contained):
-    createDirectFieldProperties(badges_interfaces.IVerificationObject)
+    createDirectFieldProperties(open_interfaces.IVerificationObject)
 
     __external_can_create__ = True
     mime_type = mimeType = 'application/vnd.nextthought.badges.verificationobject'
@@ -45,9 +45,9 @@ class VerificationObject(SchemaConfigured, persistent.Persistent, contained.Cont
         xhash ^= hash(self.type)
         return xhash
 
-@interface.implementer(badges_interfaces.IIdentityObject)
+@interface.implementer(open_interfaces.IIdentityObject)
 class IdentityObject(SchemaConfigured, persistent.Persistent, contained.Contained):
-    createDirectFieldProperties(badges_interfaces.IIdentityObject)
+    createDirectFieldProperties(open_interfaces.IIdentityObject)
 
     __external_can_create__ = True
     mime_type = mimeType = 'application/vnd.nextthought.badges.identityobject'
@@ -71,9 +71,9 @@ class IdentityObject(SchemaConfigured, persistent.Persistent, contained.Containe
         xhash ^= hash(self.identity)
         return xhash
 
-@interface.implementer(badges_interfaces.IAlignmentObject)
+@interface.implementer(open_interfaces.IAlignmentObject)
 class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contained):
-    createDirectFieldProperties(badges_interfaces.IAlignmentObject)
+    createDirectFieldProperties(open_interfaces.IAlignmentObject)
 
     __external_can_create__ = True
     mime_type = mimeType = 'application/vnd.nextthought.badges.alignmentobject'
@@ -96,9 +96,9 @@ class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contain
         xhash ^= hash(self.name)
         return xhash
 
-@interface.implementer(badges_interfaces.IBadgeClass)
+@interface.implementer(open_interfaces.IBadgeClass)
 class BadgeClass(SchemaConfigured, persistent.Persistent, contained.Contained):
-    createDirectFieldProperties(badges_interfaces.IBadgeClass)
+    createDirectFieldProperties(open_interfaces.IBadgeClass)
 
     __external_can_create__ = True
     mime_type = mimeType = 'application/vnd.nextthought.badges.badgeclass'
@@ -120,9 +120,9 @@ class BadgeClass(SchemaConfigured, persistent.Persistent, contained.Contained):
         xhash ^= hash(self.name)
         return xhash
 
-@interface.implementer(badges_interfaces.IBadgeAssertion)
+@interface.implementer(open_interfaces.IBadgeAssertion)
 class BadgeAssertion(SchemaConfigured, persistent.Persistent, contained.Contained):
-    createDirectFieldProperties(badges_interfaces.IBadgeAssertion)
+    createDirectFieldProperties(open_interfaces.IBadgeAssertion)
 
     __external_can_create__ = True
     mime_type = mimeType = 'application/vnd.nextthought.badges.badgeassertion'

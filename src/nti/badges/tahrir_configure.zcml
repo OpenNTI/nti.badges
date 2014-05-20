@@ -39,18 +39,18 @@
 		
 	<adapter factory=".tahrir_adapters.person_to_identity_object"
 			 for=".tahrir_interfaces.IPerson"
-			 provides=".interfaces.IIdentityObject" />
+			 provides=".open_interfaces.IIdentityObject" />
  	
  	<adapter factory=".tahrir_adapters.identity_object_to_person"
-			 for=".interfaces.IIdentityObject"
+			 for=".open_interfaces.IIdentityObject"
 			 provides=".tahrir_interfaces.IPerson" />
 			 
  	<adapter factory=".tahrir_adapters.tahrir_badge_to_openbadge"
 			 for=".tahrir_interfaces.IBadge"
-			 provides=".interfaces.IBadgeClass" />
+			 provides=".open_interfaces.IBadgeClass" />
 		
  	<adapter factory=".tahrir_adapters.openbadge_to_tahrir_badge"
-			 for=".interfaces.IBadgeClass"
+			 for=".open_interfaces.IBadgeClass"
 			 provides=".tahrir_interfaces.IBadge" />
 			 	 
 	<!-- Database -->

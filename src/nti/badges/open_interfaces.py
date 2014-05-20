@@ -97,21 +97,3 @@ class IBadgeAssertion(interface.Interface):
 					required=False)
 
 	expires = nti_schema.ValidDatetime(title="Achievment expiry", required=False)
-
-
-class IBadgeManager(interface.Interface):
-	
-	def get_all_badges():
-		"""
-		return all availble badges
-		"""
-
-	def get_user_assertions(userid):
-		"""
-		return the assertions for the specified user
-		"""
-
-	def delete_user(userid):
-		"""
-		delete the user w/ the specified userid
-		"""

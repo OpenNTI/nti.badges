@@ -23,8 +23,8 @@ from datetime import datetime
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
 
-from nti.badges import interfaces
 from nti.badges import openbadges
+from nti.badges import open_interfaces
 
 from nti.externalization.tests import externalizes
 
@@ -36,10 +36,10 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_verification_object(self):
         vo = openbadges.VerificationObject(type="hosted", url="http://foo.json")
-        assert_that(vo, verifiably_provides(interfaces.IVerificationObject))
-        assert_that(vo, externalizes(has_entry('Class', 'VerificationObject')))
+        assert_that(vo, verifiably_provides(open_interfaces.IVerificationObject))
 
         ext_obj = toExternalObject(vo)
+        assert_that(ext_obj, has_entry('Class', 'VerificationObject'))
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
 
@@ -53,7 +53,7 @@ class TestOpenBadges(NTIBadgesTestCase):
     def test_identity_object(self):
         io = openbadges.IdentityObject(identity="my-identity", type="email",
                                        hashed=True, salt="xyz")
-        assert_that(io, verifiably_provides(interfaces.IIdentityObject))
+        assert_that(io, verifiably_provides(open_interfaces.IIdentityObject))
         assert_that(io, externalizes(has_entry('Class', 'IdentityObject')))
 
         ext_obj = toExternalObject(io)
@@ -72,7 +72,7 @@ class TestOpenBadges(NTIBadgesTestCase):
     def test_alignment_object(self):
         ao = openbadges.AlignmentObject(name="my-alignment", url=b"http://foo.xyz",
                                         description="foo")
-        assert_that(ao, verifiably_provides(interfaces.IAlignmentObject))
+        assert_that(ao, verifiably_provides(open_interfaces.IAlignmentObject))
         assert_that(ao, externalizes(has_entry('Class', 'AlignmentObject')))
 
         ext_obj = toExternalObject(ao)
@@ -101,7 +101,7 @@ class TestOpenBadges(NTIBadgesTestCase):
                                    issuer=b"https://badge-issuer.com",
                                    alignment=[ao1, ao2],
                                    )
-        assert_that(bc, verifiably_provides(interfaces.IBadgeClass))
+        assert_that(bc, verifiably_provides(open_interfaces.IBadgeClass))
         assert_that(bc, externalizes(has_entry('Class', 'BadgeClass')))
 
         ext_obj = toExternalObject(bc)
@@ -133,7 +133,7 @@ class TestOpenBadges(NTIBadgesTestCase):
                                        image=b"http://foo.jpg",
                                        evidence=b"http://foo.com",
                                        expires=now)
-        assert_that(ba, verifiably_provides(interfaces.IBadgeAssertion))
+        assert_that(ba, verifiably_provides(open_interfaces.IBadgeAssertion))
         assert_that(ba, externalizes(has_entry('Class', 'BadgeAssertion')))
 
         ext_obj = toExternalObject(ba)

@@ -16,19 +16,19 @@ from tahrir_api.model import Person
 
 from . import navstr
 from . import openbadges
+from . import open_interfaces
 from . import tahrir_interfaces
-from . import interfaces as badge_interfaces
 
 @component.adapter(tahrir_interfaces.IPerson)
-@interface.implementer(badge_interfaces.IIdentityObject)
+@interface.implementer(open_interfaces.IIdentityObject)
 def person_to_identity_object(person):
 	result = openbadges.IdentityObject(identity=person.email,
-									   type=badge_interfaces.ID_TYPE_EMAIL,
+									   type=open_interfaces.ID_TYPE_EMAIL,
 									   hashed=False,
 									   salt=None)
 	return result
 
-@component.adapter(badge_interfaces.IIdentityObject)
+@component.adapter(open_interfaces.IIdentityObject)
 @interface.implementer(tahrir_interfaces.IPerson)
 def identity_object_to_person(io):
 	result = Person()
@@ -36,7 +36,7 @@ def identity_object_to_person(io):
 	return result
 
 @component.adapter(tahrir_interfaces.IBadge)
-@interface.implementer(badge_interfaces.IBadgeClass)
+@interface.implementer(open_interfaces.IBadgeClass)
 def tahrir_badge_to_openbadge(badge):
 	# Issuer HTTP URL is not set
 	result = openbadges.BadgeClass(name=badge.name,
@@ -45,7 +45,7 @@ def tahrir_badge_to_openbadge(badge):
 								   criteria=navstr(badge.criteria))
 	return result
 
-@component.adapter(badge_interfaces.IBadgeClass)
+@component.adapter(open_interfaces.IBadgeClass)
 @interface.implementer(tahrir_interfaces.IBadge)
 def openbadge_to_tahrir_badge(badge):
 	result = Badge()
