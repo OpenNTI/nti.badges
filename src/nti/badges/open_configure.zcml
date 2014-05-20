@@ -19,6 +19,6 @@
 						 .open_interfaces.IAlignmentObject
 						 .open_interfaces.IBadgeClass
 						 .open_interfaces.IBadgeAssertion"
-		modules=".openbadges" />
+		modules=".open_badges" />
 	
 </configure>

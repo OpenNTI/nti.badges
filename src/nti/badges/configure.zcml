@@ -21,7 +21,7 @@
 			 for="nti.dataserver.interfaces.IDataserverFolder pyramid.interfaces.IRequest"
 			 factory=".views.NTIBadgesPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
-	
+
 	<include package="." file="open_configure.zcml" />
 	<include package="." file="tahrir_configure.zcml" />
 	

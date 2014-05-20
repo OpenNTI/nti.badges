@@ -23,7 +23,7 @@ from datetime import datetime
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
 
-from nti.badges import openbadges
+from nti.badges import open_badges
 from nti.badges import open_interfaces
 
 from nti.externalization.tests import externalizes
@@ -35,11 +35,13 @@ from nti.badges.tests import NTIBadgesTestCase
 class TestOpenBadges(NTIBadgesTestCase):
 
     def test_verification_object(self):
-        vo = openbadges.VerificationObject(type="hosted", url="http://foo.json")
+        vo = open_badges.VerificationObject(type="hosted", url="http://foo.json")
         assert_that(vo, verifiably_provides(open_interfaces.IVerificationObject))
 
         ext_obj = toExternalObject(vo)
+        print(ext_obj)
         assert_that(ext_obj, has_entry('Class', 'VerificationObject'))
+
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
 
@@ -51,12 +53,13 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(vo, equal_to(new_vo))
 
     def test_identity_object(self):
-        io = openbadges.IdentityObject(identity="my-identity", type="email",
+        io = open_badges.IdentityObject(identity="my-identity", type="email",
                                        hashed=True, salt="xyz")
         assert_that(io, verifiably_provides(open_interfaces.IIdentityObject))
-        assert_that(io, externalizes(has_entry('Class', 'IdentityObject')))
 
         ext_obj = toExternalObject(io)
+        assert_that(ext_obj, has_entry('Class', 'IdentityObject'))
+
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
 
@@ -70,12 +73,13 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(io, equal_to(new_io))
 
     def test_alignment_object(self):
-        ao = openbadges.AlignmentObject(name="my-alignment", url=b"http://foo.xyz",
+        ao = open_badges.AlignmentObject(name="my-alignment", url=b"http://foo.xyz",
                                         description="foo")
         assert_that(ao, verifiably_provides(open_interfaces.IAlignmentObject))
-        assert_that(ao, externalizes(has_entry('Class', 'AlignmentObject')))
 
         ext_obj = toExternalObject(ao)
+        assert_that(ext_obj, has_entry('Class', 'AlignmentObject'))
+
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
 
@@ -89,22 +93,23 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_badge_class(self):
         
-        ao1 = openbadges.AlignmentObject(name="my-alignment-1", url=b"http://foo-1.xyz",
+        ao1 = open_badges.AlignmentObject(name="my-alignment-1", url=b"http://foo-1.xyz",
                                         description="foo-1")
         
-        ao2 = openbadges.AlignmentObject(name="my-alignment-2", url=b"http://foo-2.xyz",
+        ao2 = open_badges.AlignmentObject(name="my-alignment-2", url=b"http://foo-2.xyz",
                                         description="foo-2")
 
-        bc = openbadges.BadgeClass(name="my-badge", description="super badge",
+        bc = open_badges.BadgeClass(name="my-badge", description="super badge",
                                    image=b"https://badge.png",
                                    criteria=b"https://badge-criteria.com",
                                    issuer=b"https://badge-issuer.com",
                                    alignment=[ao1, ao2],
                                    )
         assert_that(bc, verifiably_provides(open_interfaces.IBadgeClass))
-        assert_that(bc, externalizes(has_entry('Class', 'BadgeClass')))
 
         ext_obj = toExternalObject(bc)
+        assert_that(ext_obj, has_entry('Class', 'BadgeClass'))
+
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
 
@@ -122,10 +127,10 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_badge_assertion(self):
         now = datetime.fromtimestamp(int(time.time()))
-        verify = openbadges.VerificationObject(type="hosted", url="http://foo.json")
-        recipient = openbadges.IdentityObject(identity="my-identity", type="email",
+        verify = open_badges.VerificationObject(type="hosted", url="http://foo.json")
+        recipient = open_badges.IdentityObject(identity="my-identity", type="email",
                                               hashed=True, salt="xyz")
-        ba = openbadges.BadgeAssertion(uid="my-uid",
+        ba = open_badges.BadgeAssertion(uid="my-uid",
                                        recipient=recipient,
                                        verify=verify,
                                        badge=b"http://badge.json",
@@ -137,6 +142,8 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(ba, externalizes(has_entry('Class', 'BadgeAssertion')))
 
         ext_obj = toExternalObject(ba)
+        assert_that(ext_obj, has_entry('Class', 'BadgeAssertion'))
+
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
 
