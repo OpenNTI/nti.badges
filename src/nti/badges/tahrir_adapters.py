@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
+from . import navstr
 from . import openbadges
 from . import tahrir_interfaces
 from . import interfaces as badge_interfaces
@@ -22,4 +23,15 @@ def person_to_identity_object(person):
 									   type=badge_interfaces.ID_TYPE_EMAIL,
 									   hashed=False,
 									   salt=None)
+	return result
+
+
+@component.adapter(tahrir_interfaces.IBadge)
+@interface.implementer(badge_interfaces.IBadgeClass)
+def tahrir_badge_to_open_badge(badge):
+	# Issuer HTTP URL is not set
+	result = openbadges.BadgeClass(name=badge.name,
+								   description=badge.description,
+								   image=navstr(badge.image),
+								   criteria=navstr(badge.criteria))
 	return result

@@ -41,6 +41,10 @@
 			 for=".tahrir_interfaces.IPerson"
 			 provides=".interfaces.IIdentityObject" />
  	
+ 	<adapter factory=".tahrir_adapters.tahrir_badge_to_open_badge"
+			 for=".tahrir_interfaces.IBadge"
+			 provides=".interfaces.IBadgeClass" />
+			 
 	<!-- Database -->
 		 
 	<configure zcml:condition="have devmode">

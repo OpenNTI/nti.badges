@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 """
-badges module
-
 .. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -10,10 +8,10 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import sys
+from . import navstr
+from . import interfaces as badge_interfaces
 
-PY3 = sys.version_info[0] >= 3
-if PY3:  # pragma: no cover
-    navstr = str
-else:  # pragma: no cover
-    navstr = bytes
+def tahrir_badge_to_open_badge(badge, issuer_url):
+	result = badge_interfaces.IBadgeClass(badge)
+	result.issuer = navstr(issuer_url)
+	return result
