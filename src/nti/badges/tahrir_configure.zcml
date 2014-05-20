@@ -36,18 +36,10 @@
 	</class>
 	
 	<!-- Adapters -->
-	
-	<adapter factory=".tahrir_adapters.user_to_tahrir_person"
-			 for="nti.dataserver.interfaces.IUser"
-			 provides=".tahrir_interfaces.IPerson" />
 		
 	<adapter factory=".tahrir_adapters.person_to_identity_object"
 			 for=".tahrir_interfaces.IPerson"
 			 provides=".interfaces.IIdentityObject" />
-			
-	<!-- Subscribers -->
- 
- 	<subscriber handler=".tahrir_subscribers._user_deleted" />
  	
 	<!-- Database -->
 		 

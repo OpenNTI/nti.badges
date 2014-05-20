@@ -12,7 +12,9 @@ from hamcrest import is_not
 from hamcrest import assert_that
 does_not = is_not
 
-from nti.badges.tahrir_manager import get_tahri_badgemanger
+from zope import component
+
+from nti.badges import tahrir_interfaces
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
@@ -22,7 +24,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 
 	@WithMockDSTrans
 	def test_fossboxbadge(self):
-		manager = get_tahri_badgemanger()
+		manager = component.queryUtility(tahrir_interfaces.ITahrirBadgeManager)
 		assert_that(manager, is_not(none()))
 
 		issuer_id = manager.db.add_issuer(u'http://foss.rit.edu/badges',
