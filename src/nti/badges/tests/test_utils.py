@@ -14,13 +14,13 @@ does_not = is_not
 
 from tahrir_api.model import Badge
 
-from nti.badges.tahrir_utils import tahrir_badge_to_open_badge
+from nti.badges.utils import tahrir_badge_to_open_badge
 
 from nti.badges.tests import NTIBadgesTestCase
 
-class TestTahrirUtils(NTIBadgesTestCase):
+class TestUtils(NTIBadgesTestCase):
 
-	def test_adapter(self):
+	def test_tahrir_badge_to_open_badge(self):
 		badge = Badge()
 		badge.name = u'fossbox'
 		badge.image = u'http://foss.rit.edu/files/fossboxbadge.png'

@@ -9,6 +9,9 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 	
+	<include package=".tahrir" file="configure.zcml" />
+	<include package=".openbadges" file="configure.zcml" />
+	
 	<!-- Adpaters -->
 	
 	<adapter name="badges"
@@ -16,7 +19,20 @@
 			 factory=".views.NTIBadgesPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 
-	<include package=".tahrir" file="configure.zcml" />
-	<include package=".openbadges" file="configure.zcml" />
+	<adapter factory=".adapters.person_to_identity_object"
+			 for=".tahrir.interfaces.IPerson"
+			 provides=".openbadges.interfaces.IIdentityObject" />
+
+	<adapter factory=".adapters.identity_object_to_person"
+			 for=".openbadges.interfaces.IIdentityObject"
+			 provides=".tahrir.interfaces.IPerson" />
+
+	<adapter factory=".adapters.tahrir_badge_to_openbadge"
+			 for=".tahrir.interfaces.IBadge"
+			 provides=".openbadges.interfaces.IBadgeClass" />
+
+	<adapter factory=".adapters.openbadge_to_tahrir_badge"
+			 for=".openbadges.interfaces.IBadgeClass"
+			 provides=".tahrir.interfaces.IBadge" />
 	
 </configure>
