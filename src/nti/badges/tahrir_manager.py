@@ -61,6 +61,10 @@ class TahrirBadgeManager(object):
 	def delete_user(self, userid):
 		return self.db.delete_person(userid)
 
+	def get_all_badges(self):
+		result = self.session.get_all_badges()
+		return result
+
 def create_tahrir_badge_manager(dburi, twophase=False, autocommit=True):
 	result = TahrirBadgeManager(dburi, twophase, autocommit)
 	return result
