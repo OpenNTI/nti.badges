@@ -24,6 +24,8 @@ from .openbadges import interfaces as open_interfaces
 
 from .tahrir import interfaces as tahrir_interfaces
 
+from . import interfaces
+
 @component.adapter(tahrir_interfaces.IPerson)
 @interface.implementer(open_interfaces.IIdentityObject)
 def person_to_identity_object(person):
@@ -40,6 +42,13 @@ def identity_object_to_person(io):
     result.email = io.identity
     return result
 
+def _tag_badge_interfaces(source, target):
+    if interfaces.IEarnableBadge.providedBy(source):
+        interface.alsoProvides(target, interfaces.IEarnableBadge)
+
+    if interfaces.IEarnedBadge.providedBy(source):
+        interface.alsoProvides(target, interfaces.IEarnedBadge)
+
 @component.adapter(open_interfaces.IBadgeClass)
 @interface.implementer(tahrir_interfaces.IBadge)
 def open_badge_to_tahrir_badge(badge):
@@ -48,6 +57,7 @@ def open_badge_to_tahrir_badge(badge):
     result.image = badge.image
     result.criteria = badge.criteria
     result.description = badge.description
+    _tag_badge_interfaces(badge, result)
     return result
 
 @component.adapter(tahrir_interfaces.ITahrirBadge)
@@ -60,6 +70,7 @@ def tahrir_badge_to_open_badge(badge):
                         image=navstr(data.image),
                         criteria=navstr(data.criteria),
                         issuer=navstr(issuer.uri))
+    _tag_badge_interfaces(badge, result)
     return result
 
 @component.adapter(tahrir_interfaces.ITahrirAssertion)

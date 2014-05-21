@@ -31,6 +31,18 @@ class INTIBadge(interface.Interface):
 	issuer = nti_schema.Object(INTIIssuer, title="issuer url")
 	data = nti_schema.Object(interface.Interface, title="badge data")
 
+class IEarnableBadge(interface.Interface):
+	"""
+	marker interface for a earnable badbe
+	"""
+	pass
+
+class IEarnedBadge(IEarnableBadge):
+	"""
+	marker interface for a earned badbe
+	"""
+	pass
+
 class INTIAssertion(interface.Interface):
 	"""
 	marker interface for a badge
@@ -47,6 +59,11 @@ class IBadgeManager(interface.Interface):
 	def get_all_badges():
 		"""
 		return all availble badges
+		"""
+
+	def get_user_badges(userid):
+		"""
+		return the earned badges for the specified user
 		"""
 
 	def get_user_assertions(userid):

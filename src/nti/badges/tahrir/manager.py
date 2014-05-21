@@ -25,6 +25,7 @@ from tahrir_api.model import DeclarativeBase as tahrir_base
 from nti.utils.property import Lazy
 
 from . import interfaces
+from .. import interfaces as badge_interfaces
 
 TahrirIssuer = namedtuple("TahrirIssuer", ["uri", "org"])
 
@@ -69,6 +70,8 @@ class TahrirBadgeManager(object):
 		metadata.create_all(self.engine, checkfirst=True)
 		return result
 
+	# DB operations
+
 	def delete_user(self, userid):
 		return self.db.delete_person(userid)
 
@@ -89,13 +92,25 @@ class TahrirBadgeManager(object):
 			result.append(badge)
 		return result
 
+	def _user_assertions_badges(self, userid):
+		for ast in self.db.get_assertions_by_email(userid):
+			yield ast, ast.badge
+			
+	def get_user_badges(self, userid):
+		result = []
+		for _, badge in self._user_assertions_badges(userid):
+			badge = self._tahrir_badge(badge)
+			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
+			result.append(badge)
+		return result
+
 	def get_user_assertions(self, userid):
 		result = []
-		for ast in self.db.get_assertions_by_email(userid):
-			badge = ast.badge
+		for ast, badge in self._user_assertions_badges(userid):
 			badge = self._tahrir_badge(badge)
-			obj = TahrirAssertion(badge, ast.issued_on, userid)
-			result.append(obj)
+			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
+			assertion = TahrirAssertion(badge, ast.issued_on, userid)
+			result.append(assertion)
 		return result
 
 def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):
