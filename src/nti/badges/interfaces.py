@@ -21,6 +21,15 @@ class INTIBadge(interface.Interface):
 	issuer = interface.Attribute("issuer url")
 	data = interface.Attribute("badge data")
 
+class INTIAssertion(interface.Interface):
+	"""
+	marker interface for a badge
+	"""
+	badge = interface.Attribute("badge")
+	issuer = interface.Attribute("issuer url")
+	recipient = interface.Attribute("recipient id")
+	issuedOn = interface.Attribute("created/issue date")
+
 class IBadgeManager(interface.Interface):
 	
 	def get_all_badges():

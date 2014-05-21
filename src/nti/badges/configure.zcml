@@ -13,11 +13,6 @@
 	<include package=".openbadges" file="configure.zcml" />
 	
 	<!-- Adpaters -->
-	
-	<adapter name="badges"
-			 for="nti.dataserver.interfaces.IDataserverFolder pyramid.interfaces.IRequest"
-			 factory=".views.NTIBadgesPathAdapter"
-			 provides="zope.traversing.interfaces.IPathAdapter" />
 
 	<adapter factory=".adapters.person_to_identity_object"
 			 for=".tahrir.interfaces.IPerson"
@@ -27,12 +22,16 @@
 			 for=".openbadges.interfaces.IIdentityObject"
 			 provides=".tahrir.interfaces.IPerson" />
 
-	<adapter factory=".adapters.tahrir_badge_to_openbadge"
-			 for=".tahrir.interfaces.IBadge"
-			 provides=".openbadges.interfaces.IBadgeClass" />
-
-	<adapter factory=".adapters.openbadge_to_tahrir_badge"
+	<adapter factory=".adapters.open_badge_to_tahrir_badge"
 			 for=".openbadges.interfaces.IBadgeClass"
 			 provides=".tahrir.interfaces.IBadge" />
+			 
+	<adapter factory=".adapters.tahrir_badge_to_open_badge"
+			 for=".tahrir.interfaces.ITahrirBadge"
+			 provides=".openbadges.interfaces.IBadgeClass" />
 	
+	<adapter factory=".adapters.tahrir_assertion_to_open_assertion"
+			 for=".tahrir.interfaces.ITahrirAssertion"
+			 provides=".openbadges.interfaces.IBadgeAssertion" />
+			 
 </configure>
