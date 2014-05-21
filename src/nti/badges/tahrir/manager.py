@@ -25,6 +25,8 @@ from nti.utils.property import Lazy
 from . import interfaces
 
 TahrirBadge = namedtuple("TahrirBadge", ["issuer", "data"])
+TahrirAssertion = namedtuple("TahrirAssertion",
+							 ["issuer", "badge", "issuedOn", "recipient"])
 
 class NTITahrirDatabase(TahrirDatabase):
 	pass
@@ -70,6 +72,15 @@ class TahrirBadgeManager(object):
 		for badge in self.db.get_all_badges():
 			issuer = self.db.get_issuer(badge.issuer_id)
 			obj = TahrirBadge(issuer.origin, badge)
+			result.append(obj)
+		return result
+
+	def get_user_assertions(self, userid):
+		result = []
+		for ast in self.db.get_assertions_by_email(userid):
+			badge = ast.badge
+			issuer = self.db.get_issuer(badge.issuer_id)
+			obj = TahrirAssertion(issuer.org, badge, ast.issued_on, userid)
 			result.append(obj)
 		return result
 

@@ -38,6 +38,10 @@
 	<class class=".manager.TahrirBadge">
 		<implements interface=".interfaces.ITahrirBadge" />
 	</class>
+
+	<class class=".manager.TahrirAssertion">
+		<implements interface=".interfaces.ITahrirAssertion" />
+	</class>
 	 	 
 	<!-- Database -->
 		 

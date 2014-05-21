@@ -91,6 +91,12 @@ class ITahrirBadge(badge_interfaces.INTIBadge):
 	issuer = nti_schema.ValidTextLine(title="Issuer URL")
 	data = nti_schema.Object(IBadge, title="Badge data")
 
+class ITahrirAssertion(badge_interfaces.INTIAssertion):
+	issuer = nti_schema.ValidTextLine(title="Issuer URL")
+	badge = nti_schema.Object(IBadge, title="Badge data")
+	issuedOn = nti_schema.ValidDatetime(title="Issue date")
+	recipient = nti_schema.ValidTextLine(title="Recipient")
+
 class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""
 	Interface for Tahrir database managers
