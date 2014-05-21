@@ -20,7 +20,8 @@ VO_TYPES_VOCABULARY = \
 	vocabulary.SimpleVocabulary([vocabulary.SimpleTerm(_x) for _x in VO_TYPES])
 
 ID_TYPE_EMAIL = u'email'
-ID_TYPES = (ID_TYPE_EMAIL,)
+ID_TYPE_USERNAME = u'username'
+ID_TYPES = (ID_TYPE_EMAIL, ID_TYPE_USERNAME)
 ID_TYPES_VOCABULARY = \
 	vocabulary.SimpleVocabulary([vocabulary.SimpleTerm(_x) for _x in ID_TYPES])
 
