@@ -8,11 +8,3 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from ._compact import navstr
-
-from .openbadges import interfaces as open_interfaces
-
-def tahrir_badge_to_open_badge(badge, issuer_url):
-	result = open_interfaces.IBadgeClass(badge)
-	result.issuer = navstr(issuer_url)
-	return result
