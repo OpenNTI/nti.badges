@@ -35,6 +35,10 @@
 		<implements interface=".interfaces.IAssertion" />
 	</class>
 				
+	<class class=".manager.TahrirIssuer">
+		<implements interface=".interfaces.ITahrirIssuer" />
+	</class>
+	
 	<class class=".manager.TahrirBadge">
 		<implements interface=".interfaces.ITahrirBadge" />
 	</class>
@@ -47,6 +51,6 @@
 		 
 	<configure zcml:condition="have devmode">
 		<include package="." file="meta.zcml" />
-		<tdb:registerTahrirDB dburi="sqlite://" />
+		<tdb:registerTahrirDB defaultSQLite="True" />
 	</configure>
 </configure>

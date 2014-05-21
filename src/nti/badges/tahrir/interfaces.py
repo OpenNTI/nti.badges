@@ -87,15 +87,14 @@ class IAssertion(ITahrirModel):
 	issued_for = nti_schema.ValidTextLine(title="Issue for", required=False)
 	recipient = nti_schema.ValidTextLine(title="Recipient ", required=False)
 
+class ITahrirIssuer(badge_interfaces.INTIIssuer):
+	pass
+
 class ITahrirBadge(badge_interfaces.INTIBadge):
-	issuer = nti_schema.ValidTextLine(title="Issuer URL")
 	data = nti_schema.Object(IBadge, title="Badge data")
 
 class ITahrirAssertion(badge_interfaces.INTIAssertion):
-	issuer = nti_schema.ValidTextLine(title="Issuer URL")
-	badge = nti_schema.Object(IBadge, title="Badge data")
-	issuedOn = nti_schema.ValidDatetime(title="Issue date")
-	recipient = nti_schema.ValidTextLine(title="Recipient")
+	badge = nti_schema.Object(ITahrirBadge, title="Badge data")
 
 class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""

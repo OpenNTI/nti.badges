@@ -15,16 +15,20 @@ does_not = is_not
 from zope import component
 
 from nti.badges.tahrir import interfaces
-
+from nti.badges.tahrir.manager import create_badge_manager
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.badges.tests import NTIBadgesTestCase
 
 class TestTahrirBadgeManager(NTIBadgesTestCase):
 
+	def test_registration(self):
+		manager = component.queryUtility(interfaces.ITahrirBadgeManager)
+		assert_that(manager, is_not(none()))
+		
 	@WithMockDSTrans
 	def test_fossboxbadge(self):
-		manager = component.queryUtility(interfaces.ITahrirBadgeManager)
+		manager = create_badge_manager(dburi="sqlite://")
 		assert_that(manager, is_not(none()))
 
 		issuer_id = manager.db.add_issuer(u'http://foss.rit.edu/badges',

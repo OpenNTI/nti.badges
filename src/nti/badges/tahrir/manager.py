@@ -8,6 +8,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import os
+
 from  collections import namedtuple
 
 from zope import interface
@@ -24,9 +26,12 @@ from nti.utils.property import Lazy
 
 from . import interfaces
 
+TahrirIssuer = namedtuple("TahrirIssuer", ["uri", "org"])
+
 TahrirBadge = namedtuple("TahrirBadge", ["issuer", "data"])
+
 TahrirAssertion = namedtuple("TahrirAssertion",
-							 ["issuer", "badge", "issuedOn", "recipient"])
+							 ["badge", "issuedOn", "recipient"])
 
 class NTITahrirDatabase(TahrirDatabase):
 	pass
@@ -67,23 +72,39 @@ class TahrirBadgeManager(object):
 	def delete_user(self, userid):
 		return self.db.delete_person(userid)
 
+	def _tahrir_issuer(self, issuer):
+		result = TahrirIssuer(issuer.name, issuer.org)
+		return result
+
+	def _tahrir_badge(self, badge):
+		issuer = self.db.get_issuer(badge.issuer_id)
+		issuer = self._tahrir_issuer(issuer)
+		result = TahrirBadge(issuer, badge)
+		return result
+
 	def get_all_badges(self):
 		result = []
 		for badge in self.db.get_all_badges():
-			issuer = self.db.get_issuer(badge.issuer_id)
-			obj = TahrirBadge(issuer.origin, badge)
-			result.append(obj)
+			badge = self._tahrir_badge(badge)
+			result.append(badge)
 		return result
 
 	def get_user_assertions(self, userid):
 		result = []
 		for ast in self.db.get_assertions_by_email(userid):
 			badge = ast.badge
-			issuer = self.db.get_issuer(badge.issuer_id)
-			obj = TahrirAssertion(issuer.org, badge, ast.issued_on, userid)
+			badge = self._tahrir_badge(badge)
+			obj = TahrirAssertion(badge, ast.issued_on, userid)
 			result.append(obj)
 		return result
 
-def create_badge_manager(dburi, twophase=False, autocommit=True):
+def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):
+	if defaultSQLite:
+		data_dir = os.getenv('DATASERVER_DIR') or '/tmp'
+		data_dir = os.path.join(os.path.expanduser(data_dir), 'data')
+		if not os.path.exists(data_dir):
+			os.makedirs(data_dir)
+		data_file = os.path.join(data_dir, 'tahrir.db')
+		dburi = "sqlite:///%s" % data_file
 	result = TahrirBadgeManager(dburi, twophase, autocommit)
 	return result

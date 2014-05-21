@@ -40,17 +40,6 @@ def identity_object_to_person(io):
     result.email = io.identity
     return result
 
-@component.adapter(tahrir_interfaces.ITahrirBadge)
-@interface.implementer(open_interfaces.IBadgeClass)
-def tahrir_badge_to_open_badge(badge):
-    data = badge.data
-    result = BadgeClass(name=data.name,
-                        description=data.description,
-                        image=navstr(data.image),
-                        criteria=navstr(data.criteria),
-                        issuer=navstr(badge.issuer))
-    return result
-
 @component.adapter(open_interfaces.IBadgeClass)
 @interface.implementer(tahrir_interfaces.IBadge)
 def open_badge_to_tahrir_badge(badge):
@@ -61,12 +50,25 @@ def open_badge_to_tahrir_badge(badge):
     result.description = badge.description
     return result
 
+@component.adapter(tahrir_interfaces.ITahrirBadge)
+@interface.implementer(open_interfaces.IBadgeClass)
+def tahrir_badge_to_open_badge(badge):
+    issuer = badge.issuer
+    data = badge.data
+    result = BadgeClass(name=data.name,
+                        description=data.description,
+                        image=navstr(data.image),
+                        criteria=navstr(data.criteria),
+                        issuer=navstr(issuer.uri))
+    return result
+
 @component.adapter(tahrir_interfaces.ITahrirAssertion)
 @interface.implementer(open_interfaces.IBadgeAssertion)
 def tahrir_assertion_to_open_assertion(ast):
-    issuer, badge, issuedOn = ast.issuer, ast.badge, ast.issuedOn
+    badge, issuedOn = ast.badge, ast.issuedOn
+    issuer = badge.issuer
     verify = VerificationObject(type=open_interfaces.VO_TYPE_HOSTED,
-                                url=navstr(issuer))
+                                url=navstr(issuer.org))
     result = BadgeAssertion(uid=badge.name,
                             recipient=badge.recipient,
                             verify=verify,
