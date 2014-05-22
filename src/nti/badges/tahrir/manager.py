@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import time
 
 from zope import interface
 
@@ -23,8 +24,8 @@ from tahrir_api.model import DeclarativeBase as tahrir_base
 from nti.utils.property import Lazy
 
 from . import interfaces
+from ..model import NTIAssertion
 from .. import interfaces as badge_interfaces
-from .model import TahrirIssuer, TahrirBadge, TahrirAssertion
 
 class NTITahrirDatabase(TahrirDatabase):
 	pass
@@ -67,20 +68,18 @@ class TahrirBadgeManager(object):
 	def delete_user(self, userid):
 		return self.db.delete_person(userid)
 
-	def _tahrir_issuer(self, issuer):
-		result = TahrirIssuer(uri=issuer.name, org=issuer.org)
+	def _nti_issuer(self, issuer):
+		result = badge_interfaces.INTIIssuer(issuer)
 		return result
 
-	def _tahrir_badge(self, badge):
-		issuer = self.db.get_issuer(badge.issuer_id)
-		issuer = self._tahrir_issuer(issuer)
-		result = TahrirBadge(issuer=issuer, badge=badge)
+	def _nti_badge(self, badge):
+		result = badge_interfaces.INTIBadge(badge)
 		return result
 
 	def get_all_badges(self):
 		result = []
 		for badge in self.db.get_all_badges():
-			badge = self._tahrir_badge(badge)
+			badge = self._nti_badge(badge)
 			result.append(badge)
 		return result
 
@@ -91,7 +90,7 @@ class TahrirBadgeManager(object):
 	def get_user_badges(self, userid):
 		result = []
 		for _, badge in self._user_assertions_badges(userid):
-			badge = self._tahrir_badge(badge)
+			badge = self._nti_badge(badge)
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
 			result.append(badge)
 		return result
@@ -99,11 +98,12 @@ class TahrirBadgeManager(object):
 	def get_user_assertions(self, userid):
 		result = []
 		for ast, badge in self._user_assertions_badges(userid):
-			badge = self._tahrir_badge(badge)
+			badge = self._nti_badge(badge)
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
-			assertion = TahrirAssertion(badge=badge,
-										recipient=userid,
-										issueOn=ast.issued_on)
+			issuedOn = time.mktime(ast.issued_on.timetuple())
+			assertion = NTIAssertion(badge=badge,
+									 recipient=userid,
+									 issueOn=issuedOn)
 			result.append(assertion)
 		return result
 

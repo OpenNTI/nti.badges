@@ -26,12 +26,12 @@
 			 for=".openbadges.interfaces.IBadgeClass"
 			 provides=".tahrir.interfaces.IBadge" />
 			 
-	<adapter factory=".adapters.tahrir_badge_to_open_badge"
-			 for=".tahrir.interfaces.ITahrirBadge"
+	<adapter factory=".adapters.ntibadge_to_mozilla_badge"
+			 for=".interfaces.INTIBadge"
 			 provides=".openbadges.interfaces.IBadgeClass" />
 	
-	<adapter factory=".adapters.tahrir_assertion_to_open_assertion"
-			 for=".tahrir.interfaces.ITahrirAssertion"
+	<adapter factory=".adapters.ntiassertion_to_mozilla_assertion"
+			 for=".interfaces.INTIAssertion"
 			 provides=".openbadges.interfaces.IBadgeAssertion" />
 			 
 </configure>

@@ -8,6 +8,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from datetime import datetime
+
 from zope import component
 from zope import interface
 
@@ -42,7 +44,7 @@ def identity_object_to_person(io):
     result.email = io.identity
     return result
 
-def _tag_badge_interfaces(source, target):
+def tag_badge_interfaces(source, target):
     if interfaces.IEarnableBadge.providedBy(source):
         interface.alsoProvides(target, interfaces.IEarnableBadge)
 
@@ -57,32 +59,32 @@ def open_badge_to_tahrir_badge(badge):
     result.image = badge.image
     result.criteria = badge.criteria
     result.description = badge.description
-    _tag_badge_interfaces(badge, result)
+    tag_badge_interfaces(badge, result)
     return result
 
-@component.adapter(tahrir_interfaces.ITahrirBadge)
+@component.adapter(interfaces.INTIBadge)
 @interface.implementer(open_interfaces.IBadgeClass)
-def tahrir_badge_to_open_badge(badge):
+def ntibadge_to_mozilla_badge(badge):
     issuer = badge.issuer
-    data = badge.data
-    result = BadgeClass(name=data.name,
-                        description=data.description,
-                        image=navstr(data.image),
-                        criteria=navstr(data.criteria),
+    result = BadgeClass(name=badge.name,
+                        description=badge.description,
+                        image=navstr(badge.image),
+                        criteria=navstr(badge.criteria),
                         issuer=navstr(issuer.uri))
-    _tag_badge_interfaces(badge, result)
+    tag_badge_interfaces(badge, result)
     return result
 
-@component.adapter(tahrir_interfaces.ITahrirAssertion)
+@component.adapter(interfaces.INTIAssertion)
 @interface.implementer(open_interfaces.IBadgeAssertion)
-def tahrir_assertion_to_open_assertion(ast):
-    badge, issuedOn = ast.badge, ast.issuedOn
+def ntiassertion_to_mozilla_assertion(ast):
+    badge = ast.badge
     issuer = badge.issuer
+    issuedOn = ast.issuedOn
     verify = VerificationObject(type=open_interfaces.VO_TYPE_HOSTED,
                                 url=navstr(issuer.org))
     result = BadgeAssertion(uid=badge.name,
-                            recipient=badge.recipient,
                             verify=verify,
-                            issuedOn=issuedOn,
-                            image=navstr(badge.image),)
+                            recipient=badge.recipient,
+                            image=navstr(badge.image),
+                            issuedOn=datetime.fromtimestamp(issuedOn))
     return result

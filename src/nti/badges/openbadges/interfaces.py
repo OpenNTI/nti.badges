@@ -9,9 +9,9 @@ __docformat__ = "restructuredtext en"
 from zope import interface
 from zope.schema import vocabulary
 
-from nti.dataserver import interfaces as nti_interfaces
-
 from nti.utils import schema as nti_schema
+
+from ..interfaces import ITaggedContent
 
 VO_TYPE_HOSTED = u'hosted'
 VO_TYPE_SIGNED = u'signed'
@@ -53,7 +53,7 @@ class IAlignmentObject(interface.Interface):
 	description = nti_schema.ValidText(title="Short description of the standard",
                                        required=False)
 
-class IBadgeClass(nti_interfaces.IUserTaggedContent):
+class IBadgeClass(ITaggedContent):
 	name = nti_schema.ValidTextLine(title="The name of the achievement")
 	
 	description = nti_schema.ValidText(title="A short description of the achievement")

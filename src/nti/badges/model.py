@@ -34,7 +34,7 @@ class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
     def __eq__(self, other):
         try:
             return self is other or (self.issuer == other.issuer and
-                                     self.data == other.data)
+                                     self.name == other.name)
         except AttributeError:
             return NotImplemented
 
@@ -42,7 +42,7 @@ class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
 
     def __hash__(self):
         xhash = 47
-        xhash ^= hash(self.data)
+        xhash ^= hash(self.name)
         xhash ^= hash(self.issuer)
         return xhash
 

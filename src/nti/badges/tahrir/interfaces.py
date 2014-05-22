@@ -87,15 +87,6 @@ class IAssertion(ITahrirModel):
 	issued_for = nti_schema.ValidTextLine(title="Issue for", required=False)
 	recipient = nti_schema.ValidTextLine(title="Recipient ", required=False)
 
-class ITahrirIssuer(badge_interfaces.INTIIssuer):
-	pass
-
-class ITahrirBadge(badge_interfaces.INTIBadge):
-	data = nti_schema.Object(IBadge, title="Badge data")
-
-class ITahrirAssertion(badge_interfaces.INTIAssertion):
-	badge = nti_schema.Object(ITahrirBadge, title="Badge data")
-
 class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""
 	Interface for Tahrir database managers
