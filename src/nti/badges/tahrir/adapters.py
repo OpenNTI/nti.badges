@@ -16,12 +16,24 @@ from zope import interface
 from . import interfaces
 from ..model import NTIBadge
 from ..model import NTIIssuer
+from ..model import NTIPerson
+from ..model import NTIAssertion
 from .. import interfaces as badges_intefaces
 
 @component.adapter(interfaces.IIssuer)
 @interface.implementer(badges_intefaces.INTIIssuer)
 def issuer_to_ntiissuer(issuer):
     result = NTIIssuer(uri=issuer.name, org=issuer.org)
+    return result
+
+@component.adapter(interfaces.IPerson)
+@interface.implementer(badges_intefaces.INTIPerson)
+def person_to_ntiperson(person):
+    assertions = [badges_intefaces.INTIAssertion(x) for x in person.assertions]
+    result = NTIPerson(name=person.nickname,
+                       email=person.email,
+                       assertions=assertions,
+                       createdTime=time.mktime(person.created_on.timetuple()))
     return result
 
 @component.adapter(interfaces.IBadge)
@@ -36,3 +48,14 @@ def badge_to_ntibadge(badge):
                       createdTime=time.mktime(badge.created_on.timetuple()),
                       tags=tags)
     return result
+
+@component.adapter(interfaces.IAssertion)
+@interface.implementer(badges_intefaces.INTIAssertion)
+def assertion_to_ntiassertion(ast):
+    badge = badges_intefaces.INTIBadge(ast.badge, None)
+    interface.alsoProvides(badge, badges_intefaces.IEarnedBadge)
+    issuedOn = time.mktime(ast.issued_on.timetuple())
+    assertion = NTIAssertion(badge=badge,
+                             recipient=ast.recipient,
+                             issueOn=issuedOn)
+    return assertion

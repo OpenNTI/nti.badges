@@ -14,11 +14,11 @@
 	
 	<!-- Adpaters -->
 
-	<adapter factory=".adapters.person_to_identity_object"
+	<adapter factory=".adapters.tahrir_person_to_identity_object"
 			 for=".tahrir.interfaces.IPerson"
 			 provides=".openbadges.interfaces.IIdentityObject" />
 
-	<adapter factory=".adapters.identity_object_to_person"
+	<adapter factory=".adapters.identity_object_to_tahrir_person"
 			 for=".openbadges.interfaces.IIdentityObject"
 			 provides=".tahrir.interfaces.IPerson" />
 
@@ -41,6 +41,7 @@
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.INTIBadge
 						 .interfaces.INTIIssuer
+						 .interfaces.INTIPerson
 						 .interfaces.INTIAssertion"
 		modules=".model" />
 	 

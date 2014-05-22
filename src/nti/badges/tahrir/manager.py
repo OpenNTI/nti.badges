@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
-import time
 
 from zope import interface
 
@@ -24,7 +23,6 @@ from tahrir_api.model import DeclarativeBase as tahrir_base
 from nti.utils.property import Lazy
 
 from . import interfaces
-from ..model import NTIAssertion
 from .. import interfaces as badge_interfaces
 
 class NTITahrirDatabase(TahrirDatabase):
@@ -97,14 +95,12 @@ class TahrirBadgeManager(object):
 
 	def get_user_assertions(self, userid):
 		result = []
-		for ast, badge in self._user_assertions_badges(userid):
-			badge = self._nti_badge(badge)
-			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
-			issuedOn = time.mktime(ast.issued_on.timetuple())
-			assertion = NTIAssertion(badge=badge,
-									 recipient=userid,
-									 issueOn=issuedOn)
+		for ast, _ in self._user_assertions_badges(userid):
+			assertion = badge_interfaces.INTIAssertion(ast)
 			result.append(assertion)
+			# do we want to change the recipient?
+			if assertion.recipient != userid:
+				assertion.recipient = userid
 		return result
 
 def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):

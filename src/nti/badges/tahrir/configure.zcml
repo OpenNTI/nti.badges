@@ -45,6 +45,14 @@
 			 for=".interfaces.IBadge"
 			 provides="nti.badges.interfaces.INTIBadge" />
 			 	  	 
+	<adapter factory=".adapters.person_to_ntiperson"
+			 for=".interfaces.IPerson"
+			 provides="nti.badges.interfaces.INTIPerson" />
+	
+	<adapter factory=".adapters.assertion_to_ntiassertion"
+			 for=".interfaces.IAssertion"
+			 provides="nti.badges.interfaces.INTIAssertion" />
+			 		 
 	<!-- Database -->
 		 
 	<configure zcml:condition="have devmode">

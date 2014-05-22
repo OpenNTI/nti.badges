@@ -47,6 +47,33 @@ class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
         xhash ^= hash(self.issuer)
         return xhash
 
+@interface.implementer(interfaces.INTIPerson)
+class NTIPerson(SchemaConfigured, persistent.Persistent, contained.Contained):
+    createDirectFieldProperties(interfaces.INTIPerson)
+
+    __external_can_create__ = True
+    __external_class_name__ = "Issuer"
+    mime_type = mimeType = 'application/vnd.nextthought.badges.person'
+
+    def __init__(self, *args, **kwargs):
+        persistent.Persistent.__init__(self)
+        SchemaConfigured.__init__(self, *args, **kwargs)
+
+    def __eq__(self, other):
+        try:
+            return self is other or (self.name == other.name and
+                                     self.email == other.email)
+        except AttributeError:
+            return NotImplemented
+
+    __repr__ = make_repr()
+
+    def __hash__(self):
+        xhash = 47
+        xhash ^= hash(self.name)
+        xhash ^= hash(self.email)
+        return xhash
+
 @interface.implementer(interfaces.INTIIssuer)
 class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
     createDirectFieldProperties(interfaces.INTIIssuer)

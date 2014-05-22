@@ -30,7 +30,7 @@ from . import interfaces
 
 @component.adapter(tahrir_interfaces.IPerson)
 @interface.implementer(open_interfaces.IIdentityObject)
-def person_to_identity_object(person):
+def tahrir_person_to_identity_object(person):
     result = IdentityObject(identity=person.email,
                             type=open_interfaces.ID_TYPE_EMAIL,
                             hashed=False,
@@ -39,7 +39,7 @@ def person_to_identity_object(person):
 
 @component.adapter(open_interfaces.IIdentityObject)
 @interface.implementer(tahrir_interfaces.IPerson)
-def identity_object_to_person(io):
+def identity_object_to_tahrir_person(io):
     result = Person()
     result.email = io.identity
     return result
