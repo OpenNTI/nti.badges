@@ -19,6 +19,6 @@
 						 .interfaces.IAlignmentObject
 						 .interfaces.IBadgeClass
 						 .interfaces.IBadgeAssertion"
-		modules=".elements" />
+		modules=".model" />
 	
 </configure>

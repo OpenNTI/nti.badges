@@ -25,7 +25,7 @@ class VerificationObject(SchemaConfigured, persistent.Persistent, contained.Cont
     createDirectFieldProperties(interfaces.IVerificationObject)
 
     __external_can_create__ = True
-    mime_type = mimeType = 'application/vnd.nextthought.badges.verificationobject'
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.verificationobject'
 
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)
@@ -50,7 +50,7 @@ class IdentityObject(SchemaConfigured, persistent.Persistent, contained.Containe
     createDirectFieldProperties(interfaces.IIdentityObject)
 
     __external_can_create__ = True
-    mime_type = mimeType = 'application/vnd.nextthought.badges.identityobject'
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.identityobject'
 
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)
@@ -76,7 +76,7 @@ class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contain
     createDirectFieldProperties(interfaces.IAlignmentObject)
 
     __external_can_create__ = True
-    mime_type = mimeType = 'application/vnd.nextthought.badges.alignmentobject'
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.alignmentobject'
 
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)
@@ -101,7 +101,7 @@ class BadgeClass(SchemaConfigured, persistent.Persistent, contained.Contained):
     createDirectFieldProperties(interfaces.IBadgeClass)
 
     __external_can_create__ = True
-    mime_type = mimeType = 'application/vnd.nextthought.badges.badgeclass'
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.badge'
 
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)
@@ -125,7 +125,7 @@ class BadgeAssertion(SchemaConfigured, persistent.Persistent, contained.Containe
     createDirectFieldProperties(interfaces.IBadgeAssertion)
 
     __external_can_create__ = True
-    mime_type = mimeType = 'application/vnd.nextthought.badges.badgeassertion'
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.assertion'
 
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)

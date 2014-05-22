@@ -31,6 +31,17 @@ class INTIBadge(interface.Interface):
 	issuer = nti_schema.Object(INTIIssuer, title="issuer url")
 	data = nti_schema.Object(interface.Interface, title="badge data")
 
+class INTIAssertion(interface.Interface):
+	"""
+	marker interface for a badge
+	"""
+	badge = nti_schema.Object(INTIBadge, title="badge")
+	recipient = nti_schema.Variant((
+					nti_schema.TextLine(title='Badge recipient id'),
+					nti_schema.HTTPURL(title='Badge recipient URL')),
+					title="Badge recipient")
+	issuedOn = nti_schema.ValidDatetime(title="Date that the achievement was awarded")
+
 class IEarnableBadge(interface.Interface):
 	"""
 	marker interface for a earnable badbe
@@ -43,16 +54,6 @@ class IEarnedBadge(IEarnableBadge):
 	"""
 	pass
 
-class INTIAssertion(interface.Interface):
-	"""
-	marker interface for a badge
-	"""
-	badge = nti_schema.Object(INTIBadge, title="badge")
-	recipient = nti_schema.Variant((
-					nti_schema.TextLine(title='Badge recipient id'),
-					nti_schema.HTTPURL(title='Badge recipient URL')),
-					title="Badge recipient")
-	issuedOn = nti_schema.ValidDatetime(title="Date that the achievement was awarded")
 
 class IBadgeManager(interface.Interface):
 	

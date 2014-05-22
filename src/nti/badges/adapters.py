@@ -16,10 +16,10 @@ from tahrir_api.model import Person
 
 from ._compact import navstr
 
-from .openbadges.elements import BadgeClass
-from .openbadges.elements import BadgeAssertion
-from .openbadges.elements import IdentityObject
-from .openbadges.elements import VerificationObject
+from .openbadges.model import BadgeClass
+from .openbadges.model import BadgeAssertion
+from .openbadges.model import IdentityObject
+from .openbadges.model import VerificationObject
 from .openbadges import interfaces as open_interfaces
 
 from .tahrir import interfaces as tahrir_interfaces

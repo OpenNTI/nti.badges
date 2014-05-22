@@ -10,8 +10,6 @@ logger = __import__('logging').getLogger(__name__)
 
 import os
 
-from  collections import namedtuple
-
 from zope import interface
 
 from sqlalchemy import create_engine
@@ -26,13 +24,7 @@ from nti.utils.property import Lazy
 
 from . import interfaces
 from .. import interfaces as badge_interfaces
-
-TahrirIssuer = namedtuple("TahrirIssuer", ["uri", "org"])
-
-TahrirBadge = namedtuple("TahrirBadge", ["issuer", "data"])
-
-TahrirAssertion = namedtuple("TahrirAssertion",
-							 ["badge", "issuedOn", "recipient"])
+from .model import TahrirIssuer, TahrirBadge, TahrirAssertion
 
 class NTITahrirDatabase(TahrirDatabase):
 	pass
@@ -76,13 +68,13 @@ class TahrirBadgeManager(object):
 		return self.db.delete_person(userid)
 
 	def _tahrir_issuer(self, issuer):
-		result = TahrirIssuer(issuer.name, issuer.org)
+		result = TahrirIssuer(uri=issuer.name, org=issuer.org)
 		return result
 
 	def _tahrir_badge(self, badge):
 		issuer = self.db.get_issuer(badge.issuer_id)
 		issuer = self._tahrir_issuer(issuer)
-		result = TahrirBadge(issuer, badge)
+		result = TahrirBadge(issuer=issuer, badge=badge)
 		return result
 
 	def get_all_badges(self):
@@ -109,7 +101,9 @@ class TahrirBadgeManager(object):
 		for ast, badge in self._user_assertions_badges(userid):
 			badge = self._tahrir_badge(badge)
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
-			assertion = TahrirAssertion(badge, ast.issued_on, userid)
+			assertion = TahrirAssertion(badge=badge,
+										recipient=userid,
+										issueOn=ast.issued_on)
 			result.append(assertion)
 		return result
 

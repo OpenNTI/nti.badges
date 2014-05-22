@@ -34,19 +34,7 @@
 	<class class="tahrir_api.model.Assertion">
 		<implements interface=".interfaces.IAssertion" />
 	</class>
-				
-	<class class=".manager.TahrirIssuer">
-		<implements interface=".interfaces.ITahrirIssuer" />
-	</class>
-	
-	<class class=".manager.TahrirBadge">
-		<implements interface=".interfaces.ITahrirBadge" />
-	</class>
-
-	<class class=".manager.TahrirAssertion">
-		<implements interface=".interfaces.ITahrirAssertion" />
-	</class>
-	 	 
+				 	 
 	<!-- Database -->
 		 
 	<configure zcml:condition="have devmode">

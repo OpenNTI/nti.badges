@@ -23,7 +23,7 @@ from datetime import datetime
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
 
-from nti.badges.openbadges import elements
+from nti.badges.openbadges import model
 from nti.badges.openbadges import interfaces
 
 from nti.externalization.tests import externalizes
@@ -35,11 +35,10 @@ from nti.badges.tests import NTIBadgesTestCase
 class TestOpenBadges(NTIBadgesTestCase):
 
     def test_verification_object(self):
-        vo = elements.VerificationObject(type="hosted", url="http://foo.json")
+        vo = model.VerificationObject(type="hosted", url="http://foo.json")
         assert_that(vo, verifiably_provides(interfaces.IVerificationObject))
 
         ext_obj = toExternalObject(vo)
-        print(ext_obj)
         assert_that(ext_obj, has_entry('Class', 'VerificationObject'))
 
         factory = internalization.find_factory_for(ext_obj)
@@ -53,8 +52,8 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(vo, equal_to(new_vo))
 
     def test_identity_object(self):
-        io = elements.IdentityObject(identity="my-identity", type="email",
-                                       hashed=True, salt="xyz")
+        io = model.IdentityObject(identity="my-identity", type="email",
+                                  hashed=True, salt="xyz")
         assert_that(io, verifiably_provides(interfaces.IIdentityObject))
 
         ext_obj = toExternalObject(io)
@@ -73,8 +72,8 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(io, equal_to(new_io))
 
     def test_alignment_object(self):
-        ao = elements.AlignmentObject(name="my-alignment", url=b"http://foo.xyz",
-                                        description="foo")
+        ao = model.AlignmentObject(name="my-alignment", url=b"http://foo.xyz",
+                                   description="foo")
         assert_that(ao, verifiably_provides(interfaces.IAlignmentObject))
 
         ext_obj = toExternalObject(ao)
@@ -93,18 +92,17 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_badge_class(self):
         
-        ao1 = elements.AlignmentObject(name="my-alignment-1", url=b"http://foo-1.xyz",
+        ao1 = model.AlignmentObject(name="my-alignment-1", url=b"http://foo-1.xyz",
                                         description="foo-1")
         
-        ao2 = elements.AlignmentObject(name="my-alignment-2", url=b"http://foo-2.xyz",
+        ao2 = model.AlignmentObject(name="my-alignment-2", url=b"http://foo-2.xyz",
                                         description="foo-2")
 
-        bc = elements.BadgeClass(name="my-badge", description="super badge",
-                                   image=b"https://badge.png",
-                                   criteria=b"https://badge-criteria.com",
-                                   issuer=b"https://badge-issuer.com",
-                                   alignment=[ao1, ao2],
-                                   )
+        bc = model.BadgeClass(name="my-badge", description="super badge",
+                              image=b"https://badge.png",
+                              criteria=b"https://badge-criteria.com",
+                              issuer=b"https://badge-issuer.com",
+                              alignment=[ao1, ao2])
         assert_that(bc, verifiably_provides(interfaces.IBadgeClass))
 
         ext_obj = toExternalObject(bc)
@@ -127,17 +125,17 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_badge_assertion(self):
         now = datetime.fromtimestamp(int(time.time()))
-        verify = elements.VerificationObject(type="hosted", url="http://foo.json")
-        recipient = elements.IdentityObject(identity="my-identity", type="email",
+        verify = model.VerificationObject(type="hosted", url="http://foo.json")
+        recipient = model.IdentityObject(identity="my-identity", type="email",
                                               hashed=True, salt="xyz")
-        ba = elements.BadgeAssertion(uid="my-uid",
-                                       recipient=recipient,
-                                       verify=verify,
-                                       badge=b"http://badge.json",
-                                       issuedOn=now,
-                                       image=b"http://foo.jpg",
-                                       evidence=b"http://foo.com",
-                                       expires=now)
+        ba = model.BadgeAssertion(uid="my-uid",
+                                  recipient=recipient,
+                                  verify=verify,
+                                  badge=b"http://badge.json",
+                                  issuedOn=now,
+                                  image=b"http://foo.jpg",
+                                  evidence=b"http://foo.com",
+                                  expires=now)
         assert_that(ba, verifiably_provides(interfaces.IBadgeAssertion))
         assert_that(ba, externalizes(has_entry('Class', 'BadgeAssertion')))
 
