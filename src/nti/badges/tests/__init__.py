@@ -7,6 +7,10 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+import os
+import shutil
+import tempfile
+
 from nti.dataserver.tests.mock_dataserver import WithMockDS
 from nti.dataserver.tests.mock_dataserver import mock_db_trans
 
@@ -31,6 +35,9 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
     @classmethod
     def setUp(cls):
         cls.setUpPackages()
+        cls.old_data_dir = os.getenv('DATASERVER_DATA_DIR')
+        cls.new_data_dir = tempfile.mkdtemp(dir="/tmp")
+        os.environ['DATASERVER_DATA_DIR'] = cls.new_data_dir
 
     @classmethod
     def tearDown(cls):
@@ -40,6 +47,8 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
     @classmethod
     def testSetUp(cls, test=None):
         cls.setUpTestDS(test)
+        shutil.rmtree(cls.new_data_dir, True)
+        os.environ['DATASERVER_DATA_DIR'] = cls.old_data_dir or '/tmp'
         
     @classmethod
     def testTearDown(cls):

@@ -109,10 +109,8 @@ class TahrirBadgeManager(object):
 
 def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):
 	if defaultSQLite:
-		data_dir = os.getenv('DATASERVER_DIR') or '/tmp'
-		data_dir = os.path.join(os.path.expanduser(data_dir), 'data')
-		if not os.path.exists(data_dir):
-			os.makedirs(data_dir)
+		data_dir = os.getenv('DATASERVER_DATA_DIR') or '/tmp'
+		data_dir = os.path.expanduser(data_dir)
 		data_file = os.path.join(data_dir, 'tahrir.db')
 		dburi = "sqlite:///%s" % data_file
 	result = TahrirBadgeManager(dburi, twophase, autocommit)
