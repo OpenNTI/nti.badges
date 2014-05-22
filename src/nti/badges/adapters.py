@@ -95,5 +95,6 @@ def ntiperson_to_tahrir_person(nti):
     result = Person()
     result.email = nti.email
     result.nickname = nti.name
-    result.website = result.bio = u''
+    result.bio = getattr(nti, "bio", None) or u''
+    result.website = getattr(nti, "website", None) or u''
     return result
