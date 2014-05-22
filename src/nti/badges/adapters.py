@@ -88,3 +88,12 @@ def ntiassertion_to_mozilla_assertion(ast):
                             image=navstr(badge.image),
                             issuedOn=datetime.fromtimestamp(issuedOn))
     return result
+
+@component.adapter(interfaces.INTIPerson)
+@interface.implementer(tahrir_interfaces.IPerson)
+def ntiperson_to_tahrir_person(nti):
+    result = Person()
+    result.email = nti.email
+    result.nickname = nti.name
+    result.website = result.bio = u''
+    return result

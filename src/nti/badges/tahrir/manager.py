@@ -63,9 +63,6 @@ class TahrirBadgeManager(object):
 
 	# DB operations
 
-	def delete_user(self, userid):
-		return self.db.delete_person(userid)
-
 	def _nti_issuer(self, issuer):
 		result = badge_interfaces.INTIIssuer(issuer)
 		return result
@@ -74,6 +71,20 @@ class TahrirBadgeManager(object):
 		result = badge_interfaces.INTIBadge(badge)
 		return result
 
+	def _person_assertions_badges(self, pid):
+		for ast in self.db.get_assertions_by_email(pid):
+			yield ast, ast.badge
+
+	def _person_tuple(self, person, email=None, name=None):
+		pid = person
+		if badge_interfaces.INTIPerson.providedBy(pid):
+			pid = person.name
+			name = name or person.name
+			email = email or person.email
+		return (pid, name, email)
+
+	# Badges
+
 	def get_all_badges(self):
 		result = []
 		for badge in self.db.get_all_badges():
@@ -81,25 +92,16 @@ class TahrirBadgeManager(object):
 			result.append(badge)
 		return result
 
-	def _person_assertions_badges(self, pid):
-		for ast in self.db.get_assertions_by_email(pid):
-			yield ast, ast.badge
-			
-	def person_exists(self, pid=None, email=None, name=None):
-		result = self.db.person_exists(person_email=email, id=pid, nickname=name)
-		return result
-
-	def get_person(self, pid=None, email=None, name=None):
-		result = self.db.get_person(person_email=email, id=pid, nickname=name)
-		return badge_interfaces.INTIPerson(result, None)
-
-	def get_person_badges(self, pid):
+	def get_person_badges(self, person):
 		result = []
+		pid, _, _ = self._person_tuple(person)
 		for _, badge in self._person_assertions_badges(pid):
 			badge = self._nti_badge(badge)
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
 			result.append(badge)
 		return result
+
+	# Assertions
 
 	def get_person_assertions(self, pid):
 		result = []
@@ -110,6 +112,30 @@ class TahrirBadgeManager(object):
 			if assertion.recipient != pid:
 				assertion.recipient = pid
 		return result
+
+	# Persons
+	
+	def add_person(self, person):
+		person = interfaces.IPerson(person)
+		result = self.db.add_person(email=person.email,
+									nickname=person.nickname,
+									website=person.website,
+									bio=person.bio)
+		return result
+
+	def person_exists(self, person=None, email=None, name=None):
+		pid, email, name = self._person_tuple(person, email, name)
+		result = self.db.person_exists(person_email=email, id=pid, nickname=name)
+		return result
+
+	def get_person(self, person=None, email=None, name=None):
+		pid, email, name = self._person_tuple(person, email, name)
+		result = self.db.get_person(person_email=email, id=pid, nickname=name)
+		return badge_interfaces.INTIPerson(result, None)
+
+	def delete_person(self, person):
+		pid, _, _ = self._person_tuple(person)
+		return self.db.delete_person(pid)
 
 def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):
 	if defaultSQLite:
