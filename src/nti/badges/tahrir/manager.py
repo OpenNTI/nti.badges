@@ -125,7 +125,7 @@ class TahrirBadgeManager(object):
 
 	def person_exists(self, person=None, email=None, name=None):
 		pid, email, name = self._person_tuple(person, email, name)
-		result = self.db.person_exists(person_email=email, id=pid, nickname=name)
+		result = self.db.person_exists(email=email, id=pid, nickname=name)
 		return result
 
 	def get_person(self, person=None, email=None, name=None):
