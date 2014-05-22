@@ -85,6 +85,10 @@ class TahrirBadgeManager(object):
 		for ast in self.db.get_assertions_by_email(pid):
 			yield ast, ast.badge
 			
+	def person_exists(self, pid=None, email=None, name=None):
+		result = self.db.person_exists(person_email=email, id=pid, nickname=name)
+		return result
+
 	def get_person(self, pid=None, email=None, name=None):
 		result = self.db.get_person(person_email=email, id=pid, nickname=name)
 		return badge_interfaces.INTIPerson(result, None)

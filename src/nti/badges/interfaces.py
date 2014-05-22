@@ -85,7 +85,12 @@ class IEarnedBadge(IEarnableBadge):
 
 class IBadgeManager(interface.Interface):
 	
-	def get_person(self, pid=None, email=None, name=None):
+	def person_exists(pid=None, email=None, name=None):
+		"""
+		check if a person exists
+		"""
+
+	def get_person(pid=None, email=None, name=None):
 		"""
 		return a person
 		"""
