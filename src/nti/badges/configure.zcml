@@ -33,5 +33,15 @@
 	<adapter factory=".adapters.ntiassertion_to_mozilla_assertion"
 			 for=".interfaces.INTIAssertion"
 			 provides=".openbadges.interfaces.IBadgeAssertion" />
-			 
+			
+	<!-- Externalization -->
+	
+	<include package="nti.externalization" file="meta.zcml" />
+	<include package="nti.externalization" />
+	<ext:registerAutoPackageIO
+		root_interfaces=".interfaces.INTIBadge
+						 .interfaces.INTIIssuer
+						 .interfaces.INTIAssertion"
+		modules=".model" />
+	 
 </configure>

@@ -25,6 +25,7 @@ class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
     createDirectFieldProperties(interfaces.INTIBadge)
 
     __external_can_create__ = True
+    __external_class_name__ = "Badge"
     mime_type = mimeType = 'application/vnd.nextthought.badges.badge'
 
     def __init__(self, *args, **kwargs):
@@ -51,6 +52,7 @@ class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
     createDirectFieldProperties(interfaces.INTIIssuer)
 
     __external_can_create__ = True
+    __external_class_name__ = "Issuer"
     mime_type = mimeType = 'application/vnd.nextthought.badges.issuer'
 
     def __init__(self, *args, **kwargs):
@@ -76,6 +78,7 @@ class NTIAssertion(SchemaConfigured, persistent.Persistent, contained.Contained)
     createDirectFieldProperties(interfaces.INTIAssertion)
 
     __external_can_create__ = True
+    __external_class_name__ = "Assertion"
     mime_type = mimeType = 'application/vnd.nextthought.badges.assertion'
 
     def __init__(self, *args, **kwargs):
