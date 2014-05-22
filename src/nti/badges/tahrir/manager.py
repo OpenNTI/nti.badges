@@ -81,26 +81,30 @@ class TahrirBadgeManager(object):
 			result.append(badge)
 		return result
 
-	def _user_assertions_badges(self, userid):
-		for ast in self.db.get_assertions_by_email(userid):
+	def _person_assertions_badges(self, pid):
+		for ast in self.db.get_assertions_by_email(pid):
 			yield ast, ast.badge
 			
-	def get_user_badges(self, userid):
+	def get_person(self, pid=None, email=None, name=None):
+		result = self.db.get_person(person_email=email, id=pid, nickname=name)
+		return badge_interfaces.INTIPerson(result, None)
+
+	def get_person_badges(self, pid):
 		result = []
-		for _, badge in self._user_assertions_badges(userid):
+		for _, badge in self._person_assertions_badges(pid):
 			badge = self._nti_badge(badge)
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
 			result.append(badge)
 		return result
 
-	def get_user_assertions(self, userid):
+	def get_person_assertions(self, pid):
 		result = []
-		for ast, _ in self._user_assertions_badges(userid):
+		for ast, _ in self._person_assertions_badges(pid):
 			assertion = badge_interfaces.INTIAssertion(ast)
 			result.append(assertion)
 			# do we want to change the recipient?
-			if assertion.recipient != userid:
-				assertion.recipient = userid
+			if assertion.recipient != pid:
+				assertion.recipient = pid
 		return result
 
 def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):

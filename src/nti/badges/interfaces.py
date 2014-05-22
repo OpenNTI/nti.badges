@@ -85,22 +85,27 @@ class IEarnedBadge(IEarnableBadge):
 
 class IBadgeManager(interface.Interface):
 	
-	def get_all_badges():
+	def get_person(self, pid=None, email=None, name=None):
 		"""
-		return all availble badges
+		return a person
 		"""
 
-	def get_user_badges(userid):
+	def get_all_badges():
+		"""
+		return all available badges
+		"""
+
+	def get_person_badges(pid):
 		"""
 		return the earned badges for the specified user
 		"""
 
-	def get_user_assertions(userid):
+	def get_person_assertions(pid):
 		"""
 		return the assertions for the specified user
 		"""
 
-	def delete_user(userid):
+	def delete_person(pid):
 		"""
 		delete the user w/ the specified userid
 		"""
