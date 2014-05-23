@@ -14,6 +14,7 @@ from zope import component
 from zope import interface
 
 from tahrir_api.model import Badge
+from tahrir_api.model import Issuer
 from tahrir_api.model import Person
 
 from ._compact import navstr
@@ -27,6 +28,7 @@ from .openbadges import interfaces as open_interfaces
 from .tahrir import interfaces as tahrir_interfaces
 
 from . import interfaces
+from .model import NTIPerson
 
 @component.adapter(tahrir_interfaces.IPerson)
 @interface.implementer(open_interfaces.IIdentityObject)
@@ -38,10 +40,26 @@ def tahrir_person_to_identity_object(person):
     return result
 
 @component.adapter(open_interfaces.IIdentityObject)
+@interface.implementer(interfaces.INTIPerson)
+def mozilla_identityobject_to_ntiperson(iio):
+    result = NTIPerson(email=iio.identity, name=iio.identity)
+    return result
+
+@component.adapter(open_interfaces.IIdentityObject)
 @interface.implementer(tahrir_interfaces.IPerson)
-def identity_object_to_tahrir_person(io):
+def mozilla_identity_object_to_tahrir_person(io):
     result = Person()
     result.email = io.identity
+    return result
+                                        
+@component.adapter(open_interfaces.IIssuerObject)
+@interface.implementer(tahrir_interfaces.IIssuer)
+def mozilla_issuer_to_tahrir_issuer(issuer):
+    result = Issuer()
+    result.org = issuer.url
+    result.image = issuer.image
+    result.contact = issuer.email
+    result.id = result.name = issuer.name
     return result
 
 def tag_badge_interfaces(source, target):

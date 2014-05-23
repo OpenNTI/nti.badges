@@ -34,12 +34,36 @@ from nti.badges.tests import NTIBadgesTestCase
 
 class TestOpenBadges(NTIBadgesTestCase):
 
+    def test_issuer_object(self):
+        io = model.IssuerObject(name="foo",
+                                image=b"https://example.org/foo.png",
+                                url=b"http://example.org",
+                                email="foo@example.org",
+                                revocationList=b"https://example.org/revoked.json")
+        assert_that(io, verifiably_provides(interfaces.IIssuerObject))
+
+        ext_obj = toExternalObject(io)
+        assert_that(ext_obj, has_entry('Class', 'Issuer'))
+
+        factory = internalization.find_factory_for(ext_obj)
+        assert_that(factory, is_(not_none()))
+
+        new_io = factory()
+        internalization.update_from_external_object(new_io, ext_obj)
+        assert_that(new_io, has_property('name', is_('foo')))
+        assert_that(new_io, has_property('url', is_("http://example.org")))
+        assert_that(new_io, has_property('email', is_("foo@example.org")))
+        assert_that(new_io, has_property('image', is_("https://example.org/foo.png")))
+        assert_that(new_io, has_property('revocationList', is_("https://example.org/revoked.json")))
+
+        assert_that(io, equal_to(new_io))
+
     def test_verification_object(self):
         vo = model.VerificationObject(type="hosted", url="http://foo.json")
         assert_that(vo, verifiably_provides(interfaces.IVerificationObject))
 
         ext_obj = toExternalObject(vo)
-        assert_that(ext_obj, has_entry('Class', 'VerificationObject'))
+        assert_that(ext_obj, has_entry('Class', 'Verification'))
 
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
@@ -57,7 +81,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(io, verifiably_provides(interfaces.IIdentityObject))
 
         ext_obj = toExternalObject(io)
-        assert_that(ext_obj, has_entry('Class', 'IdentityObject'))
+        assert_that(ext_obj, has_entry('Class', 'Identity'))
 
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
@@ -77,7 +101,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(ao, verifiably_provides(interfaces.IAlignmentObject))
 
         ext_obj = toExternalObject(ao)
-        assert_that(ext_obj, has_entry('Class', 'AlignmentObject'))
+        assert_that(ext_obj, has_entry('Class', 'Alignment'))
 
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
@@ -106,7 +130,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(bc, verifiably_provides(interfaces.IBadgeClass))
 
         ext_obj = toExternalObject(bc)
-        assert_that(ext_obj, has_entry('Class', 'BadgeClass'))
+        assert_that(ext_obj, has_entry('Class', 'Badge'))
 
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))
@@ -137,10 +161,10 @@ class TestOpenBadges(NTIBadgesTestCase):
                                   evidence=b"http://foo.com",
                                   expires=now)
         assert_that(ba, verifiably_provides(interfaces.IBadgeAssertion))
-        assert_that(ba, externalizes(has_entry('Class', 'BadgeAssertion')))
+        assert_that(ba, externalizes(has_entry('Class', 'Assertion')))
 
         ext_obj = toExternalObject(ba)
-        assert_that(ext_obj, has_entry('Class', 'BadgeAssertion'))
+        assert_that(ext_obj, has_entry('Class', 'Assertion'))
 
         factory = internalization.find_factory_for(ext_obj)
         assert_that(factory, is_(not_none()))

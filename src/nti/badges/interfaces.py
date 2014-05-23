@@ -36,17 +36,19 @@ class INTIIssuer(IBadgeIssuer):
 	uri = nti_schema.Variant((
 				nti_schema.ValidTextLine(title='Issuer name'),
 				nti_schema.HTTPURL(title='Issuer URL')),
-				title="Issuer unique identifier")
+				title="Issuer identifier")
 
 	origin = nti_schema.Variant((
 				nti_schema.ValidTextLine(title='Issuer origin'),
 				nti_schema.HTTPURL(title='Issuer origin URL')),
 				title="Issuer origin")
 
-	org = nti_schema.Variant((
+	organization = nti_schema.Variant((
 				nti_schema.TextLine(title='Issuer organization'),
 				nti_schema.HTTPURL(title='Issuer organization URL')),
 				title="Issuer organization")
+
+	email = nti_schema.ValidTextLine(title="Issuer email")
 
 class INTIBadge(ITaggedContent):
 	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer")

@@ -14,14 +14,18 @@
 	
 	<!-- Adpaters -->
 
-	<adapter factory=".adapters.identity_object_to_tahrir_person"
+	<adapter factory=".adapters.mozilla_identity_object_to_tahrir_person"
 			 for=".openbadges.interfaces.IIdentityObject"
 			 provides=".tahrir.interfaces.IPerson" />
 
 	<adapter factory=".adapters.ntiperson_to_tahrir_person"
 			 for=".interfaces.INTIPerson"
 			 provides=".tahrir.interfaces.IPerson" />
-			 
+	
+	<adapter factory=".adapters.mozilla_issuer_to_tahrir_issuer"
+			 for=".openbadges.interfaces.IIssuerObject"
+			 provides=".tahrir.interfaces.IIssuer" />
+			 		 
 	<adapter factory=".adapters.mozilla_badge_to_tahrir_badge"
 			 for=".openbadges.interfaces.IBadgeClass"
 			 provides=".tahrir.interfaces.IBadge" />

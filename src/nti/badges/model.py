@@ -15,6 +15,7 @@ import persistent
 
 from nti.externalization.externalization import make_repr
 
+from nti.utils.property import alias
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
@@ -87,13 +88,16 @@ class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
     __external_class_name__ = "Issuer"
     mime_type = mimeType = 'application/vnd.nextthought.badges.issuer'
 
+    org = alias('organization')
+
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)
         SchemaConfigured.__init__(self, *args, **kwargs)
 
     def __eq__(self, other):
         try:
-            return self is other or (self.uri == other.uri and self.org == other.org)
+            return self is other or (self.uri == other.uri and
+                                     self.origin == other.origin)
         except AttributeError:
             return NotImplemented
 
@@ -102,7 +106,7 @@ class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
     def __hash__(self):
         xhash = 47
         xhash ^= hash(self.uri)
-        xhash ^= hash(self.org)
+        xhash ^= hash(self.origin)
         return xhash
 
 @interface.implementer(interfaces.INTIAssertion)
