@@ -13,9 +13,11 @@ from nti.utils import schema as nti_schema
 from .. import interfaces as badge_interfaces
 
 class ITahrirModel(interface.Interface):
-	pass
+	"""
+	marker interface for Tahrir model objects
+	"""
 
-class IIssuer(ITahrirModel):
+class IIssuer(ITahrirModel, badge_interfaces.IBadgeIssuer):
 	id = nti_schema.Int(title=" Issuer id")
 	origin = nti_schema.ValidTextLine(title="Issuer origin")
 	name = nti_schema.ValidTextLine(title=" Issuer name")

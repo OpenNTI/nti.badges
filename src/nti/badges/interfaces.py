@@ -26,7 +26,13 @@ class ITaggedContent(interface.Interface):
 							unique=True,
 							default=())
 	
-class INTIIssuer(interface.Interface):
+class IBadgeIssuer(interface.Interface):
+	"""
+	marker interface for all badge issuers
+	"""
+
+class INTIIssuer(IBadgeIssuer):
+
 	uri = nti_schema.Variant((
 				nti_schema.ValidTextLine(title='Issuer name'),
 				nti_schema.HTTPURL(title='Issuer URL')),
