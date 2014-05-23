@@ -23,7 +23,7 @@ from .. import interfaces as badges_intefaces
 @component.adapter(interfaces.IIssuer)
 @interface.implementer(badges_intefaces.INTIIssuer)
 def issuer_to_ntiissuer(issuer):
-    result = NTIIssuer(uri=issuer.name, org=issuer.org)
+    result = NTIIssuer(uri=issuer.name, org=issuer.org, origin=issuer.origin)
     return result
 
 @component.adapter(interfaces.IPerson)
@@ -40,7 +40,9 @@ def person_to_ntiperson(person):
 @interface.implementer(badges_intefaces.INTIBadge)
 def badge_to_ntibadge(badge):
     tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')))
-    result = NTIBadge(name=badge.name,
+    identifier = badge.id or badge.name
+    result = NTIBadge(id=identifier,
+                      name=badge.name,
                       image=badge.image,
                       description=badge.description,
                       criteria=badge.criteria,

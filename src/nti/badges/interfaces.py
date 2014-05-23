@@ -28,9 +28,14 @@ class ITaggedContent(interface.Interface):
 	
 class INTIIssuer(interface.Interface):
 	uri = nti_schema.Variant((
-				nti_schema.TextLine(title='Issuer name'),
+				nti_schema.ValidTextLine(title='Issuer name'),
 				nti_schema.HTTPURL(title='Issuer URL')),
 				title="Issuer unique identifier")
+
+	origin = nti_schema.Variant((
+				nti_schema.ValidTextLine(title='Issuer origin'),
+				nti_schema.HTTPURL(title='Issuer origin URL')),
+				title="Issuer origin")
 
 	org = nti_schema.Variant((
 				nti_schema.TextLine(title='Issuer organization'),
@@ -40,10 +45,12 @@ class INTIIssuer(interface.Interface):
 class INTIBadge(ITaggedContent):
 	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer")
 
-	name = nti_schema.TextLine(title="Badge name")
+	id = nti_schema.ValidTextLine(title='Badge identifier')
+
+	name = nti_schema.ValidTextLine(title="Badge name")
 
 	image = nti_schema.Variant((
-				nti_schema.TextLine(title='Badge image identifier'),
+				nti_schema.ValidTextLine(title='Badge image identifier'),
 				nti_schema.HTTPURL(title='Badge URL')),
 				title="Badge image")
 
@@ -57,7 +64,7 @@ class INTIBadge(ITaggedContent):
 class INTIAssertion(interface.Interface):
 	badge = nti_schema.Object(INTIBadge, title="Badge")
 	recipient = nti_schema.Variant((
-					nti_schema.TextLine(title='Badge recipient id'),
+					nti_schema.ValidTextLine(title='Badge recipient id'),
 					nti_schema.HTTPURL(title='Badge recipient URL')),
 					title="Badge recipient")
 	issuedOn = nti_schema.Float(title="Date that the achievement was awarded")
