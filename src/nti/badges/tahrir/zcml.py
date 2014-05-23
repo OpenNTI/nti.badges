@@ -54,8 +54,9 @@ class IRegisterTahrirIssuer(interface.Interface):
 	origin = fields.TextLine(title="Issuer origin [URL]")
 	org = fields.TextLine(title="Issuer organization [URL]")
 	contact = fields.TextLine(title="Issuer contact")
+	zid = fields.TextLine(title="Issuer zcml identifier", required=False, default='')
 
-def registerTahrirIssuer(_context, name, origin, org, contact):
+def registerTahrirIssuer(_context, name, origin, org, contact, zid=u''):
 	"""
 	Register a Tahri issuer
 	"""
@@ -64,6 +65,5 @@ def registerTahrirIssuer(_context, name, origin, org, contact):
 								origin=origin,
 								org=org,
 								contact=contact)
-	utility(_context, provides=interfaces.IIssuer,
-			factory=factory, name=(name + origin))
+	utility(_context, provides=interfaces.IIssuer, factory=factory, name=zid)
 
