@@ -51,7 +51,8 @@ class INTIIssuer(IBadgeIssuer):
 class INTIBadge(ITaggedContent):
 	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer")
 
-	id = nti_schema.ValidTextLine(title='Badge identifier')
+	id = nti_schema.ValidTextLine(title='Badge identifier (default to name)',
+								  required=False)
 
 	name = nti_schema.ValidTextLine(title="Badge name")
 
@@ -106,6 +107,11 @@ class IBadgeManager(interface.Interface):
 	def get_person(person=None, email=None, name=None):
 		"""
 		return a person
+		"""
+
+	def get_badge(badge):
+		"""
+		return the specifed badge
 		"""
 
 	def get_all_badges():

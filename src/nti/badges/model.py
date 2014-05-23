@@ -32,6 +32,11 @@ class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
         persistent.Persistent.__init__(self)
         SchemaConfigured.__init__(self, *args, **kwargs)
 
+    def __setattr__(self, name, value):
+        super(NTIBadge, self).__setattr__(name, value)
+        if name == "name" and not self.id:
+            self.id = value
+
     def __eq__(self, other):
         try:
             return self is other or (self.issuer == other.issuer and

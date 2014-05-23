@@ -50,4 +50,8 @@
 						 .interfaces.INTIAssertion"
 		modules=".model" />
 	 
+	<adapter factory=".internalization._NTIBadgeUpdater"
+			 for=".interfaces.INTIBadge"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+			 
 </configure>

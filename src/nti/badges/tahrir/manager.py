@@ -12,11 +12,13 @@ import os
 
 from zope import interface
 
+from sqlalchemy import or_
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
+from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.dbapi import TahrirDatabase
 from tahrir_api.model import DeclarativeBase as tahrir_base
@@ -87,6 +89,22 @@ class TahrirBadgeManager(object):
 
 	# Badges
 
+	def _badge_tuple(self, badge):
+		if badge_interfaces.INTIBadge.providedBy(badge):
+			iden, name = badge.id, badge.name,
+		else:
+			iden, name = badge
+		return (iden, name)
+
+	def get_badge(self, badge):
+		"""
+		return the specifed badge
+		"""
+		iden, name = self._badge_tuple(badge)
+		result = self.db.session.query(Badge) \
+						.filter(or_(Badge.name == name, Badge.id == iden)).all()
+		return result[0] if result else None
+	
 	def get_all_badges(self):
 		result = []
 		for badge in self.db.get_all_badges():
