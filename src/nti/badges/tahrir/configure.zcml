@@ -59,7 +59,7 @@
 		<include package="." file="meta.zcml" />
 		<tdb:registerTahrirDB defaultSQLite="True" />
 		<tdb:registerTahrirIssuer 
-					zid="nti"
+					id="NTI"
 			 		name="NextThought"
 			 		org="http://www.nextthought.com"
 			 		contact="contact@nextthought.com" 
