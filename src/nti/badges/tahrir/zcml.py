@@ -17,6 +17,7 @@ from zope.configuration import fields
 from zope.component.zcml import utility
 
 from . import interfaces
+from .manager import create_issuer
 from .manager import create_badge_manager
 
 class IRegisterTahrirDB(interface.Interface):
@@ -44,3 +45,25 @@ def registerTahrirDB(_context, dburi=None, twophase=False, defaultSQLite=False,
 								autocommit=autocommit)
 	utility(_context, provides=interfaces.ITahrirBadgeManager,
 			factory=factory, name=name)
+
+class IRegisterTahrirIssuer(interface.Interface):
+	"""
+	The arguments needed for registering a Tahri issuer
+	"""
+	name = fields.TextLine(title="Issuer [unique] name")
+	origin = fields.TextLine(title="Issuer origin [URL]")
+	org = fields.TextLine(title="Issuer organization [URL]")
+	contact = fields.TextLine(title="Issuer contact")
+
+def registerTahrirIssuer(_context, name, origin, org, contact):
+	"""
+	Register a Tahri issuer
+	"""
+	factory = functools.partial(create_issuer,
+								name=name,
+								origin=origin,
+								org=org,
+								contact=contact)
+	utility(_context, provides=interfaces.IIssuer,
+			factory=factory, name=(name + origin))
+

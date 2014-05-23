@@ -13,6 +13,10 @@
 		<meta:directive	name="registerTahrirDB"
 						schema=".zcml.IRegisterTahrirDB"
 						handler=".zcml.registerTahrirDB" />
+						
+		<meta:directive	name="registerTahrirIssuer"
+						schema=".zcml.IRegisterTahrirIssuer"
+						handler=".zcml.registerTahrirIssuer" />
 	</meta:directives>
 	
 </configure>

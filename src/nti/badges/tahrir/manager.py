@@ -17,6 +17,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
+from tahrir_api.model import Issuer
 from tahrir_api.dbapi import TahrirDatabase
 from tahrir_api.model import DeclarativeBase as tahrir_base
 
@@ -144,4 +145,12 @@ def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autoco
 		data_file = os.path.join(data_dir, 'tahrir.db')
 		dburi = "sqlite:///%s" % data_file
 	result = TahrirBadgeManager(dburi, twophase, autocommit)
+	return result
+
+def create_issuer(name, origin, org, contact):
+	result = Issuer()
+	result.org = org
+	result.name = name
+	result.origin = origin
+	result.contact = contact
 	return result
