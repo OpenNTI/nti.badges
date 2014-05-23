@@ -13,6 +13,7 @@ import os
 from zope import interface
 
 from sqlalchemy import or_
+from sqlalchemy import func
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -102,7 +103,8 @@ class TahrirBadgeManager(object):
 		"""
 		iden, name = self._badge_tuple(badge)
 		result = self.db.session.query(Badge) \
-						.filter(or_(Badge.name == name, Badge.id == iden)).all()
+						.filter(or_(func.lower(Badge.name) == func.lower(name),
+									func.lower(Badge.id) == func.lower(iden))).all()
 		return result[0] if result else None
 	
 	def get_all_badges(self):
