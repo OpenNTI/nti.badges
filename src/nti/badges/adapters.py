@@ -53,7 +53,7 @@ def tag_badge_interfaces(source, target):
 
 @component.adapter(open_interfaces.IBadgeClass)
 @interface.implementer(tahrir_interfaces.IBadge)
-def open_badge_to_tahrir_badge(badge):
+def mozilla_badge_to_tahrir_badge(badge):
     result = Badge()
     result.name = badge.name
     result.image = badge.image

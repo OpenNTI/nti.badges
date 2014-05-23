@@ -22,7 +22,7 @@
 			 for=".interfaces.INTIPerson"
 			 provides=".tahrir.interfaces.IPerson" />
 			 
-	<adapter factory=".adapters.open_badge_to_tahrir_badge"
+	<adapter factory=".adapters.mozilla_badge_to_tahrir_badge"
 			 for=".openbadges.interfaces.IBadgeClass"
 			 provides=".tahrir.interfaces.IBadge" />
 		
