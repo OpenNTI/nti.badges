@@ -8,16 +8,6 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 	<include package="zope.security" />
-	
-	<!-- Adapters -->
-			 
-	<adapter factory=".adapters.identityobject_to_ntiperson"
-			 for=".interfaces.IIdentityObject"
-			 provides="nti.badges.interfaces.INTIPerson" />
-	
-	<adapter factory=".adapters.badgeclass_to_ntibadge"
-			 for=".interfaces.IBadgeClass"
-			 provides="nti.badges.interfaces.INTIBadge" />
 			 		 
 	<!-- Externalization -->
 	
