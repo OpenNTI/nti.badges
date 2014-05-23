@@ -94,6 +94,11 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	Interface for Tahrir database managers
 	"""
 
+	def get_issuer(issuer, origin=None):
+		"""
+		return the specified issuer
+		"""
+		
 	def add_issuer(issuer):
 		"""
 		add the specified :class:`.IIssuer` object.

@@ -77,11 +77,12 @@ class TahrirBadgeManager(object):
 			yield ast, ast.badge
 
 	def _person_tuple(self, person, email=None, name=None):
-		pid = person
-		if badge_interfaces.INTIPerson.providedBy(pid):
+		if badge_interfaces.INTIPerson.providedBy(person):
 			pid = person.name
 			name = name or person.name
 			email = email or person.email
+		else:
+			pid = person
 		return (pid, name, email)
 
 	# Badges
@@ -139,6 +140,22 @@ class TahrirBadgeManager(object):
 		return self.db.delete_person(pid)
 
 	# Issuers
+
+	def _issuer_tuple(self, issuer, origin=None):
+		if badge_interfaces.INTIIssuer.providedBy(issuer):
+			name = issuer.uri
+			origin = origin or issuer.origin
+		else:
+			name = issuer
+		return (name, origin)
+	
+	def get_issuer(self, issuer, origin=None):
+		name, origin = self._issuer_tuple(issuer, origin)
+		if self.db.issuer_exists(origin=origin, name=name):
+			result = self.db.session.query(Issuer) \
+						 .filter_by(name=name, origin=origin).one()
+			return result
+		return None
 
 	def add_issuer(self, issuer):
 		result = self.db.add_issuer(origin=issuer.origin,

@@ -30,9 +30,9 @@ def identityobject_to_ntiperson(iio):
 @component.adapter(interfaces.IBadgeClass)
 @interface.implementer(badges_intefaces.INTIBadge)
 def badgeclass_to_ntibadge(badge):
-    issuer = NTIIssuer(uri=navstr(badge.issuer),
-                       org=navstr(badge.issuer),
-                       origin=navstr(badge.issuer))
+    issuer = NTIIssuer(uri=badge.issuer,
+                       org=badge.issuer,
+                       origin=badge.issuer)
     result = NTIBadge(issuer=issuer,
                       id=badge.name,
                       name=badge.name,
