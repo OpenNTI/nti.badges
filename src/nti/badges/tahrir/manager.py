@@ -12,7 +12,6 @@ import os
 
 from zope import interface
 
-from sqlalchemy import func
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -152,11 +151,7 @@ class TahrirBadgeManager(object):
 	
 	def get_issuer(self, issuer, origin=None):
 		name, origin = self._issuer_tuple(issuer, origin)
-		if not origin:
-			results = self.db.session.query(Issuer) \
-							 .filter(func.lower(Issuer.name) == func.lower(name)).all()
-			return results[0] if results else None
-		elif self.db.issuer_exists(name=name,origin=origin):
+		if self.db.issuer_exists(name=name, origin=origin):
 			result = self.db.session.query(Issuer) \
 						 	.filter_by(name=name, origin=origin).one()
 			return result
