@@ -138,6 +138,15 @@ class TahrirBadgeManager(object):
 		pid, _, _ = self._person_tuple(person)
 		return self.db.delete_person(pid)
 
+	# Issuers
+
+	def add_issuer(self, issuer):
+		result = self.db.add_issuer(origin=issuer.origin,
+									name=issuer.name,
+									org=issuer.org,
+									contact=issuer.contact)
+		return result
+
 def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):
 	if defaultSQLite:
 		data_dir = os.getenv('DATASERVER_DATA_DIR') or '/tmp'
