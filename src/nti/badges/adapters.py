@@ -133,7 +133,7 @@ def mozilla_badge_to_tahrir_badge(badge):
 
 @component.adapter(open_interfaces.IIssuerObject)
 @interface.implementer(interfaces.INTIIssuer)
-def mozilla_badge_to_ntiisuer(issuer):
+def mozilla_issuer_to_ntiisuer(issuer):
 	result = NTIIssuer(uri=issuer.name,
 					   origin=issuer.url,
 					   email=issuer.email,
