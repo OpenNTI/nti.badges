@@ -14,9 +14,10 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import png
+from PIL import Image
+from PIL import PngImagePlugin
 
-def get_baked_url(src):
+def get_baked_url(source):
 	"""
 	Return the assertion URL contained in the given baked PNG. If
 	the image isn't baked, return None.
@@ -25,14 +26,12 @@ def get_baked_url(src):
 		>>> get_baked_url('baked.png')
 		'http://f.org/assertion.json'
 	"""
+	img = Image.open(source)
+	meta = img.info
+	result = meta.get('openbadges')
+	return result
 
-	if isinstance(src, basestring): src = open(src, 'rb')
-	reader = png.Reader(file=src)
-	for chunktype, content in reader.chunks():
-		if chunktype == 'tEXt' and content.startswith('openbadges\x00'):
-			return content.split('\x00')[1]
-
-def bake_badge(src, dest, url):
+def bake_badge(source, target, url):
 	"""
 	Bake the given PNG file with the given assertion URL. The source and
 	destination can be filenames or file objects.
@@ -42,15 +41,7 @@ def bake_badge(src, dest, url):
 		>>> bake_badge('unbaked.png', 'baked.png', 'http://f.org/a.json')
 	"""
 
-	if isinstance(src, basestring): src = open(src, 'rb')
-	if isinstance(dest, basestring): dest = open(dest, 'wb')
-
-	reader = png.Reader(file=src)
-	chunks = [
-		(chunktype, content)
-		for chunktype, content in reader.chunks()
-		if not (chunktype == 'tEXt' and content.startswith('openbadges\x00'))
-	]
-
-	chunks.insert(1, ('tEXt', '\x00'.join(('openbadges', url))))
-	png.write_chunks(dest, chunks)
+	source = Image.open(source)
+	meta = PngImagePlugin.PngInfo()
+	meta.add_text("openbadges", url)
+	source.save(target, "png", pnginfo=meta)

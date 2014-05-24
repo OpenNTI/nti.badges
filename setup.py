@@ -36,8 +36,7 @@ setup(
 	namespace_packages=['nti'],
 	install_requires=[
 		'setuptools',
-        'tahrir-api',
-        'pypng'
+        'tahrir-api'
 	],
 	entry_points=entry_points
 )
