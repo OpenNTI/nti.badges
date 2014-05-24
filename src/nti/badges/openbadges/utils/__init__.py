@@ -13,6 +13,8 @@ import urllib
 import simplejson
 from collections import Mapping
 
+from nti.utils.maps import CaseInsensitiveDict
+
 from .. import model
 from ..._compact import navstr
 
@@ -30,7 +32,7 @@ def _json_to_map(source, encoding=None):
         # ready to parse
         source = simplejson.loads(source, encoding=encoding)
     assert isinstance(source, Mapping)
-    return source
+    return CaseInsensitiveDict(source)
 
 def issuerFromJSON(source, encoding=None):
     data = _json_to_map(source, encoding)
