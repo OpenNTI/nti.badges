@@ -29,14 +29,11 @@ class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
     __external_class_name__ = "Badge"
     mime_type = mimeType = 'application/vnd.nextthought.badges.badge'
 
+    id = alias('name')
+
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)
         SchemaConfigured.__init__(self, *args, **kwargs)
-
-    def __setattr__(self, name, value):
-        super(NTIBadge, self).__setattr__(name, value)
-        if name == "name" and not self.id:
-            self.id = value
 
     def __eq__(self, other):
         try:

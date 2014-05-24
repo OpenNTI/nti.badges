@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
@@ -42,3 +43,31 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 					u'Welcome to the FOSSBox. A member is you!',
 					u'http://foss.rit.edu', issuer_id)
 		assert_that(badge, is_not(none()))
+
+	@WithMockDSTrans
+	def test_operations(self):
+		manager = create_badge_manager(dburi="sqlite://")
+
+		issuer_id = manager.db.add_issuer(u'http://foss.rit.edu/badges',
+										  u'FOSS@RIT',
+										  u'http://foss.rit.edu', u'foss@rit.edu')
+		manager.db.add_badge(
+					u'fossbox',
+					u'http://foss.rit.edu/files/fossboxbadge.png',
+					u'Welcome to the FOSSBox. A member is you!',
+					u'http://foss.rit.edu', issuer_id)
+		
+		manager.db.add_person(email='foo@example.org',
+							  nickname='foo',
+							  website='http://example.org/foo',
+							  bio='I am foo')
+		
+		badge = manager.get_badge('fossbox')
+		assert_that(badge, is_not(none()))
+
+		badges = manager.get_all_badges()
+		assert_that(badges, has_length(1))
+
+		badges = manager.get_person_badges('foo')
+		assert_that(badges, has_length(0))
+

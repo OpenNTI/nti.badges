@@ -53,10 +53,10 @@ class INTIIssuer(IBadgeIssuer):
 class INTIBadge(ITaggedContent):
 	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer")
 
-	id = nti_schema.ValidTextLine(title='Badge identifier (default to name)',
-								  required=False)
-
 	name = nti_schema.ValidTextLine(title="Badge name")
+	
+	description = nti_schema.ValidText(title="Badge description",
+									  required=False, default=u'')
 
 	image = nti_schema.Variant((
 				nti_schema.ValidTextLine(title='Badge image identifier'),

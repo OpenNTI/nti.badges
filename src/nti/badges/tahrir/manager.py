@@ -76,8 +76,10 @@ class TahrirBadgeManager(object):
 		return result
 
 	def _person_assertions_badges(self, pid):
-		for ast in self.db.get_assertions_by_email(pid):
-			yield ast, ast.badge
+		assertions = self.db.get_assertions_by_email(pid)
+		if assertions:
+			for ast in self.db.get_assertions_by_email(pid):
+				yield ast, ast.badge
 
 	def _person_tuple(self, person, email=None, name=None):
 		if badge_interfaces.INTIPerson.providedBy(person):
@@ -94,7 +96,7 @@ class TahrirBadgeManager(object):
 		if badge_interfaces.INTIBadge.providedBy(badge):
 			iden, name = badge.id, badge.name,
 		else:
-			iden, name = badge
+			iden, name = badge, badge
 		return (iden, name)
 
 	def get_badge(self, badge):
