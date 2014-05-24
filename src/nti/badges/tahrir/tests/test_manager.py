@@ -7,16 +7,23 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import has_property
 does_not = is_not
+
+from datetime import datetime
 
 from zope import component
 
+from tahrir_api.model import Person
+
 from nti.badges.tahrir import interfaces
 from nti.badges.tahrir.manager import create_badge_manager
+
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.badges.tests import NTIBadgesTestCase
@@ -51,23 +58,37 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		issuer_id = manager.db.add_issuer(u'http://foss.rit.edu/badges',
 										  u'FOSS@RIT',
 										  u'http://foss.rit.edu', u'foss@rit.edu')
-		manager.db.add_badge(
+		badge_id = manager.db.add_badge(
 					u'fossbox',
 					u'http://foss.rit.edu/files/fossboxbadge.png',
 					u'Welcome to the FOSSBox. A member is you!',
 					u'http://foss.rit.edu', issuer_id)
 		
-		manager.db.add_person(email='foo@example.org',
-							  nickname='foo',
-							  website='http://example.org/foo',
-							  bio='I am foo')
-		
+		person = Person()
+		person.bio = 'I am foo'
+		person.nickname = 'foo'
+		person.email = u'foo@example.org'
+		person.created_on = datetime.now()
+		person.website = 'http://example.org/foo'
+
+		pid = manager.add_person(person)
+		assert_that(pid, is_('foo@example.org'))
+
+		person = manager.get_person(email=pid)
+		assert_that(person, has_property('bio', 'I am foo'))
+		assert_that(person, has_property('website', 'http://example.org/foo'))
+
+		manager.db.add_assertion(badge_id, 'foo@example.org', None)
+
 		badge = manager.get_badge('fossbox')
 		assert_that(badge, is_not(none()))
 
 		badges = manager.get_all_badges()
 		assert_that(badges, has_length(1))
 
-		badges = manager.get_person_badges('foo')
-		assert_that(badges, has_length(0))
+		badges = manager.get_person_badges('foo@example.org')
+		assert_that(badges, has_length(1))
+
+		assertions = manager.get_person_assertions('foo@example.org')
+		assert_that(assertions, has_length(1))
 

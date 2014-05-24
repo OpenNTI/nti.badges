@@ -65,16 +65,15 @@ def tahrir_issuer_to_ntiissuer(issuer):
 @component.adapter(tahrir_interfaces.IBadge)
 @interface.implementer(interfaces.INTIBadge)
 def tahrir_badge_to_ntibadge(badge):
-	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')))
+	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
 	issuer = interfaces.INTIIssuer(badge.issuer, None)
-	result = NTIBadge(tags=tags,
+	result = NTIBadge(issuer=issuer,
+					  tags=tuple(tags),
 					  name=badge.name,
 					  image=badge.image,
 					  criteria=badge.criteria,
 					  description=badge.description,
 					  createdTime=time.mktime(badge.created_on.timetuple()))
-	if issuer is not None:
-		result.issuer = issuer
 	return result
 
 @component.adapter(tahrir_interfaces.IAssertion)
@@ -84,10 +83,8 @@ def tahrir_assertion_to_ntiassertion(ast):
 	if badge is not None:
 		interface.alsoProvides(badge, interfaces.IEarnedBadge)
 	issuedOn = time.mktime(ast.issued_on.timetuple())
-	assertion = NTIAssertion(badge=badge,
-							 issueOn=issuedOn,
-							 recipient=ast.recipient)
-	return assertion
+	result = NTIAssertion(badge=badge, issuedOn=issuedOn, recipient=ast.recipient)
+	return result
 
 @component.adapter(tahrir_interfaces.IPerson)
 @interface.implementer(interfaces.INTIPerson)
@@ -97,6 +94,9 @@ def tahrir_person_to_ntiperson(person):
 					   email=person.email,
 					   assertions=assertions,
 					   createdTime=time.mktime(person.created_on.timetuple()))
+	# not part of the interface but keep them
+	result.bio = person.bio
+	result.website = person.website
 	return result
 
 # mozilla->
@@ -228,4 +228,5 @@ def ntiperson_to_tahrir_person(nti):
 	result.nickname = nti.name
 	result.bio = getattr(nti, "bio", None) or u''
 	result.website = getattr(nti, "website", None) or u''
+	result.created_on = datetime.fromtimestamp(nti.createdTime)
 	return result

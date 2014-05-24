@@ -18,11 +18,26 @@
 			 for=".tahrir.interfaces.IPerson"
 			 provides=".openbadges.interfaces.IIdentityObject" />
 			 
+	<adapter factory=".adapters.tahrir_issuer_to_ntiissuer"
+			 for=".tahrir.interfaces.IIssuer"
+			 provides=".interfaces.INTIIssuer" />
+			 
 	<adapter factory=".adapters.tahrir_badge_to_ntibadge"
 			 for=".tahrir.interfaces.IBadge"
 			 provides=".interfaces.INTIBadge" />
-			
-			
+	
+	<adapter factory=".adapters.tahrir_person_to_ntiperson"
+			 for=".tahrir.interfaces.IPerson"
+			 provides=".interfaces.INTIPerson" />
+			 
+	<adapter factory=".adapters.tahrir_assertion_to_ntiassertion"
+			 for=".tahrir.interfaces.IAssertion"
+			 provides=".interfaces.INTIAssertion" />
+		
+	<adapter factory=".adapters.ntiperson_to_tahrir_person"
+			 for=".interfaces.INTIPerson"
+			 provides=".tahrir.interfaces.IPerson" />
+
 	<!-- Externalization -->
 	
 	<include package="nti.externalization" file="meta.zcml" />

@@ -24,7 +24,8 @@ class ITaggedContent(interface.Interface):
 							value_type=Tag(min_length=1, title="A single tag",
 										   description=Tag.__doc__, __name__='tags'),
 							unique=True,
-							default=())
+							default=(),
+							min_length=0)
 	
 class IBadgeIssuer(interface.Interface):
 	"""
@@ -51,7 +52,7 @@ class INTIIssuer(IBadgeIssuer):
 	email = nti_schema.ValidTextLine(title="Issuer email")
 
 class INTIBadge(ITaggedContent):
-	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer")
+	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer", required=False)
 
 	name = nti_schema.ValidTextLine(title="Badge name")
 	

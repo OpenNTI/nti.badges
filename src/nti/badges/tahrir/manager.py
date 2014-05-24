@@ -78,17 +78,19 @@ class TahrirBadgeManager(object):
 	def _person_assertions_badges(self, pid):
 		assertions = self.db.get_assertions_by_email(pid)
 		if assertions:
-			for ast in self.db.get_assertions_by_email(pid):
+			for ast in assertions:
 				yield ast, ast.badge
 
-	def _person_tuple(self, person, email=None, name=None):
+	def _person_tuple(self, person=None, email=None, name=None):
 		if badge_interfaces.INTIPerson.providedBy(person):
-			pid = person.name
+			pid = person.email  # Email is used as id
 			name = name or person.name
 			email = email or person.email
 		else:
 			pid = person
-		return (pid, name, email)
+			name = name or person
+			email = email or person
+		return (pid, email, name)
 
 	# Badges
 
@@ -127,14 +129,13 @@ class TahrirBadgeManager(object):
 
 	# Assertions
 
-	def get_person_assertions(self, pid):
+	def get_person_assertions(self, person):
 		result = []
+		pid, _, _ = self._person_tuple(person)
 		for ast, _ in self._person_assertions_badges(pid):
 			assertion = badge_interfaces.INTIAssertion(ast)
+			assertion.recipient = pid
 			result.append(assertion)
-			# do we want to change the recipient?
-			if assertion.recipient != pid:
-				assertion.recipient = pid
 		return result
 
 	# Persons
@@ -148,7 +149,7 @@ class TahrirBadgeManager(object):
 		return result
 
 	def person_exists(self, person=None, email=None, name=None):
-		pid, email, name = self._person_tuple(person, email, name)
+		pid, email, name, = self._person_tuple(person, email, name)
 		result = self.db.person_exists(email=email, id=pid, nickname=name)
 		return result
 
