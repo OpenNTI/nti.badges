@@ -34,24 +34,6 @@
 	<class class="tahrir_api.model.Assertion">
 		<implements interface=".interfaces.IAssertion" />
 	</class>
-				
-	<!-- Adapters -->
-	
-	<adapter factory=".adapters.issuer_to_ntiissuer"
-			 for=".interfaces.IIssuer"
-			 provides="nti.badges.interfaces.INTIIssuer" />
-	
-	<adapter factory=".adapters.badge_to_ntibadge"
-			 for=".interfaces.IBadge"
-			 provides="nti.badges.interfaces.INTIBadge" />
-			 	  	 
-	<adapter factory=".adapters.person_to_ntiperson"
-			 for=".interfaces.IPerson"
-			 provides="nti.badges.interfaces.INTIPerson" />
-	
-	<adapter factory=".adapters.assertion_to_ntiassertion"
-			 for=".interfaces.IAssertion"
-			 provides="nti.badges.interfaces.INTIAssertion" />
 			 		 
 	<!-- Database -->
 		 
