@@ -19,7 +19,7 @@ from datetime import datetime
 
 from zope import component
 
-from tahrir_api.model import Person
+from tahrir_api.model import Badge, Person, Issuer
 
 from nti.badges.tahrir import interfaces
 from nti.badges.tahrir.manager import create_badge_manager
@@ -55,15 +55,27 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 	def test_operations(self):
 		manager = create_badge_manager(dburi="sqlite://")
 
-		issuer_id = manager.db.add_issuer(u'http://foss.rit.edu/badges',
-										  u'FOSS@RIT',
-										  u'http://foss.rit.edu', u'foss@rit.edu')
-		badge_id = manager.db.add_badge(
-					u'fossbox',
-					u'http://foss.rit.edu/files/fossboxbadge.png',
-					u'Welcome to the FOSSBox. A member is you!',
-					u'http://foss.rit.edu', issuer_id)
-		
+		issuer = Issuer()
+		issuer.name = u'FOSS@RIT'
+		issuer.origin = u'http://foss.rit.edu/badges'
+		issuer.org = u'http://foss.rit.edu'
+		issuer.contact = u'foss@rit.edu'
+		issuer_id = manager.add_issuer(issuer)
+		assert_that(issuer_id, is_not(none()))
+
+		assert_that(manager.get_issuer('FOSS@RIT', u'http://foss.rit.edu/badges'), is_not(none()))
+
+		badge = Badge()
+		badge.name = u'fossbox'
+		badge.criteria = u'http://foss.rit.edu'
+		badge.description = u'Welcome to the FOSSBox. A member is you!'
+		badge.tags = 'membership'
+		badge.issuer_id = issuer_id
+		badge.image = u'http://foss.rit.edu/files/fossboxbadge.png'
+		badge_id = manager.add_badge(badge)
+		assert_that(badge_id, is_not(badge))
+		assert_that(manager.get_badge(u'fossbox'), is_not(none()))
+
 		person = Person()
 		person.bio = 'I am foo'
 		person.nickname = 'foo'
@@ -78,7 +90,10 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		assert_that(person, has_property('bio', 'I am foo'))
 		assert_that(person, has_property('website', 'http://example.org/foo'))
 
-		manager.db.add_assertion(badge_id, 'foo@example.org', None)
+		assert_that(manager.person_exists(email='foo@example.org'), is_(True))
+
+		assert_that(manager.add_assertion('foo@example.org', 'fossbox'), is_not(False))
+		assert_that(manager.get_assertion('foo@example.org', 'fossbox'), is_not(none()))
 
 		badge = manager.get_badge('fossbox')
 		assert_that(badge, is_not(none()))
@@ -91,4 +106,6 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 
 		assertions = manager.get_person_assertions('foo@example.org')
 		assert_that(assertions, has_length(1))
+		
+		assert_that(manager.delete_person(pid), is_('foo@example.org'))
 

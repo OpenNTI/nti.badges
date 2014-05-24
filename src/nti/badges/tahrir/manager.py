@@ -12,7 +12,6 @@ import os
 
 from zope import interface
 
-from sqlalchemy import or_
 from sqlalchemy import func
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -21,6 +20,7 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
+from tahrir_api.model import Assertion
 from tahrir_api.dbapi import TahrirDatabase
 from tahrir_api.model import DeclarativeBase as tahrir_base
 
@@ -72,20 +72,15 @@ class TahrirBadgeManager(object):
 		return result
 
 	def _nti_badge(self, badge):
-		result = badge_interfaces.INTIBadge(badge)
+		result = badge_interfaces.INTIBadge(badge, None)
 		return result
 
-	def _person_assertions_badges(self, pid):
-		assertions = self.db.get_assertions_by_email(pid)
-		if assertions:
-			for ast in assertions:
-				yield ast, ast.badge
-
 	def _person_tuple(self, person=None, email=None, name=None):
-		if badge_interfaces.INTIPerson.providedBy(person):
+		if 	badge_interfaces.INTIPerson.providedBy(person) or \
+			interfaces.IPerson.providedBy(person):
 			pid = person.email  # Email is used as id
-			name = name or person.name
 			email = email or person.email
+			name = name or getattr(person, 'name', getattr(person, 'nickname', None))
 		else:
 			pid = person
 			name = name or person
@@ -94,22 +89,33 @@ class TahrirBadgeManager(object):
 
 	# Badges
 
-	def _badge_tuple(self, badge):
-		if badge_interfaces.INTIBadge.providedBy(badge):
-			iden, name = badge.id, badge.name,
+	def _badge_name(self, badge):
+		if	badge_interfaces.INTIBadge.providedBy(badge) or \
+			interfaces.IBadge.providedBy(badge):
+			name = badge.name
 		else:
-			iden, name = badge, badge
-		return (iden, name)
+			name = badge
+		return name
+
+	def add_badge(self, badge):
+		badge = interfaces.IBadge(badge)
+		result = self.db.add_badge(name =badge.name,
+								   image =badge.image,
+								   desc=badge.description,
+								   criteria=badge.criteria,
+								   issuer_id=badge.issuer_id,
+								   tags=badge.tags)
+		return result
+
+	def _get_badge(self, badge):
+		name = self._badge_name(badge)
+		result = self.db.session.query(Badge) \
+						.filter(func.lower(Badge.name) == func.lower(name)).all()
+		return result[0] if result else None
 
 	def get_badge(self, badge):
-		"""
-		return the specifed badge
-		"""
-		iden, name = self._badge_tuple(badge)
-		result = self.db.session.query(Badge) \
-						.filter(or_(func.lower(Badge.name) == func.lower(name),
-									func.lower(Badge.id) == func.lower(iden))).all()
-		return result[0] if result else None
+		result = self._get_badge(badge)
+		return self._nti_badge(result)
 	
 	def get_all_badges(self):
 		result = []
@@ -118,10 +124,15 @@ class TahrirBadgeManager(object):
 			result.append(badge)
 		return result
 
+	def _get_person_badges(self, person):
+		pid, _, _ = self._person_tuple(person)
+		assertions = self.db.get_assertions_by_email(pid)
+		result = [x.badge for x in assertions] if assertions else ()
+		return result
+
 	def get_person_badges(self, person):
 		result = []
-		pid, _, _ = self._person_tuple(person)
-		for _, badge in self._person_assertions_badges(pid):
+		for badge in self._get_person_badges(person):
 			badge = self._nti_badge(badge)
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
 			result.append(badge)
@@ -129,17 +140,68 @@ class TahrirBadgeManager(object):
 
 	# Assertions
 
+	def _get_assertion(self, person, badge):
+		badge = self._get_badge(badge)
+		person = self._get_person(person)
+		if badge and person:
+			result = self.db.session.query(Assertion)\
+				   		 .filter_by(person_id=person.id, badge_id=badge.id).all()
+			return result[0] if result else None
+		return None
+
+	def get_assertion(self, person, badge):
+		result = self._get_assertion(person, badge)
+		return badge_interfaces.INTIAssertion(result, None)
+
+	def delete_assertion(self, person, badge):
+		assertion = self._get_assertion(person, badge)
+		if assertion is None:
+			self.db.session.delete(assertion)
+			self.db.session.flush()
+			return True
+		return False
+
+	def _get_person_assertions(self, person):
+		pid, _, _ = self._person_tuple(person)
+		assertions = self.db.get_assertions_by_email(pid)
+		return assertions if assertions else ()
+
 	def get_person_assertions(self, person):
 		result = []
 		pid, _, _ = self._person_tuple(person)
-		for ast, _ in self._person_assertions_badges(pid):
+		for ast in self._get_person_assertions(pid):
 			assertion = badge_interfaces.INTIAssertion(ast)
 			assertion.recipient = pid
 			result.append(assertion)
 		return result
+	
+	def add_assertion(self, person, badge):
+		badge = self._get_badge(badge)
+		person = self._get_person(person)
+		if badge and person:
+			return self.db.add_assertion(badge.id, person.email, None)
+		return False
+
+	def delete_person_assertions(self, person):
+		result = 0
+		for ast in self._get_person_assertions(person):
+			self.db.session.delete(ast)
+			result += 1
+		if result:
+			self.db.session.flush()
+		return result
 
 	# Persons
 	
+	def _get_person(self, person=None, email=None, name=None):
+		pid, email, name = self._person_tuple(person, email, name)
+		result = self.db.get_person(person_email=email, id=pid, nickname=name)
+		return result
+
+	def get_person(self, person=None, email=None, name=None):
+		result = self._get_person(person, email, name)
+		return badge_interfaces.INTIPerson(result, None)
+
 	def add_person(self, person):
 		person = interfaces.IPerson(person)
 		result = self.db.add_person(email=person.email,
@@ -153,13 +215,9 @@ class TahrirBadgeManager(object):
 		result = self.db.person_exists(email=email, id=pid, nickname=name)
 		return result
 
-	def get_person(self, person=None, email=None, name=None):
-		pid, email, name = self._person_tuple(person, email, name)
-		result = self.db.get_person(person_email=email, id=pid, nickname=name)
-		return badge_interfaces.INTIPerson(result, None)
-
 	def delete_person(self, person):
 		pid, _, _ = self._person_tuple(person)
+		self.delete_person_assertions(pid)
 		return self.db.delete_person(pid)
 
 	# Issuers
@@ -172,13 +230,17 @@ class TahrirBadgeManager(object):
 			name = issuer
 		return (name, origin)
 	
-	def get_issuer(self, issuer, origin=None):
+	def _get_issuer(self, issuer, origin=None):
 		name, origin = self._issuer_tuple(issuer, origin)
 		if self.db.issuer_exists(name=name, origin=origin):
 			result = self.db.session.query(Issuer) \
 						 	.filter_by(name=name, origin=origin).one()
 			return result
 		return None
+
+	def get_issuer(self, issuer, origin=None):
+		result = self._get_issuer(issuer, origin)
+		return badge_interfaces.INTIIssuer(result, None)
 
 	def add_issuer(self, issuer):
 		result = self.db.add_issuer(origin=issuer.origin,
