@@ -212,7 +212,7 @@ def ntiassertion_to_mozilla_assertion(ast):
 	issuer = badge.issuer
 	issuedOn = ast.issuedOn
 	verify = VerificationObject(type=open_interfaces.VO_TYPE_HOSTED,
-								url=navstr(issuer.org))
+								url=navstr(issuer.origin))
 	result = BadgeAssertion(uid=badge.name,
 							verify=verify,
 							recipient=badge.recipient,
