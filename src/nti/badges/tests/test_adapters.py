@@ -52,6 +52,20 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(nti, has_property('email', 'foo@example.org'))
 		assert_that(nti, has_property('createdTime', is_not(none())))
 
+	def test_tahrir_issuer_to_open_issuer(self):
+		issuer = Issuer()
+		issuer.name = 'foo'
+		issuer.origin = 'http://example.org/foo'
+		issuer.org = u'http://example.org'
+		issuer.contact = u'foo@example.org'
+
+		nti = open_interfaces.IIssuerOrganization(issuer, None)
+		assert_that(nti, is_not(none()))
+		assert_that(nti, has_property('name', 'foo'))
+		assert_that(nti, has_property('url', 'http://example.org/foo'))
+		assert_that(nti, has_property('email', 'foo@example.org'))
+		assert_that(nti, has_property('description', 'http://example.org'))
+
 	def test_tahrir_issuer_to_ntiissuer(self):
 		issuer = Issuer()
 		issuer.origin = 'http://example.org/foo'

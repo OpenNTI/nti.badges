@@ -35,11 +35,12 @@ class IVerificationObject(interface.Interface):
 					title="URL pointing to the assertion or issuer's public key")
 
 
-class IIssuerObject(interface.Interface):
-	name = nti_schema.ValidTextLine(title="Issuer name")
-	url = nti_schema.HTTPURL(title='Issuer URL')
+class IIssuerOrganization(interface.Interface):
+	name = nti_schema.ValidTextLine(title="The name of the issuing organization.")
+	url = nti_schema.HTTPURL(title='URL of the institution')
 	image = nti_schema.HTTPURL(title='Issuer URL logo', required=False)
-	email = nti_schema.ValidTextLine(title="Issuer email")
+	email = nti_schema.ValidTextLine(title="Issuer email", required=False)
+	description = nti_schema.ValidText(title="Issuer description", required=False)
 	revocationList = nti_schema.HTTPURL(title='Issuer revocations URL', required=False)
 
 class IIdentityObject(interface.Interface):

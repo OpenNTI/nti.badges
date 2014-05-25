@@ -15,7 +15,7 @@
 	<include package="nti.externalization" />
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IVerificationObject
-						 .interfaces.IIssuerObject
+						 .interfaces.IIssuerOrganization
 						 .interfaces.IIdentityObject
 						 .interfaces.IAlignmentObject
 						 .interfaces.IBadgeClass

@@ -35,12 +35,13 @@ from nti.badges.tests import NTIBadgesTestCase
 class TestOpenBadges(NTIBadgesTestCase):
 
     def test_issuer_object(self):
-        io = model.IssuerObject(name="foo",
-                                image=b"https://example.org/foo.png",
-                                url=b"http://example.org",
-                                email="foo@example.org",
-                                revocationList=b"https://example.org/revoked.json")
-        assert_that(io, verifiably_provides(interfaces.IIssuerObject))
+        io = model.IssuerOrganization(name="foo",
+                                      image=b"https://example.org/foo.png",
+                                      url=b"http://example.org",
+                                      email="foo@example.org",
+                                      description="example issuer",
+                                      revocationList=b"https://example.org/revoked.json")
+        assert_that(io, verifiably_provides(interfaces.IIssuerOrganization))
 
         ext_obj = toExternalObject(io)
         assert_that(ext_obj, has_entry('Class', 'Issuer'))
@@ -54,6 +55,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(new_io, has_property('url', is_("http://example.org")))
         assert_that(new_io, has_property('email', is_("foo@example.org")))
         assert_that(new_io, has_property('image', is_("https://example.org/foo.png")))
+        assert_that(new_io, has_property('description', is_("example issuer")))
         assert_that(new_io, has_property('revocationList', is_("https://example.org/revoked.json")))
 
         assert_that(io, equal_to(new_io))
@@ -151,7 +153,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         now = datetime.fromtimestamp(int(time.time()))
         verify = model.VerificationObject(type="hosted", url="http://foo.json")
         recipient = model.IdentityObject(identity="my-identity", type="email",
-                                              hashed=True, salt="xyz")
+                                         hashed=True, salt="xyz")
         ba = model.BadgeAssertion(uid="my-uid",
                                   recipient=recipient,
                                   verify=verify,

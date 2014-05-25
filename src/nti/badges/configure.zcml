@@ -21,6 +21,10 @@
 	<adapter factory=".adapters.tahrir_issuer_to_ntiissuer"
 			 for=".tahrir.interfaces.IIssuer"
 			 provides=".interfaces.INTIIssuer" />
+
+	<adapter factory=".adapters.tahrir_issuer_to_mozilla_issuer"
+			 for=".tahrir.interfaces.IIssuer"
+			 provides=".openbadges.interfaces.IIssuerOrganization" />
 			 
 	<adapter factory=".adapters.tahrir_badge_to_ntibadge"
 			 for=".tahrir.interfaces.IBadge"

@@ -21,9 +21,9 @@ from tahrir_api.model import Person
 from ._compact import navstr
 
 from .openbadges.model import BadgeClass
-from .openbadges.model import IssuerObject
 from .openbadges.model import BadgeAssertion
 from .openbadges.model import IdentityObject
+from .openbadges.model import IssuerOrganization
 from .openbadges.model import VerificationObject
 from .openbadges import interfaces as open_interfaces
 
@@ -60,6 +60,15 @@ def tahrir_issuer_to_ntiissuer(issuer):
 					   origin=issuer.origin,
 					   organization=issuer.org,
 					   email=issuer.contact)
+	return result
+
+@component.adapter(tahrir_interfaces.IIssuer)
+@interface.implementer(open_interfaces.IIssuerOrganization)
+def tahrir_issuer_to_mozilla_issuer(issuer):
+	result = IssuerOrganization(url=navstr(issuer.origin),
+								name=issuer.name,
+								email=issuer.contact,
+								description=issuer.org)
 	return result
 
 @component.adapter(tahrir_interfaces.IBadge)
@@ -108,7 +117,7 @@ def mozilla_identity_object_to_tahrir_person(io):
 	result.email = io.identity
 	return result
 
-@component.adapter(open_interfaces.IIssuerObject)
+@component.adapter(open_interfaces.IIssuerOrganization)
 @interface.implementer(tahrir_interfaces.IIssuer)
 def mozilla_issuer_to_tahrir_issuer(issuer):
 	result = Issuer()
@@ -131,7 +140,7 @@ def mozilla_badge_to_tahrir_badge(badge):
 	tag_badge_interfaces(badge, result)
 	return result
 
-@component.adapter(open_interfaces.IIssuerObject)
+@component.adapter(open_interfaces.IIssuerOrganization)
 @interface.implementer(interfaces.INTIIssuer)
 def mozilla_issuer_to_ntiisuer(issuer):
 	result = NTIIssuer(uri=issuer.name,
@@ -185,11 +194,11 @@ def ntibadge_to_tahrir_badge(badge):
 	return result
 
 @component.adapter(interfaces.INTIIssuer)
-@interface.implementer(open_interfaces.IIssuerObject)
+@interface.implementer(open_interfaces.IIssuerOrganization)
 def ntiissuer_to_mozilla_issuer(issuer):
-	result = IssuerObject(name=issuer.uri,
-						  url=issuer.origin,
-						  email=issuer.email)
+	result = IssuerOrganization(name=issuer.uri,
+						  		url=issuer.origin,
+						  		email=issuer.email)
 	return result
 
 @component.adapter(interfaces.INTIBadge)

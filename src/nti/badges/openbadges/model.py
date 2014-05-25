@@ -99,9 +99,9 @@ class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contain
         xhash ^= hash(self.name)
         return xhash
 
-@interface.implementer(interfaces.IIssuerObject)
-class IssuerObject(SchemaConfigured, persistent.Persistent, contained.Contained):
-    createDirectFieldProperties(interfaces.IIssuerObject)
+@interface.implementer(interfaces.IIssuerOrganization)
+class IssuerOrganization(SchemaConfigured, persistent.Persistent, contained.Contained):
+    createDirectFieldProperties(interfaces.IIssuerOrganization)
 
     __external_can_create__ = True
     __external_class_name__ = "Issuer"
