@@ -22,6 +22,7 @@ from zope import component
 from tahrir_api.model import Badge, Person, Issuer
 
 from nti.badges.tahrir import interfaces
+from nti.badges import interfaces as badge_interfaces
 from nti.badges.tahrir.manager import create_badge_manager
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
@@ -50,6 +51,14 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 					u'Welcome to the FOSSBox. A member is you!',
 					u'http://foss.rit.edu', issuer_id)
 		assert_that(badge, is_not(none()))
+
+	def _test_ntiassertion(self, assertion):
+		nti = badge_interfaces.INTIAssertion(assertion, None)
+		assert_that(nti, is_not(none()))
+		assert_that(nti, has_property('badge', is_not(none())))
+		assert_that(nti, has_property('recipient', is_not(none())))
+		assert_that(nti, has_property('issuedOn', is_not(none())))
+
 
 	@WithMockDSTrans
 	def test_operations(self):
@@ -93,7 +102,10 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		assert_that(manager.person_exists(email='foo@example.org'), is_(True))
 
 		assert_that(manager.add_assertion('foo@example.org', 'fossbox'), is_not(False))
-		assert_that(manager.get_assertion('foo@example.org', 'fossbox'), is_not(none()))
+		assertion = manager.get_assertion('foo@example.org', 'fossbox')
+		assert_that(assertion, is_not(none()))
+		self._test_ntiassertion(assertion)
+		assert_that(manager.assertion_exists('foo@example.org', 'fossbox'), is_(True))
 
 		badge = manager.get_badge('fossbox')
 		assert_that(badge, is_not(none()))

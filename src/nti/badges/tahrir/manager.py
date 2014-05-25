@@ -67,13 +67,6 @@ class TahrirBadgeManager(object):
 
 	# DB operations
 
-	def _nti_issuer(self, issuer):
-		result = badge_interfaces.INTIIssuer(issuer)
-		return result
-
-	def _nti_badge(self, badge):
-		result = badge_interfaces.INTIBadge(badge, None)
-		return result
 
 	def _person_tuple(self, person=None, email=None, name=None):
 		if 	badge_interfaces.INTIPerson.providedBy(person) or \
@@ -115,12 +108,11 @@ class TahrirBadgeManager(object):
 
 	def get_badge(self, badge):
 		result = self._get_badge(badge)
-		return self._nti_badge(result)
+		return result
 	
 	def get_all_badges(self):
 		result = []
 		for badge in self.db.get_all_badges():
-			badge = self._nti_badge(badge)
 			result.append(badge)
 		return result
 
@@ -133,7 +125,6 @@ class TahrirBadgeManager(object):
 	def get_person_badges(self, person):
 		result = []
 		for badge in self._get_person_badges(person):
-			badge = self._nti_badge(badge)
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
 			result.append(badge)
 		return result
@@ -151,7 +142,11 @@ class TahrirBadgeManager(object):
 
 	def get_assertion(self, person, badge):
 		result = self._get_assertion(person, badge)
-		return badge_interfaces.INTIAssertion(result, None)
+		return result
+
+	def assertion_exists(self, person, badge):
+		result = self._get_assertion(person, badge)
+		return True if result is not None else False
 
 	def delete_assertion(self, person, badge):
 		assertion = self._get_assertion(person, badge)
@@ -169,9 +164,7 @@ class TahrirBadgeManager(object):
 	def get_person_assertions(self, person):
 		result = []
 		pid, _, _ = self._person_tuple(person)
-		for ast in self._get_person_assertions(pid):
-			assertion = badge_interfaces.INTIAssertion(ast)
-			assertion.recipient = pid
+		for assertion in self._get_person_assertions(pid):
 			result.append(assertion)
 		return result
 	
@@ -200,7 +193,7 @@ class TahrirBadgeManager(object):
 
 	def get_person(self, person=None, email=None, name=None):
 		result = self._get_person(person, email, name)
-		return badge_interfaces.INTIPerson(result, None)
+		return result
 
 	def add_person(self, person):
 		person = interfaces.IPerson(person)
@@ -240,7 +233,7 @@ class TahrirBadgeManager(object):
 
 	def get_issuer(self, issuer, origin=None):
 		result = self._get_issuer(issuer, origin)
-		return badge_interfaces.INTIIssuer(result, None)
+		return result
 
 	def add_issuer(self, issuer):
 		result = self.db.add_issuer(origin=issuer.origin,

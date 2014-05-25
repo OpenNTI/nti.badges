@@ -7,7 +7,7 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-# from hamcrest import is_
+from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import assert_that
@@ -83,6 +83,7 @@ class TestAdapters(NTIBadgesTestCase):
 	def test_tahrir_badge_to_ntibadge(self):
 		badge = Badge()
 		badge.name = u'fossbox'
+		badge.tags = "fox,box,"
 		badge.created_on = datetime.now()
 		badge.image = u'http://foss.rit.edu/files/fossboxbadge.png'
 		badge.description = u'Welcome to the FOSSBox. A member is you!'
@@ -91,6 +92,7 @@ class TestAdapters(NTIBadgesTestCase):
 		nti = badge_interfaces.INTIBadge(badge, None)
 		assert_that(nti, is_not(none()))
 		assert_that(nti, has_property('name', 'fossbox'))
+		assert_that(nti, has_property('tags', is_(('fox', 'box'))))
 		assert_that(nti, has_property('createdTime', is_not(none())))
 		assert_that(nti, has_property('criteria', 'http://foss.rit.edu'))
 		assert_that(nti, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))

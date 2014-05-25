@@ -127,6 +127,9 @@ class IBadgeManager(interface.Interface):
 		return the earned badges for the specified person
 		"""
 
+	def assertion_exists(person, badge):
+		pass
+
 	def get_person_assertions(person):
 		"""
 		return the assertions for the specified person
