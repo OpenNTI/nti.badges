@@ -10,38 +10,51 @@ logger = __import__('logging').getLogger(__name__)
 
 import six
 import urllib
-import simplejson
 from datetime import datetime
 from collections import Mapping
 from dateutil.parser import parse
+
+import simplejson
 
 from nti.utils.maps import CaseInsensitiveDict
 
 from .. import model
 from ..._compact import navstr
 
-def _json_to_map(source, encoding=None):
-    if hasattr(source, "read"):
-        source = source.read()
-    if isinstance(source, six.string_types):
-        # check for a remote source
-        if  source.startswith('http://') or \
-            source.startswith('https://') or \
-            source.startswith('file://') or \
-            source.startswith('ftp://'):
-            response = urllib.urlopen(source, source)
-            source = response.read()
-        # ready to parse
-        source = simplejson.loads(source, encoding=encoding)
-    assert isinstance(source, Mapping)
-    return CaseInsensitiveDict(source)
+def _datetime(s):
+    if isinstance(s, basestring):
+        result = parse(s)
+    else:
+        result = datetime.fromtimestamp(float(s))
+    return result
 
 def _unicode(s):
     s.decode("utf-8") if isinstance(s, bytes) else s
     return unicode(s) if s is not None else None
 
+def process_json_source(source, encoding):
+    if hasattr(source, "read"):
+        source = source.read()
+    if isinstance(source, six.string_types):
+        # check for a remote source
+        lower = source.lower()
+        if  lower.startswith('http://') or \
+            lower.startswith('https://') or \
+            lower.startswith('file://') or \
+            lower.startswith('ftp://'):
+            response = urllib.urlopen(source)
+            source = response.read()
+        # ready to parse
+        source = simplejson.loads(source, encoding=encoding)
+    return source
+
+def json_source_to_map(source, encoding):
+    source = process_json_source(source, encoding)
+    assert isinstance(source, Mapping)
+    return CaseInsensitiveDict(source)
+
 def issuerFromJSON(source, encoding=None):
-    data = _json_to_map(source, encoding)
+    data = json_source_to_map(source, encoding)
     result = model.IssuerOrganization()
     for field, func in (('name', _unicode), ('image', navstr), ('url', navstr),
                         ('email', _unicode), ('revocationList', navstr)):
@@ -49,9 +62,10 @@ def issuerFromJSON(source, encoding=None):
         value = func(value) if value else None
         setattr(result, field, value)
     return result
+issuer_from_source = issuerFromJSON
 
 def badgeFromJSON(source, encoding=None):
-    data = _json_to_map(source, encoding)
+    data = json_source_to_map(source, encoding)
     result = model.BadgeClass()
 
     # parse common single value fields
@@ -74,16 +88,10 @@ def badgeFromJSON(source, encoding=None):
         alignment.append(ao)
 
     return result
-
-def _datetime(s):
-    if isinstance(s, basestring):
-        result = parse(s)
-    else:
-        result = datetime.fromtimestamp(float(s))
-    return result
+badge_from_source = badgeFromJSON
 
 def assertionFromJSON(source, encoding=None):
-    data = _json_to_map(source, encoding)
+    data = json_source_to_map(source, encoding)
     result = model.BadgeAssertion()
 
     # parse common single value fields
@@ -106,3 +114,4 @@ def assertionFromJSON(source, encoding=None):
                                              url=navstr(verify['url']))
 
     return result
+assertion_from_source = assertionFromJSON
