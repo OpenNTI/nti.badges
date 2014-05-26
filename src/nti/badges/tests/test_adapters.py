@@ -306,7 +306,7 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(nti, has_property('origin', 'http://foss.rit.edu/foss.json'))
 		assert_that(nti, has_property('organization', 'http://foss.rit.edu/foss.json'))
 
-	def test_mozilla_badte_to_ntibadge(self):
+	def test_mozilla_badge_to_ntibadge(self):
 		badge = self._open_badge()
 		nti = badge_interfaces.INTIBadge(badge, None)
 		assert_that(nti, is_not(none()))
@@ -317,7 +317,7 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(nti, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
 		assert_that(nti, has_property('description', u'Welcome to the FOSSBox. A member is you!'))
 
-	def test_mozilla_badte_to_tahrir_badge(self):
+	def test_mozilla_badge_to_tahrir_badge(self):
 		badge = self._open_badge()
 		nti = tahrir_interfaces.IBadge(badge, None)
 		assert_that(nti, is_not(none()))
