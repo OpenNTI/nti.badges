@@ -18,17 +18,10 @@ from . import badge_from_source
 from . import issuer_from_source
 from .. import interfaces as open_interfaces
 
-def _fix_url(url):
-	if not url:
-		return None
-	for k,v in os.environ.items():
-		url = url.replace('$' + k, v)
-	return url
-
 def get_baked_url(name):
 	try:
 		url = badgebakery.get_baked_url(name)
-		return _fix_url(url)
+		return url
 	except Exception as e:
 		logger.error("Could not get baked URL from '%s'; %s", name, e)
 
@@ -68,7 +61,7 @@ def flat_scan(path, verify=False):
 		if badge is None:
 			continue
 		logger.debug("Badge %s parsed", badge.name)
-		issuer_url = _fix_url((badge.issuer or u'').lower())
+		issuer_url = (badge.issuer or u'').lower()
 		issuer = issuers.get(issuer_url)
 		if issuer is None:
 			issuer = parse_issuer(issuer_url)
