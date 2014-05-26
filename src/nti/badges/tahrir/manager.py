@@ -95,13 +95,15 @@ class TahrirBadgeManager(object):
 			name = badge
 		return name
 
-	def add_badge(self, badge):
+	def add_badge(self, badge, issuer=None):
 		badge = interfaces.IBadge(badge)
+		issuer = self._get_issuer(issuer) if issuer is not None else None
+		issuer_id = badge.issuer_id or issuer.id
 		result = self.db.add_badge(name =badge.name,
 								   image =badge.image,
 								   desc=badge.description,
 								   criteria=badge.criteria,
-								   issuer_id=badge.issuer_id,
+								   issuer_id=issuer_id,
 								   tags=badge.tags)
 		return result
 

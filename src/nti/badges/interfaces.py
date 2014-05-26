@@ -116,6 +116,11 @@ class IBadgeManager(interface.Interface):
 		return a person
 		"""
 
+	def add_badge(badge, issuer=None):
+		"""
+		add the specifed badge
+		"""
+
 	def get_badge(badge):
 		"""
 		return the specifed badge
