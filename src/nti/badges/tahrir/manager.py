@@ -162,6 +162,7 @@ class TahrirBadgeManager(object):
 			self.db.session.flush()
 			return True
 		return False
+	remove_assertion = delete_assertion
 
 	def _get_person_assertions(self, person):
 		pid, _, _ = self._person_tuple(person)
