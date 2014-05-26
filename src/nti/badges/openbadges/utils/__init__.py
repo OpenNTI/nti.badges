@@ -19,7 +19,7 @@ import simplejson
 from nti.utils.maps import CaseInsensitiveDict
 
 from .. import model
-from ..._compact import navstr
+from .. import navstr
 
 def _datetime(s):
     if isinstance(s, basestring):
@@ -53,7 +53,7 @@ def json_source_to_map(source, encoding):
     assert isinstance(source, Mapping)
     return CaseInsensitiveDict(source)
 
-def issuerFromJSON(source, encoding=None):
+def issuer_from_source(source, encoding=None):
     data = json_source_to_map(source, encoding)
     result = model.IssuerOrganization()
     for field, func in (('name', _unicode), ('image', navstr), ('url', navstr),
@@ -62,9 +62,8 @@ def issuerFromJSON(source, encoding=None):
         value = func(value) if value else None
         setattr(result, field, value)
     return result
-issuer_from_source = issuerFromJSON
 
-def badgeFromJSON(source, encoding=None):
+def badge_from_source(source, encoding=None):
     data = json_source_to_map(source, encoding)
     result = model.BadgeClass()
 
@@ -88,9 +87,8 @@ def badgeFromJSON(source, encoding=None):
         alignment.append(ao)
 
     return result
-badge_from_source = badgeFromJSON
 
-def assertionFromJSON(source, encoding=None):
+def assertion_from_source(source, encoding=None):
     data = json_source_to_map(source, encoding)
     result = model.BadgeAssertion()
 
@@ -114,4 +112,3 @@ def assertionFromJSON(source, encoding=None):
                                              url=navstr(verify['url']))
 
     return result
-assertion_from_source = assertionFromJSON

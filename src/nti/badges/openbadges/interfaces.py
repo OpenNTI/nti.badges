@@ -11,7 +11,7 @@ from zope.schema import vocabulary
 
 from nti.utils import schema as nti_schema
 
-from ..interfaces import ITaggedContent
+from ..interfaces import ITaggedContent, IBadgeIssuer, IBadgeAssertion
 
 VO_TYPE_HOSTED = u'hosted'
 VO_TYPE_SIGNED = u'signed'
@@ -35,7 +35,7 @@ class IVerificationObject(interface.Interface):
 					title="URL pointing to the assertion or issuer's public key")
 
 
-class IIssuerOrganization(interface.Interface):
+class IIssuerOrganization(IBadgeIssuer):
 	name = nti_schema.ValidTextLine(title="The name of the issuing organization.")
 	url = nti_schema.HTTPURL(title='URL of the institution')
 	image = nti_schema.HTTPURL(title='Issuer URL logo', required=False)
@@ -80,15 +80,15 @@ class IBadgeClass(ITaggedContent):
                                        required=False,
                                        min_length=0)
 
-class IBadgeAssertion(interface.Interface):
+class IBadgeAssertion(IBadgeAssertion):
 	uid = nti_schema.ValidTextLine(title=" Unique Identifier for the badge")
 
 	recipient = nti_schema.Object(IIdentityObject,
 								  title="The recipient of the achievement")
 	badge = nti_schema.Variant((
 					nti_schema.Object(IBadgeClass, title="Badge class"),
-					nti_schema.HTTPURL(title='badge URL')),
-					title="badge being awarded")
+					nti_schema.HTTPURL(title='Badge URL')),
+					title="Badge being awarded")
 
 	verify = nti_schema.Object(IVerificationObject,
 							   title="Data to help a third party verify this assertion")

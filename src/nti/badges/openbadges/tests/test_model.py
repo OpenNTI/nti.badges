@@ -26,8 +26,6 @@ from nti.externalization.externalization import toExternalObject
 from nti.badges.openbadges import model
 from nti.badges.openbadges import interfaces
 
-from nti.externalization.tests import externalizes
-
 from nti.testing.matchers import verifiably_provides
 
 from nti.badges.tests import NTIBadgesTestCase
@@ -163,7 +161,6 @@ class TestOpenBadges(NTIBadgesTestCase):
                                   evidence=b"http://foo.com",
                                   expires=now)
         assert_that(ba, verifiably_provides(interfaces.IBadgeAssertion))
-        assert_that(ba, externalizes(has_entry('Class', 'Assertion')))
 
         ext_obj = toExternalObject(ba)
         assert_that(ext_obj, has_entry('Class', 'Assertion'))

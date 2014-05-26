@@ -13,35 +13,65 @@
 	<include package=".openbadges" file="configure.zcml" />
 	
 	<!-- Adpaters -->
-
-	<adapter factory=".adapters.tahrir_person_to_identity_object"
+	
+	<!-- tahrir-to -->
+	<adapter factory=".adapters.tahrir_person_to_mozilla_identity_object"
 			 for=".tahrir.interfaces.IPerson"
 			 provides=".openbadges.interfaces.IIdentityObject" />
+	
+	<adapter factory=".adapters.tahrir_issuer_to_mozilla_verification_object"
+			 for=".tahrir.interfaces.IIssuer"
+			 provides=".openbadges.interfaces.IVerificationObject" />
+			 		 
+	<adapter factory=".adapters.tahrir_issuer_to_mozilla_issuer"
+			 for=".tahrir.interfaces.IIssuer"
+			 provides=".openbadges.interfaces.IIssuerOrganization" />
+		
+	<adapter factory=".adapters.tahrir_badge_to_mozilla_badge"
+			 for=".tahrir.interfaces.IBadge"
+			 provides=".openbadges.interfaces.IBadgeClass" />
+			 	 
+	<adapter factory=".adapters.tahrir_assertion_to_mozilla_assertion"
+			 for=".tahrir.interfaces.IAssertion"
+			 provides=".openbadges.interfaces.IBadgeAssertion" />	
 			 
 	<adapter factory=".adapters.tahrir_issuer_to_ntiissuer"
 			 for=".tahrir.interfaces.IIssuer"
 			 provides=".interfaces.INTIIssuer" />
-
-	<adapter factory=".adapters.tahrir_issuer_to_mozilla_issuer"
-			 for=".tahrir.interfaces.IIssuer"
-			 provides=".openbadges.interfaces.IIssuerOrganization" />
 			 
 	<adapter factory=".adapters.tahrir_badge_to_ntibadge"
 			 for=".tahrir.interfaces.IBadge"
 			 provides=".interfaces.INTIBadge" />
-	
+
 	<adapter factory=".adapters.tahrir_person_to_ntiperson"
 			 for=".tahrir.interfaces.IPerson"
 			 provides=".interfaces.INTIPerson" />
 			 
 	<adapter factory=".adapters.tahrir_assertion_to_ntiassertion"
 			 for=".tahrir.interfaces.IAssertion"
-			 provides=".interfaces.INTIAssertion" />
-		
+			 provides=".interfaces.INTIAssertion" /> 
+			 
+	<!-- nti-to -->
+	<adapter factory=".adapters.ntiissuer_to_verification_object"
+			 for=".interfaces.INTIIssuer"
+			 provides=".openbadges.interfaces.IVerificationObject" />
+			 
+	<adapter factory=".adapters.ntiissuer_to_mozilla_issuer"
+			 for=".interfaces.INTIIssuer"
+			 provides=".openbadges.interfaces.IIssuerOrganization" />
+			 
 	<adapter factory=".adapters.ntiperson_to_tahrir_person"
 			 for=".interfaces.INTIPerson"
 			 provides=".tahrir.interfaces.IPerson" />
 
+	<adapter factory=".adapters.ntibadge_to_mozilla_badge"
+			 for=".interfaces.INTIBadge"
+			 provides=".openbadges.interfaces.IBadgeClass" />
+			 
+	<adapter factory=".adapters.ntiassertion_to_mozilla_assertion"
+			 for=".interfaces.INTIAssertion"
+			 provides=".openbadges.interfaces.IBadgeAssertion" />
+			 
 	<!-- Externalization -->
 	
 	<include package="nti.externalization" file="meta.zcml" />
@@ -52,5 +82,13 @@
 						 .interfaces.INTIPerson
 						 .interfaces.INTIAssertion"
 		modules=".model" />
+			 
+	<adapter factory=".internalization._NTIBadgeUpdater"
+			 for=".interfaces.INTIBadge"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+
+	<adapter factory=".internalization._NTIPersonUpdater"
+			 for=".interfaces.INTIPerson"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
 			 
 </configure>

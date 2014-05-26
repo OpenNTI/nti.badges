@@ -24,6 +24,7 @@ from tahrir_api.model import Badge, Person, Issuer
 from nti.badges.tahrir import interfaces
 from nti.badges import interfaces as badge_interfaces
 from nti.badges.tahrir.manager import create_badge_manager
+from nti.badges.openbadges import interfaces as open_interfaces
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
@@ -52,13 +53,30 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 					u'http://foss.rit.edu', issuer_id)
 		assert_that(badge, is_not(none()))
 
-	def _test_ntiassertion(self, assertion):
+	def _test_nti_assertion(self, assertion):
 		nti = badge_interfaces.INTIAssertion(assertion, None)
 		assert_that(nti, is_not(none()))
 		assert_that(nti, has_property('badge', is_not(none())))
-		assert_that(nti, has_property('recipient', is_not(none())))
 		assert_that(nti, has_property('issuedOn', is_not(none())))
+		assert_that(nti, has_property('recipient', is_('foo@example.org')))
 
+	def _test_open_assertion(self, assertion):
+		ast = open_interfaces.IBadgeAssertion(assertion, None)
+		assert_that(ast, is_not(none()))
+		assert_that(ast, has_property('uid', is_('fossbox')))
+		assert_that(ast, has_property('image', is_('http://foss.rit.edu/files/fossboxbadge.png')))
+		assert_that(ast, has_property('recipient', has_property('identity', 'foo@example.org')))
+		assert_that(ast, has_property('badge', has_property('name', 'fossbox')))
+		assert_that(ast, has_property('verify', has_property('url', 'http://foss.rit.edu/badges')))
+
+	def _test_open_badge(self, badge):
+		ob = open_interfaces.IBadgeClass(badge, None)
+		assert_that(ob, is_not(none()))
+		assert_that(ob, has_property('name', 'fossbox'))
+		assert_that(ob, has_property('tags', is_((u'fox', u'box'))))
+		assert_that(ob, has_property('criteria', 'http://foss.rit.edu'))
+		assert_that(ob, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
+		assert_that(ob, has_property('description', u'Welcome to the FOSSBox. A member is you!'))
 
 	@WithMockDSTrans
 	def test_operations(self):
@@ -78,12 +96,15 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		badge.name = u'fossbox'
 		badge.criteria = u'http://foss.rit.edu'
 		badge.description = u'Welcome to the FOSSBox. A member is you!'
-		badge.tags = 'membership'
+		badge.tags = 'fox,box,'
 		badge.issuer_id = issuer_id
 		badge.image = u'http://foss.rit.edu/files/fossboxbadge.png'
 		badge_id = manager.add_badge(badge)
 		assert_that(badge_id, is_not(badge))
-		assert_that(manager.get_badge(u'fossbox'), is_not(none()))
+
+		db_badge = manager.get_badge(u'fossbox')
+		assert_that(db_badge, is_not(none()))
+		self._test_open_badge(db_badge)
 
 		person = Person()
 		person.bio = 'I am foo'
@@ -104,8 +125,9 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		assert_that(manager.add_assertion('foo@example.org', 'fossbox'), is_not(False))
 		assertion = manager.get_assertion('foo@example.org', 'fossbox')
 		assert_that(assertion, is_not(none()))
-		self._test_ntiassertion(assertion)
 		assert_that(manager.assertion_exists('foo@example.org', 'fossbox'), is_(True))
+		self._test_nti_assertion(assertion)
+		self._test_open_assertion(assertion)
 
 		badge = manager.get_badge('fossbox')
 		assert_that(badge, is_not(none()))
@@ -120,4 +142,3 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		assert_that(assertions, has_length(1))
 		
 		assert_that(manager.delete_person(pid), is_('foo@example.org'))
-

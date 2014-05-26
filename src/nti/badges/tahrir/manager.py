@@ -28,6 +28,7 @@ from nti.utils.property import Lazy
 
 from . import interfaces
 from .. import interfaces as badge_interfaces
+from ..openbadges import interfaces as open_interfaces
 
 class NTITahrirDatabase(TahrirDatabase):
 	pass
@@ -67,13 +68,16 @@ class TahrirBadgeManager(object):
 
 	# DB operations
 
-
 	def _person_tuple(self, person=None, email=None, name=None):
-		if 	badge_interfaces.INTIPerson.providedBy(person) or \
-			interfaces.IPerson.providedBy(person):
+		if 	interfaces.IPerson.providedBy(person) or \
+			badge_interfaces.INTIPerson.providedBy(person):
 			pid = person.email  # Email is used as id
 			email = email or person.email
 			name = name or getattr(person, 'name', getattr(person, 'nickname', None))
+		elif open_interfaces.IIdentityObject.providedBy(person):
+			pid = person.identity
+			name = name or person.identity
+			email = email or person.identity
 		else:
 			pid = person
 			name = name or person
@@ -84,6 +88,7 @@ class TahrirBadgeManager(object):
 
 	def _badge_name(self, badge):
 		if	badge_interfaces.INTIBadge.providedBy(badge) or \
+			open_interfaces.IBadgeClass.providedBy(badge) or \
 			interfaces.IBadge.providedBy(badge):
 			name = badge.name
 		else:
@@ -218,6 +223,12 @@ class TahrirBadgeManager(object):
 	def _issuer_tuple(self, issuer, origin=None):
 		if badge_interfaces.INTIIssuer.providedBy(issuer):
 			name = issuer.uri
+			origin = origin or issuer.origin
+		elif open_interfaces.IIssuerOrganization.providedBy(issuer):
+			name = issuer.name
+			origin = origin or issuer.url
+		elif interfaces.IIssuer.providedBy(issuer):
+			name = issuer.name
 			origin = origin or issuer.origin
 		else:
 			name = issuer

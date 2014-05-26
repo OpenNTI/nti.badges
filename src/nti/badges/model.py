@@ -55,7 +55,7 @@ class NTIPerson(SchemaConfigured, persistent.Persistent, contained.Contained):
     createDirectFieldProperties(interfaces.INTIPerson)
 
     __external_can_create__ = True
-    __external_class_name__ = "Issuer"
+    __external_class_name__ = "Person"
     mime_type = mimeType = 'application/vnd.nextthought.badges.person'
 
     def __init__(self, *args, **kwargs):

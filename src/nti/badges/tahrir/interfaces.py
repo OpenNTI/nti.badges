@@ -78,7 +78,7 @@ class IAuthorization(ITahrirModel):
 	badge_id = nti_schema.ValidTextLine(title=" Badge id")
 	person_id = nti_schema.Int(title="Person id")
 
-class IAssertion(ITahrirModel):
+class IAssertion(ITahrirModel, badge_interfaces.IBadgeAssertion):
 	id = nti_schema.ValidTextLine(title="Assertion id")
 	badge_id = nti_schema.ValidTextLine(title="Badge id")
 	person_id = nti_schema.Int(title="Person's id")

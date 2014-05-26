@@ -32,8 +32,12 @@ class IBadgeIssuer(interface.Interface):
 	marker interface for all badge issuers
 	"""
 
-class INTIIssuer(IBadgeIssuer):
+class IBadgeAssertion(interface.Interface):
+	"""
+	marker interface for all badge assertion
+	"""
 
+class INTIIssuer(IBadgeIssuer):
 	uri = nti_schema.Variant((
 				nti_schema.ValidTextLine(title='Issuer name'),
 				nti_schema.HTTPURL(title='Issuer URL')),
@@ -69,20 +73,18 @@ class INTIBadge(ITaggedContent):
 					nti_schema.HTTPURL(title='Badge criteria URL')),
 					title="Badge criteria")
 	
-	createdTime = nti_schema.Float(title='createdTime', required=False)
+	createdTime = nti_schema.Float(title='creation time', required=False)
 
-class INTIAssertion(interface.Interface):
+
+class INTIAssertion(IBadgeAssertion):
 	badge = nti_schema.Object(INTIBadge, title="Badge")
-	recipient = nti_schema.Variant((
-					nti_schema.ValidTextLine(title='Badge recipient id'),
-					nti_schema.HTTPURL(title='Badge recipient URL')),
-					title="Badge recipient")
+	recipient = nti_schema.ValidTextLine(title="Badge recipient")
 	issuedOn = nti_schema.Float(title="Date that the achievement was awarded")
 
 class INTIPerson(interface.Interface):
 	name = nti_schema.ValidTextLine(title="Person [unique] name")
 	email = nti_schema.ValidTextLine(title="Person [unique] email")
-	createdTime = nti_schema.Float(title='createdTime', required=False)
+	createdTime = nti_schema.Float(title='created time', required=False)
 	assertions = nti_schema.ListOrTuple(nti_schema.Object(INTIAssertion, title="Assertion"),
 										title="Assertions", min_length=0,
 										default=(), required=False)

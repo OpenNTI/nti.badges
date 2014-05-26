@@ -18,9 +18,9 @@ does_not = is_not
 import os
 
 from nti.badges.openbadges import interfaces
-from nti.badges.openbadges.utils import badgeFromJSON
-from nti.badges.openbadges.utils import issuerFromJSON
-from nti.badges.openbadges.utils import assertionFromJSON
+from nti.badges.openbadges.utils import badge_from_source
+from nti.badges.openbadges.utils import issuer_from_source
+from nti.badges.openbadges.utils import assertion_from_source
 
 from nti.testing.matchers import verifiably_provides
 
@@ -31,7 +31,7 @@ class TestUtils(NTIBadgesTestCase):
 	def test_issuer_from_json(self):
 		path = os.path.join(os.path.dirname(__file__), 'issuer.json')
 		with open(path, "rb") as fp:
-			issuer = issuerFromJSON(fp)
+			issuer = issuer_from_source(fp)
 
 		assert_that(issuer, is_not(none()))
 		assert_that(issuer, verifiably_provides(interfaces.IIssuerOrganization))
@@ -44,7 +44,7 @@ class TestUtils(NTIBadgesTestCase):
 	def test_badge_from_json(self):
 		path = os.path.join(os.path.dirname(__file__), 'badge.json')
 		with open(path, "rb") as fp:
-			badge = badgeFromJSON(fp)
+			badge = badge_from_source(fp)
 
 		assert_that(badge, is_not(none()))
 		assert_that(badge, verifiably_provides(interfaces.IBadgeClass))
@@ -63,7 +63,7 @@ class TestUtils(NTIBadgesTestCase):
 	def test_assertion_from_json(self):
 		path = os.path.join(os.path.dirname(__file__), 'assertion.json')
 		with open(path, "rb") as fp:
-			assertion = assertionFromJSON(fp)
+			assertion = assertion_from_source(fp)
 
 		assert_that(assertion, is_not(none()))
 		assert_that(assertion, verifiably_provides(interfaces.IBadgeAssertion))
