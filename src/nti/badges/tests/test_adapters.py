@@ -133,7 +133,7 @@ class TestAdapters(NTIBadgesTestCase):
 		issuer = self._tahrir_issuer()
 		nti = badge_interfaces.INTIIssuer(issuer, None)
 		assert_that(nti, is_not(none()))
-		assert_that(nti, has_property('uri', 'FOSS@RIT'))
+		assert_that(nti, has_property('name', 'FOSS@RIT'))
 		assert_that(nti, has_property('email', 'foss@rit.edu'))
 		assert_that(nti, has_property('createdTime', is_not(none())))
 		assert_that(nti, has_property('organization', 'http://foss.rit.edu'))
@@ -170,7 +170,7 @@ class TestAdapters(NTIBadgesTestCase):
 
 	def _ntiissuer(self):
 		issuer = NTIIssuer()
-		issuer.uri = u'FOSS@RIT'
+		issuer.name = u'FOSS@RIT'
 		issuer.email = u'foss@rit.edu'
 		issuer.createdTime = self._time_now
 		issuer.organization = b'http://foss.rit.edu'
@@ -301,7 +301,7 @@ class TestAdapters(NTIBadgesTestCase):
 		issuer = self._open_issuer()
 		nti = badge_interfaces.INTIIssuer(issuer, None)
 		assert_that(nti, is_not(none()))
-		assert_that(nti, has_property('uri', 'FOSS@RIT'))
+		assert_that(nti, has_property('name', 'FOSS@RIT'))
 		assert_that(nti, has_property('email', u'foss@rit.edu'))
 		assert_that(nti, has_property('origin', 'http://foss.rit.edu/foss.json'))
 		assert_that(nti, has_property('organization', 'http://foss.rit.edu/foss.json'))

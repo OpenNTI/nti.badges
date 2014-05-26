@@ -101,7 +101,7 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 @component.adapter(tahrir_interfaces.IIssuer)
 @interface.implementer(interfaces.INTIIssuer)
 def tahrir_issuer_to_ntiissuer(issuer):
-	result = NTIIssuer(uri=issuer.name,
+	result = NTIIssuer(name=issuer.name,
 					   origin=issuer.origin,
 					   organization=issuer.org,
 					   email=issuer.contact,
@@ -150,7 +150,7 @@ def tahrir_person_to_ntiperson(person):
 @interface.implementer(tahrir_interfaces.IIssuer)
 def ntiissuer_to_tahrir_issuer(issuer):
 	result = Issuer()
-	result.name = issuer.uri
+	result.name = issuer.name
 	result.contact = issuer.email
 	result.origin = issuer.origin
 	result.org = issuer.organization
@@ -180,7 +180,7 @@ def ntiissuer_to_mozilla_verification_object(issuer):
 @component.adapter(interfaces.INTIIssuer)
 @interface.implementer(open_interfaces.IIssuerOrganization)
 def ntiissuer_to_mozilla_issuer(issuer):
-	result = IssuerOrganization(name=issuer.uri,
+	result = IssuerOrganization(name=issuer.name,
 						  		url=navstr(issuer.origin),
 						  		email=issuer.email)
 	return result
@@ -249,7 +249,7 @@ def mozilla_issuer_to_tahrir_issuer(issuer):
 @component.adapter(open_interfaces.IIssuerOrganization)
 @interface.implementer(interfaces.INTIIssuer)
 def mozilla_issuer_to_ntiisuer(issuer):
-	result = NTIIssuer(uri=issuer.name,
+	result = NTIIssuer(name=issuer.name,
 					   origin=issuer.url,
 					   email=issuer.email,
 					   organization=issuer.url)

@@ -224,7 +224,7 @@ class TahrirBadgeManager(object):
 
 	def _issuer_tuple(self, issuer, origin=None):
 		if badge_interfaces.INTIIssuer.providedBy(issuer):
-			name = issuer.uri
+			name = issuer.name
 			origin = origin or issuer.origin
 		elif open_interfaces.IIssuerOrganization.providedBy(issuer):
 			name = issuer.name

@@ -38,10 +38,7 @@ class IBadgeAssertion(interface.Interface):
 	"""
 
 class INTIIssuer(IBadgeIssuer):
-	uri = nti_schema.Variant((
-				nti_schema.ValidTextLine(title='Issuer name'),
-				nti_schema.HTTPURL(title='Issuer URL')),
-				title="Issuer identifier")
+	name = nti_schema.ValidTextLine(title='Issuer name')
 
 	origin = nti_schema.Variant((
 				nti_schema.ValidTextLine(title='Issuer origin'),

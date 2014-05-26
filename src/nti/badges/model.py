@@ -93,7 +93,7 @@ class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
 
     def __eq__(self, other):
         try:
-            return self is other or (self.uri == other.uri and
+            return self is other or (self.name == other.name and
                                      self.origin == other.origin)
         except AttributeError:
             return NotImplemented
@@ -102,7 +102,7 @@ class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
 
     def __hash__(self):
         xhash = 47
-        xhash ^= hash(self.uri)
+        xhash ^= hash(self.name)
         xhash ^= hash(self.origin)
         return xhash
 

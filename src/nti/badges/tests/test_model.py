@@ -33,7 +33,7 @@ from nti.badges.tests import NTIBadgesTestCase
 class TestNTIModel(NTIBadgesTestCase):
 		
 	def _issuer(self):
-		result = model.NTIIssuer(uri="FOSS@RIT",
+		result = model.NTIIssuer(name="FOSS@RIT",
 								 origin=b"http://foss.rit.edu/badges",
 								 organization=b"http://foss.rit.edu",
 								 email="foss@rit.edu")
@@ -51,7 +51,7 @@ class TestNTIModel(NTIBadgesTestCase):
 
 		new_io = factory()
 		internalization.update_from_external_object(new_io, ext_obj)
-		assert_that(new_io, has_property('uri', is_('FOSS@RIT')))
+		assert_that(new_io, has_property('name', is_('FOSS@RIT')))
 		assert_that(new_io, has_property('email', is_("foss@rit.edu")))
 		assert_that(new_io, has_property('origin', is_("http://foss.rit.edu/badges")))
 		assert_that(new_io, has_property('organization', is_("http://foss.rit.edu")))
