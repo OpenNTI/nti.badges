@@ -133,6 +133,16 @@ class IBadgeManager(interface.Interface):
 		return the earned badges for the specified person
 		"""
 
+	def add_assertion(person, badge):
+		"""
+		add a badge assertion for the specified person
+		"""
+
+	def remove_assertion(person, badge):
+		"""
+		remove a badge assertion from the specified person
+		"""
+
 	def assertion_exists(person, badge):
 		pass
 
