@@ -52,7 +52,15 @@
 			 provides=".interfaces.INTIAssertion" /> 
 			 
 	<!-- nti-to -->
-	<adapter factory=".adapters.ntiissuer_to_verification_object"
+	<adapter factory=".adapters.ntiperson_to_tahrir_person"
+			 for=".interfaces.INTIPerson"
+			 provides=".tahrir.interfaces.IPerson" />
+
+	<adapter factory=".adapters.ntibadge_to_tahrir_badge"
+			 for=".interfaces.INTIBadge"
+			 provides=".tahrir.interfaces.IBadge" />
+			 
+	<adapter factory=".adapters.ntiissuer_to_mozilla_verification_object"
 			 for=".interfaces.INTIIssuer"
 			 provides=".openbadges.interfaces.IVerificationObject" />
 			 
@@ -60,10 +68,6 @@
 			 for=".interfaces.INTIIssuer"
 			 provides=".openbadges.interfaces.IIssuerOrganization" />
 			 
-	<adapter factory=".adapters.ntiperson_to_tahrir_person"
-			 for=".interfaces.INTIPerson"
-			 provides=".tahrir.interfaces.IPerson" />
-
 	<adapter factory=".adapters.ntibadge_to_mozilla_badge"
 			 for=".interfaces.INTIBadge"
 			 provides=".openbadges.interfaces.IBadgeClass" />
@@ -71,6 +75,30 @@
 	<adapter factory=".adapters.ntiassertion_to_mozilla_assertion"
 			 for=".interfaces.INTIAssertion"
 			 provides=".openbadges.interfaces.IBadgeAssertion" />
+		
+	<adapter factory=".adapters.mozilla_identity_object_to_tahrir_person"
+			 for=".openbadges.interfaces.IIdentityObject"
+			 provides=".tahrir.interfaces.IPerson" />
+			 	 
+	<adapter factory=".adapters.mozilla_issuer_to_tahrir_issuer"
+			 for=".openbadges.interfaces.IIssuerOrganization"
+			 provides=".tahrir.interfaces.IIssuer" />
+
+	<adapter factory=".adapters.mozilla_issuer_to_ntiisuer"
+			 for=".openbadges.interfaces.IIssuerOrganization"
+			 provides=".interfaces.INTIIssuer" />
+
+	<adapter factory=".adapters.mozilla_identityobject_to_ntiperson"
+			 for=".openbadges.interfaces.IIdentityObject"
+			 provides=".interfaces.INTIPerson" />
+
+	<adapter factory=".adapters.mozilla_badge_to_ntibadge"
+			 for=".openbadges.interfaces.IBadgeClass"
+			 provides=".interfaces.INTIBadge" />
+
+	<adapter factory=".adapters.mozilla_badge_to_tahrir_badge"
+			 for=".openbadges.interfaces.IBadgeClass"
+			 provides=".tahrir.interfaces.IBadge" />
 			 
 	<!-- Externalization -->
 	
@@ -82,7 +110,11 @@
 						 .interfaces.INTIPerson
 						 .interfaces.INTIAssertion"
 		modules=".model" />
-			 
+		
+	<adapter factory=".internalization._NTIIssuerUpdater"
+			 for=".interfaces.INTIIssuer"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+ 
 	<adapter factory=".internalization._NTIBadgeUpdater"
 			 for=".interfaces.INTIBadge"
 			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />

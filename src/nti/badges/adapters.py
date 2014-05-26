@@ -104,7 +104,8 @@ def tahrir_issuer_to_ntiissuer(issuer):
 	result = NTIIssuer(uri=issuer.name,
 					   origin=issuer.origin,
 					   organization=issuer.org,
-					   email=issuer.contact)
+					   email=issuer.contact,
+					   createdTime=time.mktime(issuer.created_on.timetuple()))
 	return result
 
 @component.adapter(tahrir_interfaces.IBadge)
@@ -143,65 +144,6 @@ def tahrir_person_to_ntiperson(person):
 	result.website = person.website
 	return result
 
-# mozilla->
-
-@component.adapter(open_interfaces.IIdentityObject)
-@interface.implementer(tahrir_interfaces.IPerson)
-def mozilla_identity_object_to_tahrir_person(io):
-	result = Person()
-	result.email = io.identity
-	return result
-
-@component.adapter(open_interfaces.IIssuerOrganization)
-@interface.implementer(tahrir_interfaces.IIssuer)
-def mozilla_issuer_to_tahrir_issuer(issuer):
-	result = Issuer()
-	result.org = issuer.url
-	result.name = issuer.name
-	result.origin = issuer.url
-	result.image = issuer.image
-	result.contact = issuer.email
-	return result
-
-@component.adapter(open_interfaces.IBadgeClass)
-@interface.implementer(tahrir_interfaces.IBadge)
-def mozilla_badge_to_tahrir_badge(badge):
-	# XXX: Issuer is not set
-	result = Badge()
-	result.name = badge.name
-	result.image = badge.image
-	result.criteria = badge.criteria
-	result.description = badge.description
-	tag_badge_interfaces(badge, result)
-	return result
-
-@component.adapter(open_interfaces.IIssuerOrganization)
-@interface.implementer(interfaces.INTIIssuer)
-def mozilla_issuer_to_ntiisuer(issuer):
-	result = NTIIssuer(uri=issuer.name,
-					   origin=issuer.url,
-					   email=issuer.email,
-					   organization=issuer.url)
-	return result
-
-@component.adapter(open_interfaces.IIdentityObject)
-@interface.implementer(interfaces.INTIPerson)
-def mozilla_identityobject_to_ntiperson(iio):
-	result = NTIPerson(email=iio.identity, name=iio.identity)
-	return result
-	
-@component.adapter(open_interfaces.IBadgeClass)
-@interface.implementer(interfaces.INTIBadge)
-def mozilla_badge_to_ntibadge(badge):
-	# XXX: Issuer is not set
-	result = NTIBadge(tags=(),
-					  name=badge.name,
-					  image=badge.image,
-					  criteria=badge.criteria,
-					  description=badge.description,
-					  createdTime=time.time())
-	return result
-
 # nti->
 
 @component.adapter(interfaces.INTIIssuer)
@@ -230,7 +172,7 @@ def ntibadge_to_tahrir_badge(badge):
 
 @component.adapter(interfaces.INTIIssuer)
 @interface.implementer(open_interfaces.IVerificationObject)
-def ntiissuer_to_verification_object(issuer):
+def ntiissuer_to_mozilla_verification_object(issuer):
 	verify = VerificationObject(type=open_interfaces.VO_TYPE_HOSTED,
 								url=navstr(issuer.origin))
 	return verify
@@ -283,3 +225,64 @@ def ntiperson_to_tahrir_person(nti):
 	result.website = getattr(nti, "website", None) or u''
 	result.created_on = datetime.fromtimestamp(nti.createdTime)
 	return result
+
+# mozilla->
+
+@component.adapter(open_interfaces.IIdentityObject)
+@interface.implementer(tahrir_interfaces.IPerson)
+def mozilla_identity_object_to_tahrir_person(io):
+	result = Person()
+	result.email = io.identity
+	return result
+
+@component.adapter(open_interfaces.IIssuerOrganization)
+@interface.implementer(tahrir_interfaces.IIssuer)
+def mozilla_issuer_to_tahrir_issuer(issuer):
+	result = Issuer()
+	result.org = issuer.url
+	result.name = issuer.name
+	result.origin = issuer.url
+	result.image = issuer.image
+	result.contact = issuer.email
+	return result
+
+@component.adapter(open_interfaces.IIssuerOrganization)
+@interface.implementer(interfaces.INTIIssuer)
+def mozilla_issuer_to_ntiisuer(issuer):
+	result = NTIIssuer(uri=issuer.name,
+					   origin=issuer.url,
+					   email=issuer.email,
+					   organization=issuer.url)
+	return result
+
+@component.adapter(open_interfaces.IIdentityObject)
+@interface.implementer(interfaces.INTIPerson)
+def mozilla_identityobject_to_ntiperson(iio):
+	result = NTIPerson(email=iio.identity, name=iio.identity)
+	return result
+
+@component.adapter(open_interfaces.IBadgeClass)
+@interface.implementer(tahrir_interfaces.IBadge)
+def mozilla_badge_to_tahrir_badge(badge):
+	# XXX: Issuer is not set
+	result = Badge()
+	result.name = badge.name
+	result.image = badge.image
+	result.criteria = badge.criteria
+	result.tags = ','.join(badge.tags)
+	result.description = badge.description
+	tag_badge_interfaces(badge, result)
+	return result
+
+@component.adapter(open_interfaces.IBadgeClass)
+@interface.implementer(interfaces.INTIBadge)
+def mozilla_badge_to_ntibadge(badge):
+	# XXX: Issuer is not set
+	result = NTIBadge(tags=badge.tags,
+					  name=badge.name,
+					  image=badge.image,
+					  criteria=badge.criteria,
+					  description=badge.description,
+					  createdTime=time.time())
+	return result
+

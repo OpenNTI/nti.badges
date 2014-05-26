@@ -55,6 +55,8 @@ class INTIIssuer(IBadgeIssuer):
 
 	email = nti_schema.ValidTextLine(title="Issuer email")
 
+	createdTime = nti_schema.Float(title='creation time', required=False)
+
 class INTIBadge(ITaggedContent):
 	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer", required=False)
 

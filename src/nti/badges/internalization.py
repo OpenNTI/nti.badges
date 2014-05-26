@@ -33,6 +33,11 @@ class _NTIModelUpdater(object):
         return result
 
 @interface.implementer(ext_interfaces.IInternalObjectUpdater)
+@component.adapter(interfaces.INTIIssuer)
+class _NTIIssuerUpdater(_NTIModelUpdater):
+    model_interface = interfaces.INTIIssuer
+
+@interface.implementer(ext_interfaces.IInternalObjectUpdater)
 @component.adapter(interfaces.INTIBadge)
 class _NTIBadgeUpdater(_NTIModelUpdater):
     model_interface = interfaces.INTIBadge
