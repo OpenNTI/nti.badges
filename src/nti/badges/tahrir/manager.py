@@ -247,6 +247,7 @@ class TahrirBadgeManager(object):
 		return result
 
 	def add_issuer(self, issuer):
+		issuer = interfaces.IIssuer(issuer)
 		result = self.db.add_issuer(origin=issuer.origin,
 									name=issuer.name,
 									org=issuer.org,

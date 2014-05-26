@@ -148,3 +148,8 @@ class IBadgeManager(interface.Interface):
 		"""
 		return the specified issuer
 		"""
+
+	def add_issuer(issuer):
+		"""
+		add the specified :class:`.IIssuer` object.
+		"""
