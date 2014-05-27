@@ -9,6 +9,9 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import uuid
+import hashlib
+from datetime import datetime
 
 from zope import interface
 
@@ -21,7 +24,7 @@ from zope.sqlalchemy import ZopeTransactionExtension
 from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
-from tahrir_api.dbapi import TahrirDatabase
+from tahrir_api.dbapi import TahrirDatabase, autocommit
 from tahrir_api.model import DeclarativeBase as tahrir_base
 
 from nti.utils.property import Lazy
@@ -30,13 +33,88 @@ from . import interfaces
 from .. import interfaces as badge_interfaces
 from ..openbadges import interfaces as open_interfaces
 
+def salt_default():
+	return unicode(uuid.uuid4())
+
 class NTITahrirDatabase(TahrirDatabase):
-	pass
+	
+	salt = salt_default()
+
+	def __init__(self, salt=None, *args, **kwargs):
+		super(NTITahrirDatabase, self).__init__(*args, **kwargs)
+		if salt is not None:
+			self.salt = unicode(salt)
+
+	def recipient(self, email):
+		return unicode(hashlib.sha256(email + self.salt).hexdigest())
+
+	@autocommit
+	def add_assertion(self,
+					  badge_id,
+					  person_email,
+					  issued_on=None,
+					  issued_for=None):
+		"""
+		Add an assertion (award a badge) to the database
+
+		:type badge_id: str
+		:param badge_id: ID of the badge to be issued
+
+		:type person_email: str
+		:param person_email: Email of the Person to issue the badge to
+
+		:type issued_on: DateTime
+		:param issued_on: DateTime object holding the date the badge was issued
+		on
+
+		:type issued_for: str
+		:param issued_for: An optional link back to the warranting event
+		"""
+
+		if issued_on is None:
+			issued_on = datetime.utcnow()
+
+		if self.person_exists(email=person_email) and \
+		   self.badge_exists(badge_id):
+
+			badge = self.get_badge(badge_id)
+			person = self.get_person(person_email)
+			old_rank = person.rank
+
+			new_assertion = Assertion(badge_id=badge_id,
+									  person_id=person.id,
+									  issued_on=issued_on,
+									  issued_for=issued_for,
+									  recipient=self.recipient(person_email))
+			self.session.add(new_assertion)
+			self.session.flush()
+
+			if self.notification_callback:
+				self.notification_callback(
+					topic='badge.award',
+					msg=dict(
+						badge=dict(
+							name=badge.name,
+							description=badge.description,
+							image_url=badge.image,
+							badge_id=badge_id,
+						),
+						user=dict(
+							username=person.nickname,
+							badges_user_id=person.id,
+						)
+					)
+				)
+
+			self._adjust_ranks(person, old_rank)
+			return (person_email, badge_id)
+		return False
 
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
-	def __init__(self, dburi, twophase=False, autocommit=True):
+	def __init__(self, dburi, twophase=False, autocommit=True, salt=None):
+		self.salt = salt
 		self.dburi = dburi
 		self.twophase = twophase
 		self.autocommit = autocommit
@@ -60,7 +138,8 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def db(self):
-		result = NTITahrirDatabase(session=self.session, autocommit=self.autocommit)
+		result = NTITahrirDatabase(session=self.session, autocommit=self.autocommit,
+								   salt=self.salt)
 		self.session.configure(bind=self.engine)
 		metadata = getattr(tahrir_base, 'metadata')
 		metadata.create_all(self.engine, checkfirst=True)
@@ -176,11 +255,12 @@ class TahrirBadgeManager(object):
 			result.append(assertion)
 		return result
 	
-	def add_assertion(self, person, badge):
+	def add_assertion(self, person, badge, issued_on=None):
 		badge = self._get_badge(badge)
 		person = self._get_person(person)
 		if badge and person:
-			return self.db.add_assertion(badge.id, person.email, None)
+			print('before', person.id, badge.id)
+			return self.db.add_assertion(badge.id, person.email, issued_on)
 		return False
 
 	def delete_person_assertions(self, person):
