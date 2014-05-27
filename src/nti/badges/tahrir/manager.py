@@ -259,7 +259,6 @@ class TahrirBadgeManager(object):
 		badge = self._get_badge(badge)
 		person = self._get_person(person)
 		if badge and person:
-			print('before', person.id, badge.id)
 			return self.db.add_assertion(badge.id, person.email, issued_on)
 		return False
 
