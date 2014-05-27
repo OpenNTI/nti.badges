@@ -236,7 +236,7 @@ class TahrirBadgeManager(object):
 
 	def delete_assertion(self, person, badge):
 		assertion = self._get_assertion(person, badge)
-		if assertion is None:
+		if assertion is not None:
 			self.db.session.delete(assertion)
 			self.db.session.flush()
 			return True
