@@ -28,7 +28,6 @@ def get_baked_url(name):
 def parse_badge(name, verify=False):
 	try:
 		badge = badge_from_source(name)
-		print(badge, name)
 		if verify:
 			verifyObject(open_interfaces.IBadgeClass, badge)
 		return badge
