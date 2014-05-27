@@ -156,7 +156,7 @@ class IBadgeManager(interface.Interface):
 		delete the user w/ the specified person
 		"""
 		
-	def get_issuer(issuer):
+	def get_issuer(issuer, origin=None):
 		"""
 		return the specified issuer
 		"""
