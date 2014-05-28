@@ -40,11 +40,6 @@ class NTITahrirDatabase(TahrirDatabase):
 	
 	salt = salt_default()
 
-	def __init__(self, salt=None, *args, **kwargs):
-		super(NTITahrirDatabase, self).__init__(*args, **kwargs)
-		if salt is not None:
-			self.salt = unicode(salt)
-
 	def recipient(self, email):
 		return unicode(hashlib.sha256(email + self.salt).hexdigest())
 
@@ -86,6 +81,7 @@ class NTITahrirDatabase(TahrirDatabase):
 									  issued_on=issued_on,
 									  issued_for=issued_for,
 									  recipient=self.recipient(person_email))
+			new_assertion.salt = self.salt
 			self.session.add(new_assertion)
 			self.session.flush()
 
@@ -113,8 +109,7 @@ class NTITahrirDatabase(TahrirDatabase):
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
-	def __init__(self, dburi, twophase=False, autocommit=True, salt=None):
-		self.salt = salt
+	def __init__(self, dburi, twophase=False, autocommit=True):
 		self.dburi = dburi
 		self.twophase = twophase
 		self.autocommit = autocommit
@@ -138,8 +133,7 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def db(self):
-		result = NTITahrirDatabase(session=self.session, autocommit=self.autocommit,
-								   salt=self.salt)
+		result = NTITahrirDatabase(session=self.session, autocommit=self.autocommit)
 		self.session.configure(bind=self.engine)
 		metadata = getattr(tahrir_base, 'metadata')
 		metadata.create_all(self.engine, checkfirst=True)
@@ -223,7 +217,10 @@ class TahrirBadgeManager(object):
 		if badge and person:
 			result = self.db.session.query(Assertion)\
 				   		 .filter_by(person_id=person.id, badge_id=badge.id).all()
-			return result[0] if result else None
+			if result:
+				result = result[0]
+				result.salt = self.db.salt  # Save salt
+				return result
 		return None
 
 	def get_assertion(self, person, badge):
@@ -252,6 +249,7 @@ class TahrirBadgeManager(object):
 		result = []
 		pid, _, _ = self._person_tuple(person)
 		for assertion in self._get_person_assertions(pid):
+			assertion.salt = self.db.salt  # Save salt
 			result.append(assertion)
 		return result
 	

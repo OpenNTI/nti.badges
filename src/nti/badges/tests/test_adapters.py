@@ -74,6 +74,8 @@ class TestAdapters(NTIBadgesTestCase):
 
 	def _tahrir_assertion(self):		
 		assertion = Assertion()
+		assertion.salt = 'a7425e'
+		assertion.recipient = 'QxLUF1bgIAdX'
 		assertion.issued_on = datetime.now()
 		assertion.badge = self._tahrir_badge()
 		assertion.person = self._tahrir_person()
@@ -117,8 +119,9 @@ class TestAdapters(NTIBadgesTestCase):
 		ast = open_interfaces.IBadgeAssertion(assertion, None)
 		assert_that(ast, has_property('uid', is_('fossbox')))
 		assert_that(ast, has_property('badge', has_property('name', 'fossbox')))
+		assert_that(ast, has_property('recipient', has_property('salt', 'a7425e')))
+		assert_that(ast, has_property('recipient', has_property('identity', 'QxLUF1bgIAdX')))
 		assert_that(ast, has_property('image', is_('http://foss.rit.edu/files/fossboxbadge.png')))
-		assert_that(ast, has_property('recipient', has_property('identity', 'foo@example.org')))
 		assert_that(ast, has_property('verify', has_property('url', 'http://foss.rit.edu/foss.json')))
 		
 	def test_tahrir_person_to_ntiperson(self):
@@ -153,9 +156,11 @@ class TestAdapters(NTIBadgesTestCase):
 	def test_tahrir_assertion_to_ntiassertion(self):
 		assertion = self._tahrir_assertion()
 		ast = badge_interfaces.INTIAssertion(assertion, None)
+		assert_that(ast, has_property('salt', is_('a7425e')))
 		assert_that(ast, has_property('badge', is_not(none())))
 		assert_that(ast, has_property('issuedOn', is_not(none())))
-		assert_that(ast, has_property('recipient', is_('foo@example.org')))
+		assert_that(ast, has_property('recipient', is_('QxLUF1bgIAdX')))
+		assert_that(ast, has_property('person', is_('foo@example.org')))
 
 	# NTI
 
@@ -188,8 +193,10 @@ class TestAdapters(NTIBadgesTestCase):
 		return result
 
 	def _ntiassertion(self):
-		result = NTIAssertion(badge=self._ntibadge(),
-						  	  recipient=u'foo@example.org',
+		result = NTIAssertion(salt="2cf24dba",
+							  badge=self._ntibadge(),
+						  	  person=u'foo@example.org',
+						  	  recipient="ichigobleach",
 						  	  issuedOn=self._time_now)
 		return result
 
@@ -245,8 +252,9 @@ class TestAdapters(NTIBadgesTestCase):
 		ast = open_interfaces.IBadgeAssertion(assertion, None)
 		assert_that(ast, has_property('uid', is_('fossbox')))
 		assert_that(ast, has_property('badge', has_property('name', 'fossbox')))
+		assert_that(ast, has_property('recipient', has_property('salt', '2cf24dba')))
+		assert_that(ast, has_property('recipient', has_property('identity', 'ichigobleach')))
 		assert_that(ast, has_property('image', is_('http://foss.rit.edu/files/fossboxbadge.png')))
-		assert_that(ast, has_property('recipient', has_property('identity', 'foo@example.org')))
 		assert_that(ast, has_property('verify', has_property('url', 'http://foss.rit.edu/foss.json')))
 
 	# Mozilla

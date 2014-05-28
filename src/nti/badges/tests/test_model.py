@@ -93,7 +93,9 @@ class TestNTIModel(NTIBadgesTestCase):
 	def _assertion(self):
 		badge = self._badge()
 		result = model.NTIAssertion(badge=badge,
-									recipient='foo@example.org',
+								    salt="2cf24dba",
+									person='foo@example.org',
+									recipient='ichigobleach',
 									issuedOn=time.time())
 		return result
 
@@ -110,8 +112,10 @@ class TestNTIModel(NTIBadgesTestCase):
 		new_ast = factory()
 		internalization.update_from_external_object(new_ast, ext_obj)
 		assert_that(new_ast, has_property('badge', is_not(none())))
+		assert_that(new_ast, has_property('salt', is_('2cf24dba')))
 		assert_that(new_ast, has_property('issuedOn', is_not(none())))
-		assert_that(new_ast, has_property('recipient', is_('foo@example.org')))
+		assert_that(new_ast, has_property('person', is_('foo@example.org')))
+		assert_that(new_ast, has_property('recipient', is_('ichigobleach')))
 		
 		assert_that(assertion, equal_to(new_ast))
 
@@ -136,8 +140,8 @@ class TestNTIModel(NTIBadgesTestCase):
 		new_person = factory()
 		internalization.update_from_external_object(new_person, ext_obj)
 		assert_that(new_person, has_property('name', is_('foo')))
-		assert_that(new_person, has_property('email', is_('foo@example.org')))
-		assert_that(new_person, has_property('createdTime', is_not(none())))
 		assert_that(new_person, has_property('assertions', has_length(1)))
+		assert_that(new_person, has_property('createdTime', is_not(none())))
+		assert_that(new_person, has_property('email', is_('foo@example.org')))
 
 		assert_that(person, equal_to(new_person))

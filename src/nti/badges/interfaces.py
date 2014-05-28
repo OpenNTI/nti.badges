@@ -77,8 +77,10 @@ class INTIBadge(ITaggedContent):
 
 class INTIAssertion(IBadgeAssertion):
 	badge = nti_schema.Object(INTIBadge, title="Badge")
-	recipient = nti_schema.ValidTextLine(title="Badge recipient")
+	person = nti_schema.ValidTextLine(title="Badge recipient name")
 	issuedOn = nti_schema.Float(title="Date that the achievement was awarded")
+	recipient = nti_schema.ValidTextLine(title="Badge recipient hash", required=False)
+	salt = nti_schema.ValidTextLine(title="One-way function to hash person", required=False)
 
 class INTIPerson(interface.Interface):
 	name = nti_schema.ValidTextLine(title="Person [unique] name")

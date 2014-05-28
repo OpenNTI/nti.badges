@@ -86,15 +86,22 @@ def tahrir_badge_to_mozilla_badge(badge):
 @interface.implementer(open_interfaces.IBadgeAssertion)
 def tahrir_assertion_to_mozilla_assertion(assertion):
 	badge = assertion.badge
+	# issuer
 	issuer = badge.issuer
 	verify = open_interfaces.IVerificationObject(issuer)
-	recipient = IdentityObject(identity=assertion.person.email,
+	# recipient
+	salt = getattr(assertion, 'salt', None)
+	identity = assertion.recipient if salt else assertion.person.email
+	recipient = IdentityObject(salt=salt,
+							   identity=identity,
+							   hashed=(True if salt else False),
 							   type=open_interfaces.ID_TYPE_EMAIL)
+	# assertion
 	result = BadgeAssertion(uid=badge.name,
 							verify=verify,
 							recipient=recipient,
-							issuedOn=assertion.issued_on,
 							image=navstr(badge.image),
+							issuedOn=assertion.issued_on,
 							badge=open_interfaces.IBadgeClass(badge))
 	return result
 
@@ -128,7 +135,11 @@ def tahrir_assertion_to_ntiassertion(ast):
 	badge = interfaces.INTIBadge(ast.badge)
 	interface.alsoProvides(badge, interfaces.IEarnedBadge)
 	issuedOn = time.mktime(ast.issued_on.timetuple())
-	result = NTIAssertion(badge=badge, issuedOn=issuedOn, recipient=ast.person.email)
+	result = NTIAssertion(badge=badge,
+						  issuedOn=issuedOn,
+						  person=ast.person.email,
+						  recipient=ast.recipient,
+						  salt=getattr(ast, 'salt', None))
 	return result
 
 @component.adapter(tahrir_interfaces.IPerson)
@@ -204,9 +215,12 @@ def ntiassertion_to_mozilla_assertion(assertion):
 	badge = assertion.badge
 	issuer = badge.issuer
 	issuedOn = assertion.issuedOn
+	identity = assertion.recipient or assertion.person
 	verify = open_interfaces.IVerificationObject(issuer)
-	recipient = IdentityObject(identity=assertion.recipient,
-							   type=open_interfaces.ID_TYPE_EMAIL)
+	recipient = IdentityObject(identity=identity,
+							   type=open_interfaces.ID_TYPE_EMAIL,
+							   hashed=(assertion.salt is not None),
+							   salt=assertion.salt)
 	result = BadgeAssertion(uid=badge.name,
 							verify=verify,
 							recipient=recipient,
