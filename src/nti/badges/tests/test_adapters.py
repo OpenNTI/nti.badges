@@ -184,6 +184,7 @@ class TestAdapters(NTIBadgesTestCase):
 
 	def _ntibadge(self):
 		result = NTIBadge(name="fossbox",
+						  title='FOSSBox',
 						  issuer=self._ntiissuer(),
 						  description=u"Welcome to the FOSSBox. A member is you!",
 						  image=b"http://foss.rit.edu/files/fossboxbadge.png",
@@ -241,6 +242,7 @@ class TestAdapters(NTIBadgesTestCase):
 		bc = open_interfaces.IBadgeClass(badge, None)
 		assert_that(bc, is_not(none()))
 		assert_that(bc, has_property('name', 'fossbox'))
+		assert_that(bc, has_property('title', 'FOSSBox'))
 		assert_that(bc, has_property('tags', is_(['fox', 'box'])))
 		assert_that(bc, has_property('issuer', 'http://foss.rit.edu/foss.json'))
 		assert_that(bc, has_property('criteria', 'http://foss.rit.edu/fossbox'))
@@ -275,6 +277,7 @@ class TestAdapters(NTIBadgesTestCase):
 
 	def _open_badge(self):
 		result = BadgeClass(name="fossbox", 
+						    title='FOSSBox',
 							description="Welcome to the FOSSBox. A member is you!",
 							image=b"http://foss.rit.edu/files/fossboxbadge.png",
 							criteria=b"http://foss.rit.edu/fossbox",
@@ -319,6 +322,7 @@ class TestAdapters(NTIBadgesTestCase):
 		nti = badge_interfaces.INTIBadge(badge, None)
 		assert_that(nti, is_not(none()))
 		assert_that(nti, has_property('name', 'fossbox'))
+		assert_that(nti, has_property('title', 'FOSSBox'))
 		assert_that(nti, has_property('issuer', is_(none())))
 		assert_that(nti, has_property('tags', is_(['fox', 'box'])))
 		assert_that(nti, has_property('criteria', 'http://foss.rit.edu/fossbox'))

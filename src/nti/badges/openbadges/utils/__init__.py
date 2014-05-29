@@ -68,11 +68,15 @@ def badge_from_source(source, encoding=None):
     result = model.BadgeClass()
 
     # parse common single value fields
-    for field, func in (('name', _unicode), ('description', _unicode),
-                        ('image', navstr), ('criteria', navstr), ('issuer', navstr)):
+    for field, func in (('name', _unicode), ('title', _unicode),
+                        ('description', _unicode), ('image', navstr),
+                        ('criteria', navstr), ('issuer', navstr)):
         value = data.get(field)
         value = func(value) if value else None
         setattr(result, field, value)
+
+    # assure a title
+    result.title = result.title or result.description
 
     # tags
     result.tags = data.get('tags', ())

@@ -75,6 +75,7 @@ def tahrir_badge_to_mozilla_badge(badge):
 	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
 	result = BadgeClass(tags=tags,
 						name=badge.name,
+						title=badge.description,
 						image=navstr(badge.image),
 						description=badge.description,
 						criteria=navstr(badge.criteria),
@@ -124,6 +125,7 @@ def tahrir_badge_to_ntibadge(badge):
 					  tags=tuple(tags),
 					  name=badge.name,
 					  image=badge.image,
+					  title=badge.description,
 					  criteria=badge.criteria,
 					  description=badge.description,
 					  createdTime=time.mktime(badge.created_on.timetuple()))
@@ -200,7 +202,9 @@ def ntiissuer_to_mozilla_issuer(issuer):
 @interface.implementer(open_interfaces.IBadgeClass)
 def ntibadge_to_mozilla_badge(badge):
 	issuer = badge.issuer
-	result = BadgeClass(tags=badge.tags,
+	title = badge.title or badge.description
+	result = BadgeClass(title=title,
+						tags=badge.tags,
 						name=badge.name,
 						image=badge.image,
 						issuer=navstr(issuer.origin),
@@ -292,7 +296,9 @@ def mozilla_badge_to_tahrir_badge(badge):
 @interface.implementer(interfaces.INTIBadge)
 def mozilla_badge_to_ntibadge(badge):
 	# XXX: Issuer is not set
-	result = NTIBadge(tags=badge.tags,
+	title = badge.title or badge.description
+	result = NTIBadge(title=title,
+					  tags=badge.tags,
 					  name=badge.name,
 					  image=badge.image,
 					  criteria=badge.criteria,

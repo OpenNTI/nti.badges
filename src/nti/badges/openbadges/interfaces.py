@@ -64,6 +64,8 @@ class IAlignmentObject(interface.Interface):
 class IBadgeClass(ITaggedContent):
 	name = nti_schema.ValidTextLine(title="The name of the achievement")
 	
+	title = nti_schema.ValidTextLine(title="The title of the achievement", required=False)
+
 	description = nti_schema.ValidText(title="A short description of the achievement")
 	
 	image = nti_schema.Variant((

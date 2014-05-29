@@ -122,7 +122,8 @@ class TestOpenBadges(NTIBadgesTestCase):
         ao2 = model.AlignmentObject(name="my-alignment-2", url=b"http://foo-2.xyz",
                                         description="foo-2")
 
-        bc = model.BadgeClass(name="my-badge", description="super badge",
+        bc = model.BadgeClass(name="my-badge",
+                              description="super badge",
                               image=b"https://badge.png",
                               criteria=b"https://badge-criteria.com",
                               issuer=b"https://badge-issuer.com",
@@ -138,6 +139,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         new_bc = factory()
         internalization.update_from_external_object(new_bc, ext_obj)
         assert_that(new_bc, has_property('name', is_('my-badge')))
+        assert_that(new_bc, has_property('title', is_('super badge')))
         assert_that(new_bc, has_property('image', is_(b'https://badge.png')))
         assert_that(new_bc, has_property('criteria', is_(b'https://badge-criteria.com')))
         assert_that(new_bc, has_property('issuer', is_(b'https://badge-issuer.com')))

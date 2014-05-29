@@ -22,4 +22,7 @@
 						 .interfaces.IBadgeAssertion"
 		modules=".model" />
 	
+	<adapter factory=".internalization._BadgeClassUpdater"
+			 for=".interfaces.IBadgeClass"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
 </configure>
