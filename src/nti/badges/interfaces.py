@@ -59,8 +59,6 @@ class INTIBadge(ITaggedContent):
 
 	name = nti_schema.ValidTextLine(title="Badge name")
 
-	title = nti_schema.ValidTextLine(title="Badge title", required=False)
-	
 	description = nti_schema.ValidText(title="Badge description",
 									  required=False, default=u'')
 

@@ -125,7 +125,6 @@ def tahrir_badge_to_ntibadge(badge):
 					  name=badge.name,
 					  image=badge.image,
 					  criteria=badge.criteria,
-					  title=badge.description,
 					  description=badge.description,
 					  createdTime=time.mktime(badge.created_on.timetuple()))
 	return result
@@ -297,7 +296,6 @@ def mozilla_badge_to_ntibadge(badge):
 					  name=badge.name,
 					  image=badge.image,
 					  criteria=badge.criteria,
-					  title=badge.description,
 					  description=badge.description,
 					  createdTime=time.time())
 	return result

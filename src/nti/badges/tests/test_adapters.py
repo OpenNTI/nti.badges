@@ -184,7 +184,6 @@ class TestAdapters(NTIBadgesTestCase):
 
 	def _ntibadge(self):
 		result = NTIBadge(name="fossbox",
-						  title='FOSSBox',
 						  issuer=self._ntiissuer(),
 						  description=u"Welcome to the FOSSBox. A member is you!",
 						  image=b"http://foss.rit.edu/files/fossboxbadge.png",
