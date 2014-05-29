@@ -139,7 +139,6 @@ class TestOpenBadges(NTIBadgesTestCase):
         new_bc = factory()
         internalization.update_from_external_object(new_bc, ext_obj)
         assert_that(new_bc, has_property('name', is_('my-badge')))
-        assert_that(new_bc, has_property('title', is_('super badge')))
         assert_that(new_bc, has_property('image', is_(b'https://badge.png')))
         assert_that(new_bc, has_property('criteria', is_(b'https://badge-criteria.com')))
         assert_that(new_bc, has_property('issuer', is_(b'https://badge-issuer.com')))

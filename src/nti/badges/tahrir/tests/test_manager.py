@@ -48,7 +48,6 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 									 image=u'http://foss.rit.edu/files/fossboxbadge.png',
 									 desc=u'Welcome to the FOSSBox. A member is you!',
 									 criteria=u'http://foss.rit.edu', 
-									 title='FOSSBox',
 									 issuer_id=issuer_id)
 		assert_that(badge, is_not(none()))
 
@@ -68,7 +67,6 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 
 		badge = Badge()
 		badge.name = u'fossbox'
-		badge.title = u'FOSSBox'
 		badge.criteria = u'http://foss.rit.edu'
 		badge.description = u'Welcome to the FOSSBox. A member is you!'
 		badge.tags = 'fox,box,'
@@ -79,7 +77,6 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 
 		db_badge = manager.get_badge(u'fossbox')
 		assert_that(db_badge, is_not(none()))
-		assert_that(db_badge, has_property('title', 'FOSSBox'))
 
 		person = Person()
 		person.bio = 'I am foo'

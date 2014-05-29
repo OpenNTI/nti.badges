@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 """
@@ -9,12 +8,5 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from sqlalchemy import Column
-from sqlalchemy import Unicode
 
-from tahrir_api.model import Badge
-
-def monkey_badge():
-    Badge.title = Column(Unicode(128), nullable=True)
-monkey_badge()
 

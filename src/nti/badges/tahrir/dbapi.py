@@ -12,7 +12,6 @@ import uuid
 import hashlib
 from datetime import datetime
 
-from tahrir_api.model import Badge
 from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
@@ -26,60 +25,6 @@ class NTITahrirDatabase(TahrirDatabase):
 
 	def recipient(self, email):
 		return unicode(hashlib.sha256(email + self.salt).hexdigest())
-
-	@autocommit
-	def add_badge(self, name, image, desc, criteria, issuer_id,
-				  tags=None, title=None, badge_id=None):
-		"""
-		Add a new badge to the database
-
-		:type name: str
-		:param name: Name of the Badge
-
-		:type image: str
-		:param image: URL of the image for this Badge
-
-		:type criteria: str
-		:param criteria: The criteria of this Badge
-
-		:type issuer_id: int
-		:param issuer_id: The ID of the issuer who issues this Badge
-
-		:type tags: str
-		:param tags: Comma-delimited list of badge tags.
-		"""
-
-		if not badge_id:
-			badge_id = name.lower().replace(" ", "-")
-
-			bad = ['"', "'", '(', ')', '*', '&', '?']
-			replacements = dict(zip(bad, [''] * len(bad)))
-
-			for a, b in replacements.items():
-				badge_id = badge_id.replace(a, b)
-
-		if not self.badge_exists(badge_id):
-			# Make sure the tags string has a trailing
-			# comma at the end. The tags view in Tahrir
-			# depends on that comma when matching all
-			# tags.
-			if tags and not tags.endswith(','):
-				tags = tags + ','
-
-			title = title or desc
-
-			# Actually add the badge.
-			new_badge = Badge(id=badge_id,
-							  name=name,
-							  image=image,
-							  description=desc,
-							  criteria=criteria,
-							  issuer_id=issuer_id,
-							  tags=tags,
-							  title=title)
-			self.session.add(new_badge)
-			self.session.flush()
-		return badge_id
 
 	@autocommit
 	def add_assertion(self,

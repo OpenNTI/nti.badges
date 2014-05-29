@@ -72,10 +72,8 @@ def tahrir_issuer_to_mozilla_issuer(issuer):
 @component.adapter(tahrir_interfaces.IBadge)
 @interface.implementer(open_interfaces.IBadgeClass)
 def tahrir_badge_to_mozilla_badge(badge):
-	title = getattr(badge, 'title', None) or badge.description
 	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
 	result = BadgeClass(tags=tags,
-						title=title,
 						name=badge.name,
 						image=navstr(badge.image),
 						description=badge.description,
@@ -120,15 +118,14 @@ def tahrir_issuer_to_ntiissuer(issuer):
 @component.adapter(tahrir_interfaces.IBadge)
 @interface.implementer(interfaces.INTIBadge)
 def tahrir_badge_to_ntibadge(badge):
-	title = getattr(badge, 'title', None) or badge.description
 	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
 	issuer = interfaces.INTIIssuer(badge.issuer, None)
-	result = NTIBadge(title=title,
-					  issuer=issuer,
+	result = NTIBadge(issuer=issuer,
 					  tags=tuple(tags),
 					  name=badge.name,
 					  image=badge.image,
 					  criteria=badge.criteria,
+					  title=badge.description,
 					  description=badge.description,
 					  createdTime=time.mktime(badge.created_on.timetuple()))
 	return result
@@ -182,7 +179,6 @@ def ntibadge_to_tahrir_badge(badge):
 				   criteria=badge.criteria,
 				   description=badge.description,
 				   created_on=datetime.fromtimestamp(badge.createdTime))
-	result.title = badge.title
 	tag_badge_interfaces(badge, result)
 	return result
 
@@ -205,9 +201,7 @@ def ntiissuer_to_mozilla_issuer(issuer):
 @interface.implementer(open_interfaces.IBadgeClass)
 def ntibadge_to_mozilla_badge(badge):
 	issuer = badge.issuer
-	title = badge.title or badge.description
-	result = BadgeClass(title=title,
-						tags=badge.tags,
+	result = BadgeClass(tags=badge.tags,
 						name=badge.name,
 						image=badge.image,
 						issuer=navstr(issuer.origin),
@@ -289,7 +283,6 @@ def mozilla_badge_to_tahrir_badge(badge):
 	result = Badge()
 	result.name = badge.name
 	result.image = badge.image
-	result.title = badge.title
 	result.criteria = badge.criteria
 	result.tags = ','.join(badge.tags)
 	result.description = badge.description
@@ -300,12 +293,11 @@ def mozilla_badge_to_tahrir_badge(badge):
 @interface.implementer(interfaces.INTIBadge)
 def mozilla_badge_to_ntibadge(badge):
 	# XXX: Issuer is not set
-	title = badge.title or badge.description
-	result = NTIBadge(title=title,
-					  tags=badge.tags,
+	result = NTIBadge(tags=badge.tags,
 					  name=badge.name,
 					  image=badge.image,
 					  criteria=badge.criteria,
+					  title=badge.description,
 					  description=badge.description,
 					  createdTime=time.time())
 	return result
