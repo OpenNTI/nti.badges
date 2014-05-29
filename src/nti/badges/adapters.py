@@ -72,10 +72,11 @@ def tahrir_issuer_to_mozilla_issuer(issuer):
 @component.adapter(tahrir_interfaces.IBadge)
 @interface.implementer(open_interfaces.IBadgeClass)
 def tahrir_badge_to_mozilla_badge(badge):
+	title = getattr(badge, 'title', None) or badge.description
 	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
 	result = BadgeClass(tags=tags,
+						title=title,
 						name=badge.name,
-						title=badge.description,
 						image=navstr(badge.image),
 						description=badge.description,
 						criteria=navstr(badge.criteria),
@@ -119,13 +120,14 @@ def tahrir_issuer_to_ntiissuer(issuer):
 @component.adapter(tahrir_interfaces.IBadge)
 @interface.implementer(interfaces.INTIBadge)
 def tahrir_badge_to_ntibadge(badge):
+	title = getattr(badge, 'title', None) or badge.description
 	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
 	issuer = interfaces.INTIIssuer(badge.issuer, None)
-	result = NTIBadge(issuer=issuer,
+	result = NTIBadge(title=title,
+					  issuer=issuer,
 					  tags=tuple(tags),
 					  name=badge.name,
 					  image=badge.image,
-					  title=badge.description,
 					  criteria=badge.criteria,
 					  description=badge.description,
 					  createdTime=time.mktime(badge.created_on.timetuple()))
@@ -180,6 +182,7 @@ def ntibadge_to_tahrir_badge(badge):
 				   criteria=badge.criteria,
 				   description=badge.description,
 				   created_on=datetime.fromtimestamp(badge.createdTime))
+	result.title = badge.title
 	tag_badge_interfaces(badge, result)
 	return result
 
@@ -286,6 +289,7 @@ def mozilla_badge_to_tahrir_badge(badge):
 	result = Badge()
 	result.name = badge.name
 	result.image = badge.image
+	result.title = badge.title
 	result.criteria = badge.criteria
 	result.tags = ','.join(badge.tags)
 	result.description = badge.description

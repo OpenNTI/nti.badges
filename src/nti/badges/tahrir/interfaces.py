@@ -27,6 +27,7 @@ class IIssuer(ITahrirModel, badge_interfaces.IBadgeIssuer):
 
 class IBadge(ITahrirModel):
 	name = nti_schema.ValidTextLine(title="Badge name")
+	title = nti_schema.ValidTextLine(title="Badge title", required=False)
 
 	image = nti_schema.Variant((
 					nti_schema.ValidTextLine(title="Image URL"),
