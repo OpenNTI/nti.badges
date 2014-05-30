@@ -36,7 +36,8 @@ setup(
 	namespace_packages=['nti'],
 	install_requires=[
 		'setuptools',
-        'tahrir-api'
+        'tahrir-api',
+        'itsdangerous'
 	],
 	entry_points=entry_points
 )
