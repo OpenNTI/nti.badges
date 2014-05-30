@@ -65,31 +65,17 @@ class TahrirBadgeManager(object):
 
 	# DB operations
 
-	def _person_tuple(self, person=None, email=None, name=None):
-		if 	interfaces.IPerson.providedBy(person) or \
-			badge_interfaces.INTIPerson.providedBy(person):
-			pid = person.email  # Email is used as id
-			email = email or person.email
-			name = name or getattr(person, 'name', getattr(person, 'nickname', None))
-		elif open_interfaces.IIdentityObject.providedBy(person):
-			pid = person.identity
-			name = name or person.identity
-			email = email or person.identity
-		else:
-			pid = person
-			name = name or person
-			email = email or person
-		return (pid, email, name)
+	def _person_tuple(self, person=None, name=None):
+		person = interfaces.IPerson(person, None)
+		email = getattr(person, 'email', None)  # Email is used as id
+		name = name or getattr(person, 'nickname', None)
+		return (email, name)
 
 	# Badges
 
 	def _badge_name(self, badge):
-		if	badge_interfaces.INTIBadge.providedBy(badge) or \
-			open_interfaces.IBadgeClass.providedBy(badge) or \
-			interfaces.IBadge.providedBy(badge):
-			name = badge.name
-		else:
-			name = badge
+		badge = interfaces.IBadge(badge)
+		name = badge.name
 		return name
 
 	def add_badge(self, badge, issuer=None):
@@ -121,8 +107,8 @@ class TahrirBadgeManager(object):
 		return result
 
 	def _get_person_badges(self, person):
-		pid, _, _ = self._person_tuple(person)
-		assertions = self.db.get_assertions_by_email(pid)
+		email, _ = self._person_tuple(person)
+		assertions = self.db.get_assertions_by_email(email)
 		result = [x.badge for x in assertions] if assertions else ()
 		return result
 
@@ -165,14 +151,14 @@ class TahrirBadgeManager(object):
 	remove_assertion = delete_assertion
 
 	def _get_person_assertions(self, person):
-		pid, _, _ = self._person_tuple(person)
-		assertions = self.db.get_assertions_by_email(pid)
+		email, _ = self._person_tuple(person)
+		assertions = self.db.get_assertions_by_email(email)
 		return assertions if assertions else ()
 
 	def get_person_assertions(self, person):
 		result = []
-		pid, _, _ = self._person_tuple(person)
-		for assertion in self._get_person_assertions(pid):
+		email, _ = self._person_tuple(person)
+		for assertion in self._get_person_assertions(email):
 			assertion.salt = self.db.salt  # Save salt
 			result.append(assertion)
 		return result
@@ -195,13 +181,13 @@ class TahrirBadgeManager(object):
 
 	# Persons
 	
-	def _get_person(self, person=None, email=None, name=None):
-		pid, email, name = self._person_tuple(person, email, name)
-		result = self.db.get_person(person_email=email, id=pid, nickname=name)
+	def _get_person(self, person=None, name=None):
+		email, name = self._person_tuple(person, name)
+		result = self.db.get_person(person_email=email, nickname=name)
 		return result
 
-	def get_person(self, person=None, email=None, name=None):
-		result = self._get_person(person, email, name)
+	def get_person(self, person=None, name=None):
+		result = self._get_person(person, name)
 		return result
 
 	def add_person(self, person):
@@ -212,15 +198,15 @@ class TahrirBadgeManager(object):
 									bio=person.bio)
 		return result
 
-	def person_exists(self, person=None, email=None, name=None):
-		pid, email, name, = self._person_tuple(person, email, name)
-		result = self.db.person_exists(email=email, id=pid, nickname=name)
+	def person_exists(self, person=None, name=None):
+		email, name, = self._person_tuple(person, name)
+		result = self.db.person_exists(email=email, nickname=name)
 		return result
 
 	def delete_person(self, person):
-		pid, _, _ = self._person_tuple(person)
-		self.delete_person_assertions(pid)
-		return self.db.delete_person(pid)
+		email, _ = self._person_tuple(person)
+		self.delete_person_assertions(email)
+		return self.db.delete_person(email)
 
 	# Issuers
 

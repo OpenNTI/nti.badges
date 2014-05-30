@@ -42,6 +42,36 @@ def tag_badge_interfaces(source, target):
 	if interfaces.IEarnedBadge.providedBy(source):
 		interface.alsoProvides(target, interfaces.IEarnedBadge)
 
+@interface.implementer(open_interfaces.IIdentityObject)
+def basestring_to_mozilla_indentity_object(source):
+	result = IdentityObject(identity=source,
+							type=open_interfaces.ID_TYPE_EMAIL,
+							hashed=False,
+							salt=None)
+	return result
+
+@interface.implementer(tahrir_interfaces.IPerson)
+def basestring_to_tahrir_person(source):
+	result = Person()
+	result.email = source
+	result.nickname = source
+	result.website = result.bio = u''
+	result.created_on = datetime.now()
+	return result
+
+@interface.implementer(interfaces.INTIPerson)
+def basestring_to_ntiperson(source):
+	result = NTIPerson(name=source,
+					   email=source,
+					   createdTime=time.time())
+	return result
+
+@interface.implementer(tahrir_interfaces.IBadge)
+def basestring_to_tahrir_badge(source):
+	result = Badge()
+	result.name = source
+	return result
+
 # tahrir->
 
 @component.adapter(tahrir_interfaces.IIssuer)

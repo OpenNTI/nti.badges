@@ -88,11 +88,11 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		pid = manager.add_person(person)
 		assert_that(pid, is_('foo@example.org'))
 
-		person = manager.get_person(email=pid)
+		person = manager.get_person(pid)
 		assert_that(person, has_property('bio', 'I am foo'))
 		assert_that(person, has_property('website', 'http://example.org/foo'))
 
-		assert_that(manager.person_exists(email='foo@example.org'), is_(True))
+		assert_that(manager.person_exists('foo@example.org'), is_(True))
 
 		assert_that(manager.add_assertion('foo@example.org', 'fossbox'), is_not(False))
 		assertion = manager.get_assertion('foo@example.org', 'fossbox')

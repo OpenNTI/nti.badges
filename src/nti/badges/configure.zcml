@@ -14,6 +14,22 @@
 	
 	<!-- Adpaters -->
 	
+	<adapter factory=".adapters.basestring_to_mozilla_indentity_object"
+			 for="basestring"
+			 provides=".openbadges.interfaces.IIdentityObject" />
+			 
+	<adapter factory=".adapters.basestring_to_tahrir_person"
+			 for="basestring"
+			 provides=".tahrir.interfaces.IPerson" />
+
+	<adapter factory=".adapters.basestring_to_tahrir_badge"
+			 for="basestring"
+			 provides=".tahrir.interfaces.IBadge" />
+			 
+	<adapter factory=".adapters.basestring_to_ntiperson"
+			 for="basestring"
+			 provides=".interfaces.INTIPerson" />
+			 
 	<!-- tahrir-to -->
 	<adapter factory=".adapters.tahrir_person_to_mozilla_identity_object"
 			 for=".tahrir.interfaces.IPerson"
@@ -76,6 +92,7 @@
 			 for=".interfaces.INTIAssertion"
 			 provides=".openbadges.interfaces.IBadgeAssertion" />
 		
+	<!-- mozilla-to -->
 	<adapter factory=".adapters.mozilla_identity_object_to_tahrir_person"
 			 for=".openbadges.interfaces.IIdentityObject"
 			 provides=".tahrir.interfaces.IPerson" />

@@ -105,7 +105,7 @@ class IEarnedBadge(IEarnableBadge):
 
 class IBadgeManager(interface.Interface):
 	
-	def person_exists(person=None, email=None, name=None):
+	def person_exists(person=None, name=None):
 		"""
 		check if a person exists
 		"""
