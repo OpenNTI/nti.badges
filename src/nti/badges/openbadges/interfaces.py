@@ -11,7 +11,7 @@ from zope.schema import vocabulary
 
 from nti.utils import schema as nti_schema
 
-from ..interfaces import ITaggedContent, IBadgeIssuer, IBadgeAssertion
+from .. import interfaces as badge_interfaces
 
 VO_TYPE_HOSTED = u'hosted'
 VO_TYPE_SIGNED = u'signed'
@@ -35,7 +35,7 @@ class IVerificationObject(interface.Interface):
 					title="URL pointing to the assertion or issuer's public key")
 
 
-class IIssuerOrganization(IBadgeIssuer):
+class IIssuerOrganization(badge_interfaces.IBadgeIssuer):
 	name = nti_schema.ValidTextLine(title="The name of the issuing organization.")
 	url = nti_schema.HTTPURL(title='URL of the institution')
 	image = nti_schema.HTTPURL(title='Issuer URL logo', required=False)
@@ -61,7 +61,7 @@ class IAlignmentObject(interface.Interface):
 	description = nti_schema.ValidText(title="Short description of the standard",
                                        required=False)
 
-class IBadgeClass(ITaggedContent):
+class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass):
 	name = nti_schema.ValidTextLine(title="The name of the achievement")
 
 	description = nti_schema.ValidText(title="A short description of the achievement")
@@ -80,7 +80,7 @@ class IBadgeClass(ITaggedContent):
                                        required=False,
                                        min_length=0)
 
-class IBadgeAssertion(IBadgeAssertion):
+class IBadgeAssertion(badge_interfaces.IBadgeAssertion):
 	uid = nti_schema.ValidTextLine(title=" Unique Identifier for the badge")
 
 	recipient = nti_schema.Object(IIdentityObject,

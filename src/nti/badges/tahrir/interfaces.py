@@ -25,7 +25,7 @@ class IIssuer(ITahrirModel, badge_interfaces.IBadgeIssuer):
 	contact = nti_schema.ValidTextLine(title=" Issuer contact")
 	created_on =  nti_schema.ValidDatetime(title="Created time")
 
-class IBadge(ITahrirModel):
+class IBadge(ITahrirModel, badge_interfaces.IBadgeClass):
 	name = nti_schema.ValidTextLine(title="Badge name")
 
 	image = nti_schema.Variant((

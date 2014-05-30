@@ -37,6 +37,11 @@ class IBadgeAssertion(interface.Interface):
 	marker interface for all badge assertion
 	"""
 
+class IBadgeClass(interface.Interface):
+	"""
+	marker interface for all badges
+	"""
+
 class INTIIssuer(IBadgeIssuer):
 	name = nti_schema.ValidTextLine(title='Issuer name')
 
@@ -54,7 +59,7 @@ class INTIIssuer(IBadgeIssuer):
 
 	createdTime = nti_schema.Float(title='creation time', required=False)
 
-class INTIBadge(ITaggedContent):
+class INTIBadge(ITaggedContent, IBadgeClass):
 	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer", required=False)
 
 	name = nti_schema.ValidTextLine(title="Badge name")
