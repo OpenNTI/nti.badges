@@ -17,7 +17,11 @@ logger = __import__('logging').getLogger(__name__)
 from PIL import Image
 from PIL import PngImagePlugin
 
-def get_baked_url(source):
+from itsdangerous import JSONWebSignatureSerializer
+
+from . import DEFAULT_SECRET
+
+def get_baked_data(source):
 	"""
 	Return the assertion URL contained in the given baked PNG. If
 	the image isn't baked, return None.
@@ -31,7 +35,7 @@ def get_baked_url(source):
 	result = meta.get('openbadges')
 	return result
 
-def bake_badge(source, target, url):
+def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
 	"""
 	Bake the given PNG file with the given assertion URL. The source and
 	destination can be filenames or file objects.
@@ -40,8 +44,20 @@ def bake_badge(source, target, url):
 
 		>>> bake_badge('unbaked.png', 'baked.png', 'http://f.org/a.json')
 	"""
+	if url and payload:
+		raise ValueError("must specify either an URL or payload")
+
+	if payload and not secret:
+		raise ValueError("must specify a valid JWS secret")
+	
+	data = url
+	if payload:
+		# “itsdangerous” only provides HMAC SHA derivatives and the none algorithm
+		# at the moment and does not support the ECC based ones.
+		jws = JSONWebSignatureSerializer(secret)
+		data = jws.dumps(payload)
 
 	source = Image.open(source)
 	meta = PngImagePlugin.PngInfo()
-	meta.add_text("openbadges", url)
+	meta.add_text("openbadges", data)
 	source.save(target, "png", pnginfo=meta)

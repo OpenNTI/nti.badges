@@ -24,7 +24,7 @@ from nti.badges.openbadges.utils.badgebakery import bake_badge
 
 from nti.badges.tests import NTIBadgesTestCase
 
-class TestBadgeBakery(NTIBadgesTestCase):
+class TestScanner(NTIBadgesTestCase):
 
 	def test_scan(self):
 		img_dir = tempfile.mkdtemp(dir="/tmp")
@@ -46,7 +46,7 @@ class TestBadgeBakery(NTIBadgesTestCase):
 			# bake image
 			ichigo_png = os.path.join(os.path.dirname(__file__), 'ichigo.png')
 			out_ichigo = os.path.join(img_dir, 'ichigo.png')
-			bake_badge(ichigo_png, out_ichigo, 'file://' + os.path.join(img_dir, 'badge.json'))
+			bake_badge(ichigo_png, out_ichigo, url='file://' + os.path.join(img_dir, 'badge.json'))
 
 			results = flat_scan(img_dir, True)
 			assert_that(results, has_length(1))
@@ -54,4 +54,5 @@ class TestBadgeBakery(NTIBadgesTestCase):
 			assert_that(interfaces.IBadgeClass.providedBy(results[0][0]), is_(True))
 			assert_that(interfaces.IIssuerOrganization.providedBy(results[0][1]), is_(True))
 		finally:
-			shutil.rmtree(img_dir)
+			pass
+			# shutil.rmtree(img_dir)

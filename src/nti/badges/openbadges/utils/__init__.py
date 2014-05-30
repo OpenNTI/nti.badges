@@ -16,10 +16,15 @@ from dateutil.parser import parse
 
 import simplejson
 
+from itsdangerous import BadSignature
+from itsdangerous import JSONWebSignatureSerializer
+
 from nti.utils.maps import CaseInsensitiveDict
 
 from .. import model
 from .. import navstr
+
+DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 
 def _datetime(s):
     if isinstance(s, basestring):
@@ -32,7 +37,20 @@ def _unicode(s):
     s.decode("utf-8") if isinstance(s, bytes) else s
     return unicode(s) if s is not None else None
 
-def process_json_source(source, encoding):
+def load_data(source, encoding='UTF-8', secret=DEFAULT_SECRET):
+    try:
+        result = simplejson.loads(source, encoding=encoding)
+    except simplejson.JSONDecodeError:
+        jws = JSONWebSignatureSerializer(secret)
+        try:
+            result = jws.loads(source)
+        except BadSignature:
+            raise ValueError("Bad source signature")
+        except:
+            raise ValueError("Cannot load source data")
+    return result
+
+def process_json_source(source, **kwargs):
     if hasattr(source, "read"):
         source = source.read()
     if isinstance(source, six.string_types):
@@ -45,16 +63,18 @@ def process_json_source(source, encoding):
             response = urllib.urlopen(source)
             source = response.read()
         # ready to parse
-        source = simplejson.loads(source, encoding=encoding)
+        encoding = kwargs.get('encoding', 'UTF-8')
+        secret = kwargs.get('secret', DEFAULT_SECRET)
+        source = load_data(source, encoding=encoding, secret=secret)
     return source
 
-def json_source_to_map(source, encoding):
-    source = process_json_source(source, encoding)
+def json_source_to_map(source, **kwargs):
+    source = process_json_source(source, **kwargs)
     assert isinstance(source, Mapping)
     return CaseInsensitiveDict(source)
 
-def issuer_from_source(source, encoding=None):
-    data = json_source_to_map(source, encoding)
+def issuer_from_source(source, **kwargs):
+    data = json_source_to_map(source, **kwargs)
     result = model.IssuerOrganization()
     for field, func in (('name', _unicode), ('image', navstr), ('url', navstr),
                         ('email', _unicode), ('revocationList', navstr)):
@@ -63,8 +83,8 @@ def issuer_from_source(source, encoding=None):
         setattr(result, field, value)
     return result
 
-def badge_from_source(source, encoding=None):
-    data = json_source_to_map(source, encoding)
+def badge_from_source(source, **kwargs):
+    data = json_source_to_map(source, **kwargs)
     result = model.BadgeClass()
 
     # parse common single value fields
@@ -89,8 +109,8 @@ def badge_from_source(source, encoding=None):
 
     return result
 
-def assertion_from_source(source, encoding=None):
-    data = json_source_to_map(source, encoding)
+def assertion_from_source(source, **kwargs):
+    data = json_source_to_map(source, **kwargs)
     result = model.BadgeAssertion()
 
     # parse common single value fields
