@@ -140,7 +140,8 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 							   hashed=(True if salt else False),
 							   type=open_interfaces.ID_TYPE_EMAIL)
 	# assertion
-	result = BadgeAssertion(uid=assertion.id or badge.name,
+	aid = assertion.id or u"%s -> %s" % (badge.name, assertion.person.email)
+	result = BadgeAssertion(uid=aid,
 							verify=verify,
 							recipient=recipient,
 							image=navstr(badge.image),

@@ -117,7 +117,7 @@ class TestAdapters(NTIBadgesTestCase):
 	def test_tahrir_assertion_to_mozilla_assertion(self):
 		assertion = self._tahrir_assertion()
 		ast = open_interfaces.IBadgeAssertion(assertion, None)
-		assert_that(ast, has_property('uid', is_('fossbox')))
+		assert_that(ast, has_property('uid', is_('fossbox -> foo@example.org')))
 		assert_that(ast, has_property('badge', has_property('name', 'fossbox')))
 		assert_that(ast, has_property('recipient', has_property('salt', 'a7425e')))
 		assert_that(ast, has_property('recipient', has_property('identity', 'QxLUF1bgIAdX')))
