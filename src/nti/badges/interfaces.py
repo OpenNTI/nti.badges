@@ -120,6 +120,11 @@ class IBadgeManager(interface.Interface):
 		return a person
 		"""
 
+	def badge_exists(badge):
+		"""
+		check if the specifed badge exists
+		"""
+
 	def add_badge(badge, issuer=None):
 		"""
 		add the specifed badge

@@ -96,6 +96,10 @@ class TahrirBadgeManager(object):
 						.filter(func.lower(Badge.name) == func.lower(name)).all()
 		return result[0] if result else None
 
+	def badge_exists(self, badge):
+		result = self._get_badge(badge)
+		return True if result is not None else False
+		
 	def get_badge(self, badge):
 		result = self._get_badge(badge)
 		return result
