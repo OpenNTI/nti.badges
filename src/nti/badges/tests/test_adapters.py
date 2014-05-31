@@ -335,3 +335,22 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(nti, has_property('criteria', 'http://foss.rit.edu/fossbox'))
 		assert_that(nti, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
 		assert_that(nti, has_property('description', u'Welcome to the FOSSBox. A member is you!'))
+
+	# misc
+
+	def test_string_to_tahrir_issuer(self):
+		issuer = tahrir_interfaces.IIssuer('FOSS@RIT', None)
+		assert_that(issuer, is_not(none()))
+		assert_that(issuer, has_property('name', 'FOSS@RIT'))
+
+	def test_collection_to_tahrir_issuer(self):
+		data = ('FOSS@RIT', 'http://foss.rit.edu/foss.json')
+		issuer = tahrir_interfaces.IIssuer(data, None)
+		assert_that(issuer, is_not(none()))
+		assert_that(issuer, has_property('name', 'FOSS@RIT'))
+		assert_that(issuer, has_property('origin', 'http://foss.rit.edu/foss.json'))
+
+		issuer = tahrir_interfaces.IIssuer(list(data), None)
+		assert_that(issuer, is_not(none()))
+		assert_that(issuer, has_property('name', 'FOSS@RIT'))
+		assert_that(issuer, has_property('origin', 'http://foss.rit.edu/foss.json'))

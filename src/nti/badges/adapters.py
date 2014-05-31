@@ -72,6 +72,19 @@ def basestring_to_tahrir_badge(source):
 	result.name = source
 	return result
 
+@interface.implementer(tahrir_interfaces.IIssuer)
+def basestring_to_tahrir_issuer(source):
+	result = Issuer()
+	result.name = source
+	return result
+
+@interface.implementer(tahrir_interfaces.IIssuer)
+def collection_to_tahrir_issuer(lst):
+	result = Issuer()
+	result.name = lst[0]
+	result.origin = lst[1] if len(lst) > 1 else None
+	return result
+
 # tahrir->
 
 @component.adapter(tahrir_interfaces.IIssuer)

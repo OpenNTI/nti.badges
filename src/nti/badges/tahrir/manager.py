@@ -25,10 +25,10 @@ from tahrir_api.model import DeclarativeBase as tahrir_base
 
 from nti.utils.property import Lazy
 
-from . import interfaces
 from .dbapi import NTITahrirDatabase
+
+from . import interfaces
 from .. import interfaces as badge_interfaces
-from ..openbadges import interfaces as open_interfaces
 
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
@@ -211,17 +211,9 @@ class TahrirBadgeManager(object):
 	# Issuers
 
 	def _issuer_tuple(self, issuer, origin=None):
-		if badge_interfaces.INTIIssuer.providedBy(issuer):
-			name = issuer.name
-			origin = origin or issuer.origin
-		elif open_interfaces.IIssuerOrganization.providedBy(issuer):
-			name = issuer.name
-			origin = origin or issuer.url
-		elif interfaces.IIssuer.providedBy(issuer):
-			name = issuer.name
-			origin = origin or issuer.origin
-		else:
-			name = issuer
+		issuer = interfaces.IIssuer(issuer)
+		name = issuer.name
+		origin = origin or issuer.origin
 		return (name, origin)
 	
 	def _get_issuer(self, issuer, origin=None):
@@ -231,6 +223,10 @@ class TahrirBadgeManager(object):
 						 	.filter_by(name=name, origin=origin).one()
 			return result
 		return None
+
+	def issuer_exists(self, issuer, origin=None):
+		result = self._get_issuer(issuer, origin)
+		return True if result is not None else False
 
 	def get_issuer(self, issuer, origin=None):
 		result = self._get_issuer(issuer, origin)
