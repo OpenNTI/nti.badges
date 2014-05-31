@@ -15,6 +15,7 @@ import persistent
 
 from nti.externalization.externalization import make_repr
 
+from nti.utils.property import alias
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
@@ -106,6 +107,10 @@ class IssuerOrganization(SchemaConfigured, persistent.Persistent, contained.Cont
     __external_can_create__ = True
     __external_class_name__ = "Issuer"
     mime_type = mimeType = 'application/vnd.nextthought.openbadges.issuer'
+
+    origin = alias('url')
+    contact = alias('email')
+    issued_on = alias('issuedOn')
 
     def __init__(self, *args, **kwargs):
         persistent.Persistent.__init__(self)

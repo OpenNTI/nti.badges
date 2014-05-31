@@ -73,7 +73,10 @@ class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass)
 
 	criteria = nti_schema.HTTPURL(title='URL of the criteria for earning the achievement')
 
-	issuer = nti_schema.HTTPURL(title='URL of the organization that issued the badge')
+	issuer = nti_schema.Variant((
+					nti_schema.HTTPURL(title='URL of the organization that issued the badge'),
+					nti_schema.Object(IIssuerOrganization, title="Issuer object")),
+					title="Image representing the achievement")
 
 	alignment = nti_schema.ListOrTuple(value_type=nti_schema.Object(IAlignmentObject),
                                        title="Objects describing which educational standards",

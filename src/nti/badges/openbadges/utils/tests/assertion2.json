@@ -1,0 +1,24 @@
+{
+	"uid": "2ad89",
+	"recipient": "sha256$2ad891a61112bb953171416acc9cfe2484d59a45a3ed574a1ca93b47d07629fe",
+	"salt": "hashbrowns",
+ 	"evidence": "http://p2pu.org/badges/html5-basic/bimmy",
+ 	"expires": "2013-06-01",
+ 	"issuedOn": "2011-06-01",
+	"badge": {
+ 		"name": "HTML5 Fundamental",
+ 		"image": "http://p2pu.org/img/html5-basic.png",
+ 		"description": "Knows the difference between a <section> and an <article>",
+		"criteria": "http://p2pu.org/badges/html5-basic",
+		"issuer": {
+			"url": "http://p2pu.org",
+			"name": "P2PU",
+			"email": "admin@p2pu.org",
+			"description": "School of Webcraft"
+ 		}
+	},
+	"verify": {
+		"type": "hosted",
+		"url": "http://p2pu.org/html5-basic-badge.json"
+	}
+}

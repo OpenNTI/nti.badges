@@ -84,3 +84,42 @@ class TestUtils(NTIBadgesTestCase):
 		verify = assertion.verify
 		assert_that(verify, has_property('type', is_('hosted')))
 		assert_that(verify, has_property('url', is_("https://example.org/beths-robotics-badge.json")))
+
+	def test_assertion2_from_json(self):
+		path = os.path.join(os.path.dirname(__file__), 'assertion2.json')
+		with open(path, "rb") as fp:
+			assertion = assertion_from_source(fp)
+
+		assert_that(assertion, is_not(none()))
+		assert_that(assertion, verifiably_provides(interfaces.IBadgeAssertion))
+		assert_that(assertion, has_property('uid', is_('2ad89')))
+		assert_that(assertion, has_property('image', is_(none())))
+		assert_that(assertion, has_property('evidence', is_("http://p2pu.org/badges/html5-basic/bimmy")))
+		assert_that(assertion, has_property('expires', is_not(none())))
+		assert_that(assertion, has_property('issuedOn', is_not(none())))
+		assert_that(assertion, has_property('badge', is_not(none())))
+		assert_that(assertion, has_property('verify', is_not(none())))
+		assert_that(assertion, has_property('recipient', is_not(none())))
+		
+		badge = assertion.badge
+		assert_that(badge, has_property('issuer', is_not(none())))
+		assert_that(badge, has_property('name', is_('HTML5 Fundamental')))
+		assert_that(badge, has_property('image', is_("http://p2pu.org/img/html5-basic.png")))
+		assert_that(badge, has_property('description', is_('Knows the difference between a <section> and an <article>')))
+		assert_that(badge, has_property('criteria', is_("http://p2pu.org/badges/html5-basic")))
+
+		issuer = assertion.badge.issuer
+		assert_that(issuer, has_property('url', is_('http://p2pu.org')))
+		assert_that(issuer, has_property('name', is_('P2PU')))
+		assert_that(issuer, has_property('email', is_("admin@p2pu.org")))
+		assert_that(issuer, has_property('description', is_("School of Webcraft")))
+		
+		recipient = assertion.recipient
+		assert_that(recipient, has_property('type', is_('email')))
+		assert_that(recipient, has_property('hashed', is_(True)))
+		assert_that(recipient, has_property('salt', is_('hashbrowns')))
+		assert_that(recipient, has_property('identity', is_("sha256$2ad891a61112bb953171416acc9cfe2484d59a45a3ed574a1ca93b47d07629fe")))
+
+		verify = assertion.verify
+		assert_that(verify, has_property('type', is_('hosted')))
+		assert_that(verify, has_property('url', is_("http://p2pu.org/html5-basic-badge.json")))

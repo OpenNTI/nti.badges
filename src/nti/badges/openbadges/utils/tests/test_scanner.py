@@ -7,7 +7,6 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -21,6 +20,8 @@ import simplejson
 from nti.badges.openbadges import interfaces
 from nti.badges.openbadges.utils.scanner import flat_scan
 from nti.badges.openbadges.utils.badgebakery import bake_badge
+
+from nti.testing.matchers import verifiably_provides
 
 from nti.badges.tests import NTIBadgesTestCase
 
@@ -51,8 +52,11 @@ class TestScanner(NTIBadgesTestCase):
 			results = flat_scan(img_dir, True)
 			assert_that(results, has_length(1))
 			assert_that(results[0], has_length(2))
-			assert_that(interfaces.IBadgeClass.providedBy(results[0][0]), is_(True))
-			assert_that(interfaces.IIssuerOrganization.providedBy(results[0][1]), is_(True))
+
+			badge = results[0][0]
+			assert_that(badge, verifiably_provides(interfaces.IBadgeClass))
+
+			issuer = results[0][1]
+			assert_that(issuer, verifiably_provides(interfaces.IIssuerOrganization))
 		finally:
-			pass
-			# shutil.rmtree(img_dir)
+			shutil.rmtree(img_dir)
