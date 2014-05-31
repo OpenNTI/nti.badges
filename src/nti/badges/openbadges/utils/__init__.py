@@ -63,8 +63,8 @@ def process_json_source(source, **kwargs):
             response = urllib.urlopen(source)
             source = response.read()
         # ready to parse
-        encoding = kwargs.get('encoding', 'UTF-8')
-        secret = kwargs.get('secret', DEFAULT_SECRET)
+        encoding = kwargs.get('encoding') or 'UTF-8'
+        secret = kwargs.get('secret') or DEFAULT_SECRET
         source = load_data(source, encoding=encoding, secret=secret)
     return source
 
