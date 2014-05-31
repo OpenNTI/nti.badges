@@ -8,7 +8,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import uuid
+import base64
 import hashlib
 from datetime import datetime
 
@@ -17,14 +17,22 @@ from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
 
 def salt_default():
-	return unicode(uuid.uuid4())
+	return u'23597b11-857a-447f-8129-66b5397b0c7f'
 
 class NTITahrirDatabase(TahrirDatabase):
+
+	def __init__(self, salt=None, *args, **kwargs):
+		super(NTITahrirDatabase, self).__init__(*args, **kwargs)
+		self.salt = salt or salt_default()
 	
-	salt = salt_default()
+	def assertion_id(self, person_id, badge_id):
+		result = "%s -> %r" % (badge_id, person_id)
+		result = base64.urlsafe_b64encode(result)
+		return unicode(result)
 
 	def recipient(self, email):
-		return unicode(hashlib.sha256(email + self.salt).hexdigest())
+		hexdigest = unicode(hashlib.sha256(email + self.salt).hexdigest())
+		return u"sha256$" + hexdigest
 
 	@autocommit
 	def add_assertion(self,
@@ -59,7 +67,9 @@ class NTITahrirDatabase(TahrirDatabase):
 			person = self.get_person(person_email)
 			old_rank = person.rank
 
-			new_assertion = Assertion(badge_id=badge_id,
+			aid = self.assertion_id(person.id, badge_id)
+			new_assertion = Assertion(id=aid,
+									  badge_id=badge_id,
 									  person_id=person.id,
 									  issued_on=issued_on,
 									  issued_for=issued_for,

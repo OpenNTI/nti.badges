@@ -33,7 +33,8 @@ from .. import interfaces as badge_interfaces
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
-	def __init__(self, dburi, twophase=False, autocommit=True):
+	def __init__(self, dburi, twophase=False, autocommit=True, salt=None):
+		self.salt = salt
 		self.dburi = dburi
 		self.twophase = twophase
 		self.autocommit = autocommit
@@ -57,7 +58,9 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def db(self):
-		result = NTITahrirDatabase(session=self.session, autocommit=self.autocommit)
+		result = NTITahrirDatabase(session=self.session,
+								   autocommit=self.autocommit,
+							 	   salt=self.salt)
 		self.session.configure(bind=self.engine)
 		metadata = getattr(tahrir_base, 'metadata')
 		metadata.create_all(self.engine, checkfirst=True)
@@ -244,13 +247,17 @@ class TahrirBadgeManager(object):
 									contact=issuer.contact)
 		return result
 
-def create_badge_manager(dburi=None, twophase=False, defaultSQLite=False, autocommit=False):
+def create_badge_manager(dburi=None, twophase=False, salt=None, defaultSQLite=False,
+						 autocommit=False):
 	if defaultSQLite:
 		data_dir = os.getenv('DATASERVER_DATA_DIR') or '/tmp'
 		data_dir = os.path.expanduser(data_dir)
 		data_file = os.path.join(data_dir, 'tahrir.db')
 		dburi = "sqlite:///%s" % data_file
-	result = TahrirBadgeManager(dburi, twophase, autocommit)
+	result = TahrirBadgeManager(dburi=dburi,
+								salt=salt,
+								twophase=twophase,
+								autocommit=autocommit)
 	return result
 
 def create_issuer(name, origin, org, contact):

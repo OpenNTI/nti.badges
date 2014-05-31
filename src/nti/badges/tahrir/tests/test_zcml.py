@@ -31,7 +31,7 @@ ZCML_STRING = """
 	<include package="z3c.baseregistry" file="meta.zcml" />
 	<include package="." file="meta.zcml" />
 
-	<tdb:registerTahrirDB defaultSQLite="True" />
+	<tdb:registerTahrirDB defaultSQLite="True" salt="ichigo" />
 
 	<tdb:registerTahrirIssuer
 				id="NTI"
@@ -58,3 +58,4 @@ class TestZcml(nti.testing.base.ConfiguringTestBase):
 		assert_that(manager, is_not(none()))
 		assert_that(manager, has_property('autocommit', is_(False)))
 		assert_that(manager, has_property('dburi', is_not(none())))
+		assert_that(manager, has_property('salt', is_('ichigo')))

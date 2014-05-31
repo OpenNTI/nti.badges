@@ -26,11 +26,12 @@ class IRegisterTahrirDB(interface.Interface):
 	"""
 	name = fields.TextLine(title="db name identifier (site)", required=False, default="")
 	dburi = fields.TextLine(title="db dburi", required=False)
+	salt = fields.TextLine(title='assertion salt', required=False)
 	twophase = fields.Bool(title='two phase commit protocol', required=False, default=False)
 	defaultSQLite = fields.Bool(title='default to SQLLite', required=False, default=False)
 
-def registerTahrirDB(_context, dburi=None, twophase=False, defaultSQLite=False,
-					autocommit=False, name=u""):
+def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
+					defaultSQLite=False, autocommit=False, name=u""):
 	"""
 	Register an db
 	"""
@@ -40,6 +41,7 @@ def registerTahrirDB(_context, dburi=None, twophase=False, defaultSQLite=False,
 
 	factory = functools.partial(create_badge_manager,
 								dburi=dburi,
+								salt=salt,
 								twophase=twophase,
 								defaultSQLite=defaultSQLite,
 								autocommit=autocommit)
