@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import ConfigParser
 
 from zope import interface
 
@@ -248,12 +249,27 @@ class TahrirBadgeManager(object):
 		return result
 
 def create_badge_manager(dburi=None, twophase=False, salt=None, defaultSQLite=False,
-						 autocommit=False):
+						 autocommit=False, config=None):
 	if defaultSQLite:
 		data_dir = os.getenv('DATASERVER_DATA_DIR') or '/tmp'
 		data_dir = os.path.expanduser(data_dir)
 		data_file = os.path.join(data_dir, 'tahrir.db')
 		dburi = "sqlite:///%s" % data_file
+	elif config:  # if config file is specified
+		data_dir = os.getenv('DATASERVER_DIR') or '/tmp'
+		etc_dir = os.getenv('DATASERVER_ETC_DIR') or os.path.join(data_dir, 'etc')
+		config_name = config.replace("$DATASERVER_DIR", data_dir)
+		config_name = config_name.replace('$DATASERVER_ETC_DIR', etc_dir)
+		with open(config_name, "r") as fp:
+			parser = ConfigParser.ConfigParser()
+			parser.readfp(fp)
+			if parser.has_option('tahrir', 'salt'):
+				salt = parser.get('tahrir', 'salt')
+			if parser.has_option('tahrir', 'dburi'):
+				dburi = parser.get('tahrir', 'dburi')
+			if parser.has_option('tahrir', 'twophase'):
+				twophase = parser.getboolean('tahrir', 'twophase')
+
 	result = TahrirBadgeManager(dburi=dburi,
 								salt=salt,
 								twophase=twophase,

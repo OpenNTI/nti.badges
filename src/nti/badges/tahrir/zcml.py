@@ -29,9 +29,10 @@ class IRegisterTahrirDB(interface.Interface):
 	salt = fields.TextLine(title='assertion salt', required=False)
 	twophase = fields.Bool(title='two phase commit protocol', required=False, default=False)
 	defaultSQLite = fields.Bool(title='default to SQLLite', required=False, default=False)
+	config = fields.TextLine(title='path to a config file', required=False)
 
 def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
-					defaultSQLite=False, autocommit=False, name=u""):
+					 defaultSQLite=False, autocommit=False, config=None, name=u""):
 	"""
 	Register an db
 	"""
@@ -44,7 +45,8 @@ def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
 								salt=salt,
 								twophase=twophase,
 								defaultSQLite=defaultSQLite,
-								autocommit=autocommit)
+								autocommit=autocommit,
+								config=config)
 	utility(_context, provides=interfaces.ITahrirBadgeManager,
 			factory=factory, name=name)
 
