@@ -260,15 +260,15 @@ def create_badge_manager(dburi=None, twophase=False, salt=None, defaultSQLite=Fa
 		etc_dir = os.getenv('DATASERVER_ETC_DIR') or os.path.join(data_dir, 'etc')
 		config_name = config.replace("$DATASERVER_DIR", data_dir)
 		config_name = config_name.replace('$DATASERVER_ETC_DIR', etc_dir)
-		with open(config_name, "r") as fp:
-			parser = ConfigParser.ConfigParser()
-			parser.readfp(fp)
-			if parser.has_option('tahrir', 'salt'):
-				salt = parser.get('tahrir', 'salt')
-			if parser.has_option('tahrir', 'dburi'):
-				dburi = parser.get('tahrir', 'dburi')
-			if parser.has_option('tahrir', 'twophase'):
-				twophase = parser.getboolean('tahrir', 'twophase')
+		# read and set params
+		parser = ConfigParser.ConfigParser()
+		parser.read([config_name])
+		if parser.has_option('tahrir', 'salt'):
+			salt = parser.get('tahrir', 'salt')
+		if parser.has_option('tahrir', 'dburi'):
+			dburi = parser.get('tahrir', 'dburi')
+		if parser.has_option('tahrir', 'twophase'):
+			twophase = parser.getboolean('tahrir', 'twophase')
 
 	result = TahrirBadgeManager(dburi=dburi,
 								salt=salt,
