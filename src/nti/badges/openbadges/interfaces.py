@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 from zope import interface
 from zope.schema import vocabulary
 
-from nti.utils import schema as nti_schema
-
 from nti.utils.schema import ValidTextLine
 from nti.utils.schema import ValidText
 TextLine = ValidTextLine
