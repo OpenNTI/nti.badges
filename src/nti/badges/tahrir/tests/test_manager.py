@@ -15,6 +15,10 @@ from hamcrest import assert_that
 from hamcrest import has_property
 does_not = is_not
 
+import os
+import shutil
+import tempfile
+import ConfigParser
 from datetime import datetime
 
 from zope import component
@@ -112,3 +116,23 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		assert_that(assertions, has_length(1))
 		
 		assert_that(manager.delete_person(pid), is_('foo@example.org'))
+
+	def test_config(self):
+		tmp_dir = tempfile.mkdtemp(dir="/tmp")
+		try:
+			config = ConfigParser.RawConfigParser()
+			config.add_section('tahrir')
+			config.set('tahrir', 'dburi', 'mysql://Users:Users@myhost/Tahrir')
+			config.set('tahrir', 'twophase', 'True')
+			config.set('tahrir', 'salt', 'ichigo')
+
+			config_file = os.path.join(tmp_dir, 'sample.cfg')
+			with open(config_file, 'wb') as configfile:
+				config.write(configfile)
+
+			manager = create_badge_manager(config=config_file)
+			assert_that(manager, has_property('salt', 'ichigo'))
+			assert_that(manager, has_property('twophase', is_(True)))
+			assert_that(manager, has_property('dburi', 'mysql://Users:Users@myhost/Tahrir'))
+		finally:
+			shutil.rmtree(tmp_dir, True)
