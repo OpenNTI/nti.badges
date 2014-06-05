@@ -111,7 +111,8 @@ def badge_from_source(source, **kwargs):
 					if isinstance(issuer, Mapping) else str(issuer)
 
 	# tags
-	result.tags = type(result).__dict__['tags'].bind(result).fromObject( data.get('tags', ()) )
+	tags = [_unicode(x) for x in data.get('tags', ())]
+	result.tags = type(result).__dict__['tags'].bind(result).fromObject(tags)
 
 	# alignment objects
 	result.alignment = alignment = []
