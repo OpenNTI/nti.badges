@@ -37,7 +37,7 @@ def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
 	Register an db
 	"""
 
-	if not dburi and not defaultSQLite:
+	if not dburi and not defaultSQLite and not config:
 		raise ValueError("must specified valid database uri")
 
 	factory = functools.partial(create_badge_manager,
