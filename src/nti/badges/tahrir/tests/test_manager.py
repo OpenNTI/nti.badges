@@ -13,6 +13,7 @@ from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
+from hamcrest import contains
 does_not = is_not
 
 import os
@@ -22,6 +23,9 @@ import ConfigParser
 from datetime import datetime
 
 from zope import component
+from zope.component import eventtesting
+from zope.lifecycleevent import ObjectCreatedEvent
+from zope.lifecycleevent import ObjectAddedEvent
 
 from tahrir_api.model import Badge, Person, Issuer
 
@@ -37,7 +41,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 	def test_registration(self):
 		manager = component.queryUtility(interfaces.ITahrirBadgeManager)
 		assert_that(manager, is_not(none()))
-		
+
 	@WithMockDSTrans
 	def test_fossboxbadge(self):
 		manager = create_badge_manager(dburi="sqlite://")
@@ -51,7 +55,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		badge = manager.db.add_badge(name=u'fossbox',
 									 image=u'http://foss.rit.edu/files/fossboxbadge.png',
 									 desc=u'Welcome to the FOSSBox. A member is you!',
-									 criteria=u'http://foss.rit.edu', 
+									 criteria=u'http://foss.rit.edu',
 									 issuer_id=issuer_id)
 		assert_that(badge, is_not(none()))
 
@@ -98,7 +102,17 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 
 		assert_that(manager.person_exists('foo@example.org'), is_(True))
 
+		eventtesting.clearEvents()
 		assert_that(manager.add_assertion('foo@example.org', 'fossbox'), is_not(False))
+
+		# Adding the assertion should have fired typical object created
+		# and added events
+		events = eventtesting.getEvents()
+		assert_that( events, has_length(2))
+		assert_that( events,
+					 contains( is_(ObjectCreatedEvent), is_(ObjectAddedEvent) ) )
+
+
 		assertion = manager.get_assertion('foo@example.org', 'fossbox')
 		assert_that(assertion, is_not(none()))
 		assert_that(manager.assertion_exists('foo@example.org', 'fossbox'), is_(True))
@@ -114,7 +128,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 
 		assertions = manager.get_person_assertions('foo@example.org')
 		assert_that(assertions, has_length(1))
-		
+
 		assert_that(manager.delete_person(pid), is_('foo@example.org'))
 
 	def test_config(self):

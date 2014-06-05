@@ -16,6 +16,8 @@ from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
 
+from zope import lifecycleevent
+
 def salt_default():
 	return u'23597b11-857a-447f-8129-66b5397b0c7f'
 
@@ -24,7 +26,7 @@ class NTITahrirDatabase(TahrirDatabase):
 	def __init__(self, salt=None, *args, **kwargs):
 		super(NTITahrirDatabase, self).__init__(*args, **kwargs)
 		self.salt = salt or salt_default()
-	
+
 	def assertion_id(self, person_id, badge_id):
 		result = "%s -> %r" % (badge_id, person_id)
 		result = base64.urlsafe_b64encode(result)
@@ -41,7 +43,16 @@ class NTITahrirDatabase(TahrirDatabase):
 					  issued_on=None,
 					  issued_for=None):
 		"""
-		Add an assertion (award a badge) to the database
+		Add an assertion (award a badge) to the database.
+
+		Lifecycle events are fired for the creation and addition
+		of the :class:`tahrir_api.model.Assertion` object. For the addition
+		event, the name and parent are synthetic and correspond to the
+		id and the person.
+
+		.. note:: This is currently not assured to be symmetrical; there is no
+			guarantee that any events are fired when the assertion is removed,
+			or the badge or person is removed.
 
 		:type badge_id: str
 		:param badge_id: ID of the badge to be issued
@@ -57,44 +68,50 @@ class NTITahrirDatabase(TahrirDatabase):
 		:param issued_for: An optional link back to the warranting event
 		"""
 
+		if (not self.person_exists(email=person_email)
+			or not self.badge_exists(badge_id)):
+			return False # TODO: Should probably be an empty tuple
+
+
 		if issued_on is None:
 			issued_on = datetime.utcnow()
 
-		if self.person_exists(email=person_email) and \
-		   self.badge_exists(badge_id):
+		badge = self.get_badge(badge_id)
+		person = self.get_person(person_email)
+		old_rank = person.rank
 
-			badge = self.get_badge(badge_id)
-			person = self.get_person(person_email)
-			old_rank = person.rank
+		aid = self.assertion_id(person.id, badge_id)
+		new_assertion = Assertion(id=aid,
+								  badge_id=badge_id,
+								  person_id=person.id,
+								  issued_on=issued_on,
+								  issued_for=issued_for,
+								  recipient=self.recipient(person_email))
+		new_assertion.salt = self.salt
 
-			aid = self.assertion_id(person.id, badge_id)
-			new_assertion = Assertion(id=aid,
-									  badge_id=badge_id,
-									  person_id=person.id,
-									  issued_on=issued_on,
-									  issued_for=issued_for,
-									  recipient=self.recipient(person_email))
-			new_assertion.salt = self.salt
-			self.session.add(new_assertion)
-			self.session.flush()
+		lifecycleevent.created(new_assertion)
 
-			if self.notification_callback:
-				self.notification_callback(
-					topic='badge.award',
-					msg=dict(
-						badge=dict(
-							name=badge.name,
-							description=badge.description,
-							image_url=badge.image,
-							badge_id=badge_id,
-						),
-						user=dict(
-							username=person.nickname,
-							badges_user_id=person.id,
-						)
+		self.session.add(new_assertion)
+		self.session.flush()
+
+		lifecycleevent.added(new_assertion, person, aid)
+
+		if self.notification_callback:
+			self.notification_callback(
+				topic='badge.award',
+				msg=dict(
+					badge=dict(
+						name=badge.name,
+						description=badge.description,
+						image_url=badge.image,
+						badge_id=badge_id,
+					),
+					user=dict(
+						username=person.nickname,
+						badges_user_id=person.id,
 					)
 				)
+			)
 
-			self._adjust_ranks(person, old_rank)
-			return (person_email, badge_id)
-		return False
+		self._adjust_ranks(person, old_rank)
+		return (person_email, badge_id)

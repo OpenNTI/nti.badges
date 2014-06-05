@@ -39,7 +39,7 @@ class IBadge(ITahrirModel, badge_interfaces.IBadgeClass):
 					nti_schema.ValidTextLine(title="Criteria URL"),
 					nti_schema.HTTPURL(title='Criteria URL')),
 					title="Badge criteria")
-	
+
 	issuer_id = nti_schema.Int(title='Issuer id')
 
 	created_on =  nti_schema.ValidDatetime(title="Created time")
@@ -91,4 +91,3 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""
 	Interface for Tahrir database managers
 	"""
-

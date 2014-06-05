@@ -103,11 +103,11 @@ class TahrirBadgeManager(object):
 	def badge_exists(self, badge):
 		result = self._get_badge(badge)
 		return True if result is not None else False
-		
+
 	def get_badge(self, badge):
 		result = self._get_badge(badge)
 		return result
-	
+
 	def get_all_badges(self):
 		result = []
 		for badge in self.db.get_all_badges():
@@ -170,7 +170,7 @@ class TahrirBadgeManager(object):
 			assertion.salt = self.db.salt  # Save salt
 			result.append(assertion)
 		return result
-	
+
 	def add_assertion(self, person, badge, issued_on=None):
 		badge = self._get_badge(badge)
 		person = self._get_person(person)
@@ -188,7 +188,7 @@ class TahrirBadgeManager(object):
 		return result
 
 	# Persons
-	
+
 	def _get_person(self, person=None, name=None):
 		email, name = self._person_tuple(person, name)
 		result = self.db.get_person(person_email=email, nickname=name)
@@ -223,7 +223,7 @@ class TahrirBadgeManager(object):
 		name = issuer.name
 		origin = origin or issuer.origin
 		return (name, origin)
-	
+
 	def _get_issuer(self, issuer, origin=None):
 		name, origin = self._issuer_tuple(issuer, origin)
 		if self.db.issuer_exists(name=name, origin=origin):
