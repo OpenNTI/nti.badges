@@ -14,6 +14,10 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import os
+import sys
+import argparse
+
 from PIL import Image
 from PIL import PngImagePlugin
 
@@ -61,3 +65,43 @@ def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
 	meta = PngImagePlugin.PngInfo()
 	meta.add_text("openbadges", data)
 	source.save(target, "png", pnginfo=meta)
+
+
+def process_args(args=None):
+	arg_parser = argparse.ArgumentParser(description="Baked a badge")
+	arg_parser.add_argument('source', help="The image to bake file path")
+	arg_parser.add_argument('target', help="The baked image file path")
+	arg_parser.add_argument('-s', '--secret',
+							 dest='secret',
+							 default=DEFAULT_SECRET,
+							 help="JSON web signature serializer secret")
+	site_group = arg_parser.add_mutually_exclusive_group()
+	site_group.add_argument('-u', '--url',
+							 dest='url',
+							 help="The badge URL")
+	site_group.add_argument('-p', '--payload',
+							 dest='payload',
+							 help="The badge payload")
+
+	args = arg_parser.parse_args(args=args)
+
+	source = os.path.expanduser(args.source)
+	if not os.path.exists(source) or not os.path.isfile(source):
+		print("Invalid image file", source, file=sys.stderr)
+		sys.exit(2)
+
+	url = args.url
+	payload = args.payload
+	if not url and not payload:
+		print("Must specify either an URL or JSON payload", file=sys.stderr)
+		sys.exit(2)
+
+	target = os.path.expanduser(args.target)
+	bake_badge(source, target, url=url, payload=payload, secret=args.secret)
+
+def main(args=None):
+	process_args(args)
+	sys.exit(0)
+
+if __name__ == '__main__':
+	main()
