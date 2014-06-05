@@ -17,6 +17,8 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import sys
 import argparse
+import simplejson
+import collections
 
 from PIL import Image
 from PIL import PngImagePlugin
@@ -81,7 +83,7 @@ def process_args(args=None):
 							 help="The badge URL")
 	site_group.add_argument('-p', '--payload',
 							 dest='payload',
-							 help="The badge payload")
+							 help="The badge payload json file")
 
 	args = arg_parser.parse_args(args=args)
 
@@ -95,6 +97,18 @@ def process_args(args=None):
 	if not url and not payload:
 		print("Must specify either an URL or JSON payload", file=sys.stderr)
 		sys.exit(2)
+
+	if payload:
+		if not os.path.exists(payload):
+			print("Payload file does not", payload, file=sys.stderr)
+			sys.exit(2)
+
+		with open(payload, "rb") as fp:
+			payload = simplejson.load(fp)
+
+		if not isinstance(payload, collections.Mapping):
+			print("Payload is not a json dictionary", payload, file=sys.stderr)
+			sys.exit(2)
 
 	target = os.path.expanduser(args.target)
 	bake_badge(source, target, url=url, payload=payload, secret=args.secret)
