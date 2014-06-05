@@ -39,14 +39,29 @@
 	<adapter factory=".wref.AssertionWeakRef" />
 
 	<!-- Database -->
+	<include package="." file="meta.zcml" />
 	<configure zcml:condition="have devmode">
-		<include package="." file="meta.zcml" />
-		<tdb:registerTahrirDB defaultSQLite="True" />
-		<tdb:registerTahrirIssuer
-					id="NTI"
-			 		name="NextThought"
-			 		org="http://www.nextthought.com"
-			 		contact="contact@nextthought.com"
-			 		origin="http://www.nextthought.com"/>
+		<configure zcml:condition="not-have testmode">
+			<tdb:registerTahrirDB defaultSQLite="True" />
+			<tdb:registerTahrirIssuer
+				id="NTI"
+			 	name="NextThought"
+			 	org="http://www.nextthought.com"
+			 	contact="contact@nextthought.com"
+			 	origin="http://www.nextthought.com"/>
+		</configure>
 	</configure>
+	<!-- In test mode, we want to use a non-persistent store -->
+	<configure zcml:condition="have devmode">
+		<configure zcml:condition="have testmode">
+			<tdb:registerTahrirDB dburi="sqlite://" />
+			<tdb:registerTahrirIssuer
+				id="NTI"
+			 	name="NextThought"
+			 	org="http://www.nextthought.com"
+			 	contact="contact@nextthought.com"
+			 	origin="http://www.nextthought.com"/>
+		</configure>
+	</configure>
+
 </configure>

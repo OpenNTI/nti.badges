@@ -34,7 +34,7 @@ from .. import interfaces as badge_interfaces
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
-	def __init__(self, dburi, twophase=False, autocommit=True, salt=None):
+	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
 		self.salt = salt
 		self.dburi = dburi
 		self.twophase = twophase
