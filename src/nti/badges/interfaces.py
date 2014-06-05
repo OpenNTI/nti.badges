@@ -8,6 +8,8 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
+# XXX: Note: These will move, pending a better separation
+# of the base utility packages.
 from nti.utils.schema import ValidTextLine
 from nti.utils.schema import ValidText
 TextLine = ValidTextLine
@@ -17,6 +19,9 @@ from nti.utils.schema import HTTPURL
 from nti.utils.schema import Number
 from nti.utils.schema import Object
 
+# XXX: Note: These are temporary, pending a better
+# separation of the base content model. This package
+# in general should avoid dependencies on `nti.dataserver`
 from nti.dataserver.interfaces import ICreatedTime
 from nti.dataserver.interfaces import IUserTaggedContent
 
