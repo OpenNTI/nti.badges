@@ -25,14 +25,14 @@ def get_baked_data(name):
 	except Exception as e:
 		logger.error("Could not get baked URL from '%s'; %s", name, e)
 
-def parse_badge(name, verify=False, **kwargs):
+def parse_badge(source, verify=False, **kwargs):
 	try:
-		badge = badge_from_source(name, **kwargs)
+		badge = badge_from_source(source, **kwargs)
 		if verify:
 			verifyObject(open_interfaces.IBadgeClass, badge)
 		return badge
 	except Exception as e:
-		logger.error("Could not parse badge from '%s'; %s", name, e)
+		logger.error("Could not parse badge data; %s", e)
 
 def parse_issuer(source, verify=False):
 	try:
@@ -53,7 +53,6 @@ def flat_scan(path, verify=False, **kwargs):
 		_, ext = os.path.splitext(name)
 		if ext.lower() != '.png' or not os.path.isfile(name):
 			continue
-		name = os.path.join(path, name)
 		baked_data = get_baked_data(name)
 		badge = parse_badge(baked_data, verify=verify, **kwargs) if baked_data else None
 		if badge is None:
