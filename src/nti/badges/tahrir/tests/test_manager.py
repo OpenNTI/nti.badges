@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import not_none
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
@@ -19,6 +20,7 @@ does_not = is_not
 import os
 import shutil
 import tempfile
+import pickle
 import ConfigParser
 from datetime import datetime
 
@@ -28,6 +30,8 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.lifecycleevent import ObjectAddedEvent
 
 from tahrir_api.model import Badge, Person, Issuer
+
+from nti.wref.interfaces import IWeakRef
 
 from nti.badges.tahrir import interfaces
 from nti.badges.tahrir.manager import create_badge_manager
@@ -41,10 +45,39 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 	def test_registration(self):
 		manager = component.queryUtility(interfaces.ITahrirBadgeManager)
 		assert_that(manager, is_not(none()))
+	def test_config(self):
+		tmp_dir = tempfile.mkdtemp(dir="/tmp")
+		try:
+			config = ConfigParser.RawConfigParser()
+			config.add_section('tahrir')
+			config.set('tahrir', 'dburi', 'mysql://Users:Users@myhost/Tahrir')
+			config.set('tahrir', 'twophase', 'True')
+			config.set('tahrir', 'salt', 'ichigo')
+
+			config_file = os.path.join(tmp_dir, 'sample.cfg')
+			with open(config_file, 'wb') as configfile:
+				config.write(configfile)
+
+			manager = create_badge_manager(config=config_file)
+			assert_that(manager, has_property('salt', 'ichigo'))
+			assert_that(manager, has_property('twophase', is_(True)))
+			assert_that(manager, has_property('dburi', 'mysql://Users:Users@myhost/Tahrir'))
+		finally:
+			shutil.rmtree(tmp_dir, True)
+
+class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
+
+	def setUp(self):
+		self.old = component.getUtility(interfaces.ITahrirBadgeManager)
+		self.new = create_badge_manager(dburi='sqlite://')
+		component.provideUtility(self.new)
+
+	def tearDown(self):
+		component.provideUtility(self.old)
 
 	@WithMockDSTrans
 	def test_fossboxbadge(self):
-		manager = create_badge_manager(dburi="sqlite://")
+		manager = self.new
 		assert_that(manager, is_not(none()))
 
 		issuer_id = manager.db.add_issuer(u'http://foss.rit.edu/badges',
@@ -61,7 +94,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 
 	@WithMockDSTrans
 	def test_operations(self):
-		manager = create_badge_manager(dburi="sqlite://")
+		manager = self.new
 
 		issuer = Issuer()
 		issuer.name = u'FOSS@RIT'
@@ -105,6 +138,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		eventtesting.clearEvents()
 		assert_that(manager.add_assertion('foo@example.org', 'fossbox'), is_not(False))
 
+		### Events
 		# Adding the assertion should have fired typical object created
 		# and added events
 		events = eventtesting.getEvents()
@@ -112,9 +146,22 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		assert_that( events,
 					 contains( is_(ObjectCreatedEvent), is_(ObjectAddedEvent) ) )
 
+		### WeakRefs
+		# we can get a weak ref to this assertion, and then get the same object
+		# back
+		wref = IWeakRef(events[0].object)
+		assert_that( wref, is_(wref))
+		assert_that( hash(wref), is_(hash(wref)))
+		assert_that( pickle.loads(pickle.dumps(wref)), is_(wref) )
+
+		assertion_from_wref = wref(allow_cached=False)
+		assert_that( assertion_from_wref, is_( not_none() ))
+		assert_that( assertion_from_wref, is_( events[0].object ))
+
 
 		assertion = manager.get_assertion('foo@example.org', 'fossbox')
-		assert_that(assertion, is_not(none()))
+		assert_that(assertion, is_(not_none() ) )
+		assert_that( assertion, is_( assertion_from_wref ))
 		assert_that(manager.assertion_exists('foo@example.org', 'fossbox'), is_(True))
 
 		badge = manager.get_badge('fossbox')
@@ -130,23 +177,3 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 		assert_that(assertions, has_length(1))
 
 		assert_that(manager.delete_person(pid), is_('foo@example.org'))
-
-	def test_config(self):
-		tmp_dir = tempfile.mkdtemp(dir="/tmp")
-		try:
-			config = ConfigParser.RawConfigParser()
-			config.add_section('tahrir')
-			config.set('tahrir', 'dburi', 'mysql://Users:Users@myhost/Tahrir')
-			config.set('tahrir', 'twophase', 'True')
-			config.set('tahrir', 'salt', 'ichigo')
-
-			config_file = os.path.join(tmp_dir, 'sample.cfg')
-			with open(config_file, 'wb') as configfile:
-				config.write(configfile)
-
-			manager = create_badge_manager(config=config_file)
-			assert_that(manager, has_property('salt', 'ichigo'))
-			assert_that(manager, has_property('twophase', is_(True)))
-			assert_that(manager, has_property('dburi', 'mysql://Users:Users@myhost/Tahrir'))
-		finally:
-			shutil.rmtree(tmp_dir, True)

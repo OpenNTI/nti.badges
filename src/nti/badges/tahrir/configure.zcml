@@ -35,8 +35,10 @@
 		<implements interface=".interfaces.IAssertion" />
 	</class>
 
-	<!-- Database -->
+	<!-- Weak refs -->
+	<adapter factory=".wref.AssertionWeakRef" />
 
+	<!-- Database -->
 	<configure zcml:condition="have devmode">
 		<include package="." file="meta.zcml" />
 		<tdb:registerTahrirDB defaultSQLite="True" />
