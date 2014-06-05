@@ -22,7 +22,6 @@ from itsdangerous import JSONWebSignatureSerializer
 from nti.utils.maps import CaseInsensitiveDict
 
 from .. import model
-from .. import navstr
 from .. import interfaces
 
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
@@ -35,10 +34,16 @@ def _datetime(s):
 	return result
 
 def _unicode(s):
-	s.decode("utf-8") if isinstance(s, bytes) else s
+	s = s.decode("utf-8") if isinstance(s, bytes) else s
 	return unicode(s) if s is not None else None
 
 def load_data(source, encoding='UTF-8', secret=DEFAULT_SECRET):
+	# We must decode the source ourself, to be a unicode
+	# string; otherwise, simplejson may return us a dictionary
+	# with byte objects in it, which is clearly wrong
+	if isinstance(source, bytes):
+		source = source.decode(encoding)
+
 	try:
 		result = simplejson.loads(source, encoding=encoding)
 	except simplejson.JSONDecodeError:
@@ -77,8 +82,8 @@ def json_source_to_map(source, **kwargs):
 def issuer_from_source(source, **kwargs):
 	data = json_source_to_map(source, **kwargs)
 	result = model.IssuerOrganization()
-	for field, func in (('name', _unicode), ('image', navstr), ('url', navstr),
-						('email', _unicode), ('revocationList', navstr),
+	for field, func in (('name', _unicode), ('image', str), ('url', str),
+						('email', _unicode), ('revocationList', str),
 						('description', _unicode)):
 		value = data.get(field)
 		value = func(value) if value else None
@@ -89,9 +94,13 @@ def badge_from_source(source, **kwargs):
 	data = json_source_to_map(source, **kwargs)
 	result = model.BadgeClass()
 
+	# XXX: This should really go through the standard
+	# nti.externalization process. As it is, we are clearly
+	# rolling our own validation and transformation logic.
+
 	# parse common single value fields
 	for field, func in (('name', _unicode), ('description', _unicode),
-						('criteria', navstr), ('image', navstr)):
+						('criteria', str), ('image', str)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
@@ -99,16 +108,16 @@ def badge_from_source(source, **kwargs):
 	# issuer
 	issuer = data['issuer']
 	result.issuer = issuer_from_source(issuer, **kwargs) \
-					if isinstance(issuer, Mapping) else navstr(issuer)
+					if isinstance(issuer, Mapping) else str(issuer)
 
 	# tags
-	result.tags = data.get('tags', ())
+	result.tags = type(result).__dict__['tags'].bind(result).fromObject( data.get('tags', ()) )
 
 	# alignment objects
 	result.alignment = alignment = []
 	for data in data.get('alignment', ()):
 		ao = model.AlignmentObject()
-		ao.url = navstr(data['url'])
+		ao.url = str(data['url'])
 		ao.name = _unicode(data['name'])
 		ao.description = _unicode(data.get('description'))
 		alignment.append(ao)
@@ -120,8 +129,8 @@ def assertion_from_source(source, **kwargs):
 	result = model.BadgeAssertion()
 
 	# parse common single value fields
-	for field, func in (('uid', _unicode), ('image', navstr), ('issuedOn', _datetime),
-						('evidence', navstr), ('expires', _datetime)):
+	for field, func in (('uid', _unicode), ('image', str), ('issuedOn', _datetime),
+						('evidence', str), ('expires', _datetime)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
@@ -129,8 +138,8 @@ def assertion_from_source(source, **kwargs):
 	# badge
 	badge = data['badge']
 	result.badge = badge_from_source(badge, **kwargs) \
-				   if isinstance(badge, Mapping) else navstr(badge)
-	
+				   if isinstance(badge, Mapping) else str(badge)
+
 	# recipient
 	recipient = data['recipient']
 	if not isinstance(recipient, Mapping):
@@ -149,6 +158,6 @@ def assertion_from_source(source, **kwargs):
 	# verify
 	verify = data['verify']
 	result.verify = model.VerificationObject(type=verify["type"],
-											 url=navstr(verify['url']))
+											 url=str(verify['url']))
 
 	return result

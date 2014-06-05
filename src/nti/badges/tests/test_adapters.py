@@ -12,6 +12,7 @@ from hamcrest import none
 from hamcrest import is_not
 from hamcrest import assert_that
 from hamcrest import has_property
+from hamcrest import contains
 does_not = is_not
 
 import time
@@ -41,38 +42,38 @@ class TestAdapters(NTIBadgesTestCase):
 
 	_time_now = time.time()
 	_datetime_now = datetime.now()
-	
+
 	# Tahrir
 
 	def _tahrir_person(self):
 		person = Person()
 		person.bio = 'I am foo'
 		person.nickname = 'foo'
-		person.email = u'foo@example.org'
+		person.email = 'foo@example.org'
 		person.created_on = self._datetime_now
 		return person
-	
+
 	def _tahrir_issuer(self):
 		issuer = Issuer()
-		issuer.name = u'FOSS@RIT'
-		issuer.contact = u'foss@rit.edu'
-		issuer.org = u'http://foss.rit.edu'
+		issuer.name = 'FOSS@RIT'
+		issuer.contact = 'foss@rit.ed'
+		issuer.org = 'http://foss.rit.ed'
 		issuer.created_on = self._datetime_now
-		issuer.origin = u'http://foss.rit.edu/foss.json'
+		issuer.origin = 'http://foss.rit.edu/foss.json'
 		return issuer
-	
+
 	def _tahrir_badge(self):
 		badge = Badge()
 		badge.tags = 'fox,box,'
-		badge.name = u'fossbox'
+		badge.name = 'fossbox'
 		badge.issuer = self._tahrir_issuer()
 		badge.created_on = self._datetime_now
-		badge.criteria = u'http://foss.rit.edu'
-		badge.image = u'http://foss.rit.edu/files/fossboxbadge.png'
-		badge.description = u'Welcome to the FOSSBox. A member is you!'
+		badge.criteria = 'http://foss.rit.ed'
+		badge.image = 'http://foss.rit.edu/files/fossboxbadge.png'
+		badge.description = 'Welcome to the FOSSBox. A member is you!'
 		return badge
 
-	def _tahrir_assertion(self):		
+	def _tahrir_assertion(self):
 		assertion = Assertion()
 		assertion.salt = 'a7425e'
 		assertion.recipient = 'QxLUF1bgIAdX'
@@ -80,7 +81,7 @@ class TestAdapters(NTIBadgesTestCase):
 		assertion.badge = self._tahrir_badge()
 		assertion.person = self._tahrir_person()
 		return assertion
-		
+
 	def test_tahrir_person_to_mozilla_identity_object(self):
 		person = self._tahrir_person()
 		iio = open_interfaces.IIdentityObject(person, None)
@@ -92,9 +93,9 @@ class TestAdapters(NTIBadgesTestCase):
 		nti = open_interfaces.IIssuerOrganization(issuer, None)
 		assert_that(nti, is_not(none()))
 		assert_that(nti, has_property('name', 'FOSS@RIT'))
-		assert_that(nti, has_property('email', 'foss@rit.edu'))
+		assert_that(nti, has_property('email', 'foss@rit.ed'))
 		assert_that(nti, has_property('url', 'http://foss.rit.edu/foss.json'))
-		assert_that(nti, has_property('description', 'http://foss.rit.edu'))
+		assert_that(nti, has_property('description', 'http://foss.rit.ed'))
 
 	def test_tahrir_issuer_to_mozilla_verification_object(self):
 		issuer = self._tahrir_issuer()
@@ -108,11 +109,11 @@ class TestAdapters(NTIBadgesTestCase):
 		bc = open_interfaces.IBadgeClass(badge, None)
 		assert_that(bc, is_not(none()))
 		assert_that(bc, has_property('name', 'fossbox'))
-		assert_that(bc, has_property('tags', is_((u'fox', u'box'))))
-		assert_that(bc, has_property('criteria', 'http://foss.rit.edu'))
+		assert_that(bc, has_property('tags', is_(('fox', 'box'))))
+		assert_that(bc, has_property('criteria', 'http://foss.rit.ed'))
 		assert_that(bc, has_property('issuer', 'http://foss.rit.edu/foss.json'))
 		assert_that(bc, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
-		assert_that(bc, has_property('description', u'Welcome to the FOSSBox. A member is you!'))
+		assert_that(bc, has_property('description', 'Welcome to the FOSSBox. A member is you!'))
 
 	def test_tahrir_assertion_to_mozilla_assertion(self):
 		assertion = self._tahrir_assertion()
@@ -123,7 +124,7 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(ast, has_property('recipient', has_property('identity', 'QxLUF1bgIAdX')))
 		assert_that(ast, has_property('image', is_('http://foss.rit.edu/files/fossboxbadge.png')))
 		assert_that(ast, has_property('verify', has_property('url', 'http://foss.rit.edu/foss.json')))
-		
+
 	def test_tahrir_person_to_ntiperson(self):
 		person = self._tahrir_person()
 		nti = badge_interfaces.INTIPerson(person, None)
@@ -137,9 +138,9 @@ class TestAdapters(NTIBadgesTestCase):
 		nti = badge_interfaces.INTIIssuer(issuer, None)
 		assert_that(nti, is_not(none()))
 		assert_that(nti, has_property('name', 'FOSS@RIT'))
-		assert_that(nti, has_property('email', 'foss@rit.edu'))
+		assert_that(nti, has_property('email', 'foss@rit.ed'))
 		assert_that(nti, has_property('createdTime', is_not(none())))
-		assert_that(nti, has_property('organization', 'http://foss.rit.edu'))
+		assert_that(nti, has_property('organization', 'http://foss.rit.ed'))
 		assert_that(nti, has_property('origin', 'http://foss.rit.edu/foss.json'))
 
 	def test_tahrir_badge_to_ntibadge(self):
@@ -149,9 +150,9 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(nti, has_property('name', 'fossbox'))
 		assert_that(nti, has_property('tags', is_(('fox', 'box'))))
 		assert_that(nti, has_property('createdTime', is_not(none())))
-		assert_that(nti, has_property('criteria', 'http://foss.rit.edu'))
+		assert_that(nti, has_property('criteria', 'http://foss.rit.ed'))
 		assert_that(nti, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
-		assert_that(nti, has_property('description', u'Welcome to the FOSSBox. A member is you!'))
+		assert_that(nti, has_property('description', 'Welcome to the FOSSBox. A member is you!'))
 
 	def test_tahrir_assertion_to_ntiassertion(self):
 		assertion = self._tahrir_assertion()
@@ -168,17 +169,17 @@ class TestAdapters(NTIBadgesTestCase):
 		person = NTIPerson()
 		person.name = 'foo'
 		person.bio = 'I am foo'
-		person.email = u'foo@example.org'
+		person.email = 'foo@example.org'
 		person.createdTime = self._time_now
-		person.website = u'http://example.org/foo'
+		person.website = 'http://example.org/foo'
 		return person
 
 	def _ntiissuer(self):
 		issuer = NTIIssuer()
-		issuer.name = u'FOSS@RIT'
-		issuer.email = u'foss@rit.edu'
+		issuer.name = 'FOSS@RIT'
+		issuer.email = 'foss@rit.ed'
 		issuer.createdTime = self._time_now
-		issuer.organization = b'http://foss.rit.edu'
+		issuer.organization = b'http://foss.rit.ed'
 		issuer.origin = b'http://foss.rit.edu/foss.json'
 		return issuer
 
@@ -195,7 +196,7 @@ class TestAdapters(NTIBadgesTestCase):
 	def _ntiassertion(self):
 		result = NTIAssertion(salt="2cf24dba",
 							  badge=self._ntibadge(),
-						  	  person=u'foo@example.org',
+						  	  person='foo@example.org',
 						  	  recipient="ichigobleach",
 						  	  issuedOn=self._time_now)
 		return result
@@ -208,7 +209,7 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(tah, has_property('bio', 'I am foo'))
 		assert_that(tah, has_property('email', 'foo@example.org'))
 		assert_that(tah, has_property('created_on', is_not(none())))
-		assert_that(tah, has_property('website', u'http://example.org/foo'))
+		assert_that(tah, has_property('website', 'http://example.org/foo'))
 
 	def test_ntiissuer_to_mozilla_verification_object(self):
 		issuer = self._ntiissuer()
@@ -222,7 +223,7 @@ class TestAdapters(NTIBadgesTestCase):
 		io = open_interfaces.IIssuerOrganization(issuer, None)
 		assert_that(io, is_not(none()))
 		assert_that(io, has_property('name', 'FOSS@RIT'))
-		assert_that(io, has_property('email', 'foss@rit.edu'))
+		assert_that(io, has_property('email', 'foss@rit.ed'))
 		assert_that(io, has_property('url', 'http://foss.rit.edu/foss.json'))
 
 	def test_ntibadge_to_tahrir_badge(self):
@@ -241,7 +242,7 @@ class TestAdapters(NTIBadgesTestCase):
 		bc = open_interfaces.IBadgeClass(badge, None)
 		assert_that(bc, is_not(none()))
 		assert_that(bc, has_property('name', 'fossbox'))
-		assert_that(bc, has_property('tags', is_(['fox', 'box'])))
+		assert_that(bc, has_property('tags', contains('fox', 'box')))
 		assert_that(bc, has_property('issuer', 'http://foss.rit.edu/foss.json'))
 		assert_that(bc, has_property('criteria', 'http://foss.rit.edu/fossbox'))
 		assert_that(bc, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
@@ -274,7 +275,7 @@ class TestAdapters(NTIBadgesTestCase):
 		return io
 
 	def _open_badge(self):
-		result = BadgeClass(name="fossbox", 
+		result = BadgeClass(name="fossbox",
 							description="Welcome to the FOSSBox. A member is you!",
 							image=b"http://foss.rit.edu/files/fossboxbadge.png",
 							criteria=b"http://foss.rit.edu/fossbox",
@@ -300,7 +301,7 @@ class TestAdapters(NTIBadgesTestCase):
 		tah = tahrir_interfaces.IIssuer(issuer, None)
 		assert_that(tah, is_not(none()))
 		assert_that(tah, has_property('name', 'FOSS@RIT'))
-		assert_that(tah, has_property('contact', u'foss@rit.edu'))
+		assert_that(tah, has_property('contact', 'foss@rit.edu'))
 		assert_that(tah, has_property('org', 'http://foss.rit.edu/foss.json'))
 		assert_that(tah, has_property('image', 'http://foss.rit.edu/foss.png'))
 		assert_that(tah, has_property('origin', 'http://foss.rit.edu/foss.json'))
@@ -310,7 +311,7 @@ class TestAdapters(NTIBadgesTestCase):
 		nti = badge_interfaces.INTIIssuer(issuer, None)
 		assert_that(nti, is_not(none()))
 		assert_that(nti, has_property('name', 'FOSS@RIT'))
-		assert_that(nti, has_property('email', u'foss@rit.edu'))
+		assert_that(nti, has_property('email', 'foss@rit.edu'))
 		assert_that(nti, has_property('origin', 'http://foss.rit.edu/foss.json'))
 		assert_that(nti, has_property('organization', 'http://foss.rit.edu/foss.json'))
 
@@ -320,10 +321,10 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(nti, is_not(none()))
 		assert_that(nti, has_property('name', 'fossbox'))
 		assert_that(nti, has_property('issuer', is_(none())))
-		assert_that(nti, has_property('tags', is_(['fox', 'box'])))
+		assert_that(nti, has_property('tags', contains('fox', 'box')))
 		assert_that(nti, has_property('criteria', 'http://foss.rit.edu/fossbox'))
 		assert_that(nti, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
-		assert_that(nti, has_property('description', u'Welcome to the FOSSBox. A member is you!'))
+		assert_that(nti, has_property('description', 'Welcome to the FOSSBox. A member is you!'))
 
 	def test_mozilla_badge_to_tahrir_badge(self):
 		badge = self._open_badge()
@@ -334,7 +335,7 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(nti, has_property('tags', is_('fox,box')))
 		assert_that(nti, has_property('criteria', 'http://foss.rit.edu/fossbox'))
 		assert_that(nti, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
-		assert_that(nti, has_property('description', u'Welcome to the FOSSBox. A member is you!'))
+		assert_that(nti, has_property('description', 'Welcome to the FOSSBox. A member is you!'))
 
 	# misc
 

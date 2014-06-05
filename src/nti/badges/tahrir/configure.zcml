@@ -8,43 +8,43 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 	<include package="zope.security" />
-	
+
 	<!-- Implements -->
-	
+
 	<class class="tahrir_api.model.Issuer">
 		<implements interface=".interfaces.IIssuer" />
 	</class>
-		
+
 	<class class="tahrir_api.model.Badge">
 		<implements interface=".interfaces.IBadge" />
 	</class>
-	
+
 	<class class="tahrir_api.model.Person">
 		<implements interface=".interfaces.IPerson" />
 	</class>
-	
+
 	<class class="tahrir_api.model.Invitation">
 		<implements interface=".interfaces.IInvitation" />
 	</class>
-	
+
 	<class class="tahrir_api.model.Authorization">
 		<implements interface=".interfaces.IAuthorization" />
 	</class>
-	
+
 	<class class="tahrir_api.model.Assertion">
 		<implements interface=".interfaces.IAssertion" />
 	</class>
-			 		 
+
 	<!-- Database -->
-		 
+
 	<configure zcml:condition="have devmode">
 		<include package="." file="meta.zcml" />
 		<tdb:registerTahrirDB defaultSQLite="True" />
-		<tdb:registerTahrirIssuer 
+		<tdb:registerTahrirIssuer
 					id="NTI"
 			 		name="NextThought"
 			 		org="http://www.nextthought.com"
-			 		contact="contact@nextthought.com" 
+			 		contact="contact@nextthought.com"
 			 		origin="http://www.nextthought.com"/>
 	</configure>
 </configure>

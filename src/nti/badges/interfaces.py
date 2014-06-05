@@ -8,25 +8,20 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
-from nti.utils import schema as nti_schema
+from nti.utils.schema import ValidTextLine
+from nti.utils.schema import ValidText
+TextLine = ValidTextLine
+from nti.utils.schema import ListOrTuple
+from nti.utils.schema import Variant
+from nti.utils.schema import HTTPURL
+from nti.utils.schema import Number
+from nti.utils.schema import Object
 
-class Tag(nti_schema.ValidTextLine):
+from nti.dataserver.interfaces import ICreatedTime
+from nti.dataserver.interfaces import IUserTaggedContent
 
-	def fromUnicode(self, value):
-		return super(Tag, self).fromUnicode(value.lower())
+ITaggedContent = IUserTaggedContent
 
-	def constraint(self, value):
-		return super(Tag, self).constraint(value) and ' ' not in value
-
-class ITaggedContent(interface.Interface):
-
-	tags = nti_schema.TupleFromObject(title="Tags applied.",
-							value_type=Tag(min_length=1, title="A single tag",
-										   description=Tag.__doc__, __name__='tags'),
-							unique=True,
-							default=(),
-							min_length=0)
-	
 class IBadgeIssuer(interface.Interface):
 	"""
 	marker interface for all badge issuers
@@ -42,74 +37,72 @@ class IBadgeClass(interface.Interface):
 	marker interface for all badges
 	"""
 
-class INTIIssuer(IBadgeIssuer):
-	name = nti_schema.ValidTextLine(title='Issuer name')
+class INTIIssuer(IBadgeIssuer,
+				 ICreatedTime):
+	name = ValidTextLine(title='Issuer name')
 
-	origin = nti_schema.Variant((
-				nti_schema.ValidTextLine(title='Issuer origin'),
-				nti_schema.HTTPURL(title='Issuer origin URL')),
-				title="Issuer origin")
+	origin = Variant((ValidTextLine(title='Issuer origin'),
+					  HTTPURL(title='Issuer origin URL')),
+					 title="Issuer origin")
 
-	organization = nti_schema.Variant((
-				nti_schema.TextLine(title='Issuer organization'),
-				nti_schema.HTTPURL(title='Issuer organization URL')),
-				title="Issuer organization")
+	organization = Variant((TextLine(title='Issuer organization'),
+							HTTPURL(title='Issuer organization URL')),
+						   title="Issuer organization")
 
-	email = nti_schema.ValidTextLine(title="Issuer email")
+	email = ValidTextLine(title="Issuer email")
 
-	createdTime = nti_schema.Float(title='creation time', required=False)
 
-class INTIBadge(ITaggedContent, IBadgeClass):
-	issuer = nti_schema.Object(INTIIssuer, title="Badge Issuer", required=False)
+class INTIBadge(ITaggedContent,
+				IBadgeClass,
+				ICreatedTime):
+	issuer = Object(INTIIssuer,
+					title="Badge Issuer",
+					required=False)
 
-	name = nti_schema.ValidTextLine(title="Badge name")
+	name = ValidTextLine(title="Badge name")
 
-	description = nti_schema.ValidText(title="Badge description",
-									  required=False, default=u'')
+	description = ValidText(title="Badge description",
+							required=False,
+							default='')
 
-	image = nti_schema.Variant((
-				nti_schema.ValidTextLine(title='Badge image identifier'),
-				nti_schema.HTTPURL(title='Badge URL')),
-				title="Badge image")
+	image = Variant((ValidTextLine(title='Badge image identifier'),
+					 HTTPURL(title='Badge URL')),
+					title="Badge image")
 
-	criteria = nti_schema.Variant((
-					nti_schema.TextLine(title='Badge criteria identifier'),
-					nti_schema.HTTPURL(title='Badge criteria URL')),
-					title="Badge criteria")
-	
-	createdTime = nti_schema.Float(title='creation time', required=False)
+	criteria = Variant((TextLine(title='Badge criteria identifier'),
+						HTTPURL(title='Badge criteria URL')),
+					   title="Badge criteria")
 
 
 class INTIAssertion(IBadgeAssertion):
-	badge = nti_schema.Object(INTIBadge, title="Badge")
-	person = nti_schema.ValidTextLine(title="Badge recipient name")
-	issuedOn = nti_schema.Float(title="Date that the achievement was awarded")
-	recipient = nti_schema.ValidTextLine(title="Badge recipient hash", required=False)
-	salt = nti_schema.ValidTextLine(title="One-way function to hash person", required=False)
+	badge = Object(INTIBadge, title="Badge")
+	person = ValidTextLine(title="Badge recipient name")
+	issuedOn = Number(title="Date that the achievement was awarded",
+					  default=0)
+	recipient = ValidTextLine(title="Badge recipient hash", required=False)
+	salt = ValidTextLine(title="One-way function to hash person", required=False)
 
-class INTIPerson(interface.Interface):
-	name = nti_schema.ValidTextLine(title="Person [unique] name")
-	email = nti_schema.ValidTextLine(title="Person [unique] email")
-	createdTime = nti_schema.Float(title='created time', required=False)
-	assertions = nti_schema.ListOrTuple(nti_schema.Object(INTIAssertion, title="Assertion"),
-										title="Assertions", min_length=0,
-										default=(), required=False)
+class INTIPerson(ICreatedTime):
+	name = ValidTextLine(title="Person [unique] name")
+	email = ValidTextLine(title="Person [unique] email")
+	assertions = ListOrTuple(Object(INTIAssertion,
+									title="Assertion"),
+							 title="Assertions",
+							 min_length=0,
+							 default=(), required=False)
 
 class IEarnableBadge(interface.Interface):
 	"""
 	marker interface for a earnable badbe
 	"""
-	pass
 
 class IEarnedBadge(IEarnableBadge):
 	"""
 	marker interface for a earned badbe
 	"""
-	pass
-
 
 class IBadgeManager(interface.Interface):
-	
+
 	def person_exists(person=None, name=None):
 		"""
 		check if a person exists
@@ -149,7 +142,7 @@ class IBadgeManager(interface.Interface):
 		"""
 		return a badge assertion for the specified person
 		"""
-		
+
 	def add_assertion(person, badge):
 		"""
 		add a badge assertion for the specified person
@@ -172,7 +165,7 @@ class IBadgeManager(interface.Interface):
 		"""
 		delete the user w/ the specified person
 		"""
-		
+
 	def issuer_exists(issuer, origin=None):
 		"""
 		return the specified issuer exists

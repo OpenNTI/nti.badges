@@ -18,7 +18,6 @@ from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Person
 
-from ._compact import navstr
 
 from .openbadges.model import BadgeClass
 from .openbadges.model import BadgeAssertion
@@ -55,7 +54,7 @@ def basestring_to_tahrir_person(source):
 	result = Person()
 	result.email = source
 	result.nickname = source
-	result.website = result.bio = u''
+	result.website = result.bio = ''
 	result.created_on = datetime.now()
 	return result
 
@@ -91,7 +90,7 @@ def collection_to_tahrir_issuer(lst):
 @interface.implementer(open_interfaces.IVerificationObject)
 def tahrir_issuer_to_mozilla_verification_object(issuer):
 	verify = VerificationObject(type=open_interfaces.VO_TYPE_HOSTED,
-								url=navstr(issuer.origin))
+								url=str(issuer.origin))
 	return verify
 
 @component.adapter(tahrir_interfaces.IPerson)
@@ -106,7 +105,7 @@ def tahrir_person_to_mozilla_identity_object(person):
 @component.adapter(tahrir_interfaces.IIssuer)
 @interface.implementer(open_interfaces.IIssuerOrganization)
 def tahrir_issuer_to_mozilla_issuer(issuer):
-	result = IssuerOrganization(url=navstr(issuer.origin),
+	result = IssuerOrganization(url=str(issuer.origin),
 								name=issuer.name,
 								email=issuer.contact,
 								description=issuer.org)
@@ -115,13 +114,13 @@ def tahrir_issuer_to_mozilla_issuer(issuer):
 @component.adapter(tahrir_interfaces.IBadge)
 @interface.implementer(open_interfaces.IBadgeClass)
 def tahrir_badge_to_mozilla_badge(badge):
-	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
+	tags = tuple(x.lower() for x in ((badge.tags or '').split(',')) if x)
 	result = BadgeClass(tags=tags,
 						name=badge.name,
-						image=navstr(badge.image),
+						image=str(badge.image),
 						description=badge.description,
-						criteria=navstr(badge.criteria),
-						issuer=navstr(badge.issuer.origin))
+						criteria=str(badge.criteria),
+						issuer=str(badge.issuer.origin))
 	tag_badge_interfaces(badge, result)
 	return result
 
@@ -144,7 +143,7 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 	result = BadgeAssertion(uid=aid,
 							verify=verify,
 							recipient=recipient,
-							image=navstr(badge.image),
+							image=str(badge.image),
 							issuedOn=assertion.issued_on,
 							badge=open_interfaces.IBadgeClass(badge))
 	return result
@@ -162,7 +161,7 @@ def tahrir_issuer_to_ntiissuer(issuer):
 @component.adapter(tahrir_interfaces.IBadge)
 @interface.implementer(interfaces.INTIBadge)
 def tahrir_badge_to_ntibadge(badge):
-	tags = tuple(x.lower() for x in ((badge.tags or u'').split(',')) if x)
+	tags = tuple(x.lower() for x in ((badge.tags or '').split(',')) if x)
 	issuer = interfaces.INTIIssuer(badge.issuer, None)
 	result = NTIBadge(issuer=issuer,
 					  tags=tuple(tags),
@@ -229,14 +228,14 @@ def ntibadge_to_tahrir_badge(badge):
 @interface.implementer(open_interfaces.IVerificationObject)
 def ntiissuer_to_mozilla_verification_object(issuer):
 	verify = VerificationObject(type=open_interfaces.VO_TYPE_HOSTED,
-								url=navstr(issuer.origin))
+								url=str(issuer.origin))
 	return verify
 
 @component.adapter(interfaces.INTIIssuer)
 @interface.implementer(open_interfaces.IIssuerOrganization)
 def ntiissuer_to_mozilla_issuer(issuer):
 	result = IssuerOrganization(name=issuer.name,
-						  		url=navstr(issuer.origin),
+						  		url=str(issuer.origin),
 						  		email=issuer.email)
 	return result
 
@@ -247,9 +246,9 @@ def ntibadge_to_mozilla_badge(badge):
 	result = BadgeClass(tags=badge.tags,
 						name=badge.name,
 						image=badge.image,
-						issuer=navstr(issuer.origin),
+						issuer=str(issuer.origin),
 						description=badge.description,
-						criteria=navstr(badge.criteria))
+						criteria=str(badge.criteria))
 	tag_badge_interfaces(badge, result)
 	return result
 
@@ -268,7 +267,7 @@ def ntiassertion_to_mozilla_assertion(assertion):
 	result = BadgeAssertion(uid=badge.name,
 							verify=verify,
 							recipient=recipient,
-							image=navstr(badge.image),
+							image=str(badge.image),
 							badge=open_interfaces.IBadgeClass(badge),
 							issuedOn=datetime.fromtimestamp(issuedOn))
 	return result
@@ -279,8 +278,8 @@ def ntiperson_to_tahrir_person(nti):
 	result = Person()
 	result.email = nti.email
 	result.nickname = nti.name
-	result.bio = getattr(nti, "bio", None) or u''
-	result.website = getattr(nti, "website", None) or u''
+	result.bio = getattr(nti, "bio", None) or ''
+	result.website = getattr(nti, "website", None) or ''
 	result.created_on = datetime.fromtimestamp(nti.createdTime)
 	return result
 
@@ -343,4 +342,3 @@ def mozilla_badge_to_ntibadge(badge):
 					  description=badge.description,
 					  createdTime=time.time())
 	return result
-

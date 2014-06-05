@@ -13,6 +13,7 @@ from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
+from hamcrest import contains
 does_not = is_not
 
 import os
@@ -52,7 +53,7 @@ class TestUtils(NTIBadgesTestCase):
 		assert_that(badge, has_property('image', is_("https://example.org/robotics-badge.png")))
 		assert_that(badge, has_property('description', is_("For doing awesome things with robots that people think is pretty great.")))
 		assert_that(badge, has_property('criteria', is_("https://example.org/robotics-badge.html")))
-		assert_that(badge, has_property('tags', is_(["robots", "awesome"])))
+		assert_that(badge, has_property('tags', contains("robots", "awesome")))
 		assert_that(badge, has_property('issuer', is_("https://example.org/organization.json")))
 		assert_that(badge, has_property('alignment'), has_length(1))
 		alignment = badge.alignment[0]
@@ -100,7 +101,7 @@ class TestUtils(NTIBadgesTestCase):
 		assert_that(assertion, has_property('badge', is_not(none())))
 		assert_that(assertion, has_property('verify', is_not(none())))
 		assert_that(assertion, has_property('recipient', is_not(none())))
-		
+
 		badge = assertion.badge
 		assert_that(badge, has_property('issuer', is_not(none())))
 		assert_that(badge, has_property('name', is_('HTML5 Fundamental')))
@@ -113,7 +114,7 @@ class TestUtils(NTIBadgesTestCase):
 		assert_that(issuer, has_property('name', is_('P2PU')))
 		assert_that(issuer, has_property('email', is_("admin@p2pu.org")))
 		assert_that(issuer, has_property('description', is_("School of Webcraft")))
-		
+
 		recipient = assertion.recipient
 		assert_that(recipient, has_property('type', is_('email')))
 		assert_that(recipient, has_property('hashed', is_(True)))
