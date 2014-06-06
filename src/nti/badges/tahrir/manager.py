@@ -24,7 +24,7 @@ from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
 from tahrir_api.model import DeclarativeBase as tahrir_base
 
-from nti.utils.property import Lazy
+# from nti.utils.property import Lazy
 
 from .dbapi import NTITahrirDatabase
 
@@ -40,24 +40,24 @@ class TahrirBadgeManager(object):
 		self.twophase = twophase
 		self.autocommit = autocommit
 
-	@Lazy
+	@property
 	def engine(self):
 		result = create_engine(self.dburi)
 		return result
 
-	@Lazy
+	@property
 	def sessionmaker(self):
 		result = sessionmaker(bind=self.engine,
 							  twophase=self.twophase,
 							  extension=ZopeTransactionExtension())
 		return result
 
-	@Lazy
+	@property
 	def session(self):
 		result = scoped_session(self.sessionmaker)
 		return result
 
-	@Lazy
+	@property
 	def db(self):
 		result = NTITahrirDatabase(session=self.session,
 								   autocommit=self.autocommit,
