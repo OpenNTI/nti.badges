@@ -18,12 +18,12 @@ from nti.externalization.externalization import make_repr
 from nti.utils.property import alias
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createFieldProperties
+
 # NOTE: None of these classes are inheriting from other
 # schema-configured classes, so we MUST create all the field
 # properties; only when inheritance is involved should we
 # create just the direct field properties
 #from nti.utils.schema import createDirectFieldProperties
-
 
 from . import interfaces
 from .interfaces import IBadgeClass

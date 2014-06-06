@@ -11,15 +11,13 @@ from zope.schema import vocabulary
 
 from nti.utils.schema import ValidTextLine
 from nti.utils.schema import ValidText
-TextLine = ValidTextLine
 from nti.utils.schema import ListOrTuple
 from nti.utils.schema import Variant
-from nti.utils.schema import HTTPURL
 from nti.utils.schema import Choice
 from nti.utils.schema import Object
 from nti.utils.schema import Bool
-from nti.utils.schema import DataURI
 from nti.utils.schema import ValidDatetime
+TextLine = ValidTextLine
 
 from .. import interfaces as badge_interfaces
 
@@ -39,19 +37,16 @@ class IVerificationObject(interface.Interface):
 	type = Choice(vocabulary=VO_TYPES_VOCABULARY,
 							title='Verification method',
 							required=True)
-	url = Variant((
-					TextLine(title='URL assertion/issuer public key'),
-					HTTPURL(title='URL assertion/issuer public key')),
-					title="URL pointing to the assertion or issuer's public key")
+	url = ValidTextLine(title="URL pointing to the assertion or issuer's public key")
 
 
 class IIssuerOrganization(badge_interfaces.IBadgeIssuer):
 	name = ValidTextLine(title="The name of the issuing organization.")
-	url = HTTPURL(title='URL of the institution')
-	image = HTTPURL(title='Issuer URL logo', required=False)
+	url = ValidTextLine(title='URL of the institution')
+	image = ValidTextLine(title='Issuer URL logo', required=False)
 	email = ValidTextLine(title="Issuer email", required=False)
 	description = ValidText(title="Issuer description", required=False)
-	revocationList = HTTPURL(title='Issuer revocations URL', required=False)
+	revocationList = ValidTextLine(title='Issuer revocations URL', required=False)
 
 class IIdentityObject(interface.Interface):
 	identity = ValidTextLine(title="identity hash or text")
@@ -67,7 +62,7 @@ class IIdentityObject(interface.Interface):
 
 class IAlignmentObject(interface.Interface):
 	name = ValidTextLine(title="The name of the alignment")
-	url = HTTPURL(title='URL linking to the official description of the standard')
+	url = ValidTextLine(title='URL linking to the official description of the standard')
 	description = ValidText(title="Short description of the standard",
                                        required=False)
 
@@ -76,15 +71,12 @@ class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass)
 
 	description = ValidText(title="A short description of the achievement")
 
-	image = Variant((
-					DataURI(title="Image data"),
-					HTTPURL(title='Image URL')),
-					title="Image representing the achievement")
+	image = ValidTextLine(title="Image representing the achievement (URL/FileName/DataURI)")
 
-	criteria = HTTPURL(title='URL of the criteria for earning the achievement')
+	criteria = ValidTextLine(title='URL of the criteria for earning the achievement')
 
 	issuer = Variant((
-					HTTPURL(title='URL of the organization that issued the badge'),
+					ValidTextLine(title='URL of the organization that issued the badge'),
 					Object(IIssuerOrganization, title="Issuer object")),
 					title="Image representing the achievement")
 
@@ -96,26 +88,20 @@ class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass)
 class IBadgeAssertion(badge_interfaces.IBadgeAssertion):
 	uid = ValidTextLine(title=" Unique Identifier for the badge")
 
-	recipient = Object(IIdentityObject,
-								  title="The recipient of the achievement")
+	recipient = Object(IIdentityObject, title="The recipient of the achievement")
 	badge = Variant((
 					Object(IBadgeClass, title="Badge class"),
-					HTTPURL(title='Badge URL')),
+					ValidTextLine(title='Badge URL')),
 					title="Badge being awarded")
 
 	verify = Object(IVerificationObject,
-							   title="Data to help a third party verify this assertion")
+					title="Data to help a third party verify this assertion")
 
 	issuedOn = ValidDatetime(title="date that the achievement was awarded")
 
-	image = Variant((
-					DataURI(title="Image data"),
-					HTTPURL(title='Image URL')),
-					title="Image representing this user's achievement",
-					required=False)
+	image = ValidTextLine(title="Image representing this user's achievement", required=False)
 
-	evidence = HTTPURL(
-					title='URL of the work that the recipient did to earn the achievement',
-					required=False)
+	evidence = ValidTextLine(title='URL of the work that the recipient did to earn the achievement',
+							 required=False)
 
 	expires = ValidDatetime(title="Achievment expiry", required=False)

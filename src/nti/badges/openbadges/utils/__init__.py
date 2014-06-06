@@ -100,7 +100,7 @@ def badge_from_source(source, **kwargs):
 
 	# parse common single value fields
 	for field, func in (('name', _unicode), ('description', _unicode),
-						('criteria', str), ('image', str)):
+						('criteria', str), ('image', _unicode)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
