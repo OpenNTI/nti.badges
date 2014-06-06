@@ -15,7 +15,7 @@ from zope import interface
 
 from sqlalchemy import func
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session, Session
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -31,23 +31,6 @@ from .dbapi import NTITahrirDatabase
 from . import interfaces
 from .. import interfaces as badge_interfaces
 
-from contextlib import contextmanager
-
-@contextmanager
-def session_scope(bind, autocommit, extension):
-	"""Provide a transactional scope around a series of operations."""
-	session = Session(bind=bind, autocommit=autocommit, extension=extension)
-	try:
-		yield session
-		if autocommit:
-			session.commit()
-	except:
-		if autocommit:
-			session.rollback()
-		raise
-	finally:
-		session.close()
-
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
@@ -57,12 +40,12 @@ class TahrirBadgeManager(object):
 		self.twophase = twophase
 		self.autocommit = autocommit
 
-	@property
+	@Lazy
 	def engine(self):
 		result = create_engine(self.dburi)
 		return result
 
-	@property
+	@Lazy
 	def sessionmaker(self):
 		result = sessionmaker(bind=self.engine,
 							  twophase=self.twophase,
@@ -71,20 +54,18 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def session(self):
-		#result = scoped_session(self.sessionmaker)
-		#return result
-		return None
+		result = scoped_session(self.sessionmaker)
+		return result
 
-	@property
+	@Lazy
 	def db(self):
-		with session_scope(self.engine, self.autocommit, ZopeTransactionExtension()) as session:
-			result = NTITahrirDatabase(session=session,
+		result = NTITahrirDatabase(session=self.session,
 								   autocommit=self.autocommit,
 							 	   salt=self.salt)
-			# session.configure(bind=self.engine)
-			metadata = getattr(tahrir_base, 'metadata')
-			metadata.create_all(self.engine, checkfirst=True)
-			return result
+		self.session.configure(bind=self.engine)
+		metadata = getattr(tahrir_base, 'metadata')
+		metadata.create_all(self.engine, checkfirst=True)
+		return result
 
 	# DB operations
 
