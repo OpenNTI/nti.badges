@@ -13,7 +13,9 @@ from zope.container import contained
 
 import persistent
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
+#from nti.externalization.externalization import NoPickle
+from nti.utils.schema import EqHash
 
 from nti.utils.property import alias
 from nti.utils.schema import SchemaConfigured
@@ -29,6 +31,8 @@ from . import interfaces
 from .interfaces import IBadgeClass
 
 @interface.implementer(interfaces.IVerificationObject)
+@WithRepr
+@EqHash('url', 'type')
 class VerificationObject(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createFieldProperties(interfaces.IVerificationObject)
 
@@ -40,21 +44,9 @@ class VerificationObject(SchemaConfigured, persistent.Persistent, contained.Cont
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.type == other.type and self.url == other.url)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.url)
-		xhash ^= hash(self.type)
-		return xhash
-
 @interface.implementer(interfaces.IIdentityObject)
+@WithRepr
+@EqHash('identity', 'type')
 class IdentityObject(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createFieldProperties(interfaces.IIdentityObject)
 
@@ -66,22 +58,9 @@ class IdentityObject(SchemaConfigured, persistent.Persistent, contained.Containe
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.identity == other.identity
-									 and self.type == other.type)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.type)
-		xhash ^= hash(self.identity)
-		return xhash
-
 @interface.implementer(interfaces.IAlignmentObject)
+@WithRepr
+@EqHash('url', 'name')
 class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createFieldProperties(interfaces.IAlignmentObject)
 
@@ -93,21 +72,9 @@ class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contain
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.name == other.name and self.url == other.url)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.url)
-		xhash ^= hash(self.name)
-		return xhash
-
 @interface.implementer(interfaces.IIssuerOrganization)
+@WithRepr
+@EqHash('name', 'url')
 class IssuerOrganization(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createFieldProperties(interfaces.IIssuerOrganization)
 
@@ -123,21 +90,9 @@ class IssuerOrganization(SchemaConfigured, persistent.Persistent, contained.Cont
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.name == other.name and self.url == other.url)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.url)
-		xhash ^= hash(self.name)
-		return xhash
-
 @interface.implementer(IBadgeClass)
+@WithRepr
+@EqHash('name')
 class BadgeClass(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createFieldProperties(IBadgeClass)
 
@@ -152,20 +107,10 @@ class BadgeClass(SchemaConfigured, persistent.Persistent, contained.Contained):
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.name == other.name)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.name)
-		return xhash
 
 @interface.implementer(interfaces.IBadgeAssertion)
+@WithRepr
+@EqHash('uid', 'recipient')
 class BadgeAssertion(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createFieldProperties(interfaces.IBadgeAssertion)
 
@@ -176,18 +121,3 @@ class BadgeAssertion(SchemaConfigured, persistent.Persistent, contained.Containe
 	def __init__(self, *args, **kwargs):
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
-
-	def __eq__(self, other):
-		try:
-			return self is other or (self.uid == other.uid
-									 and self.recipient == other.recipient)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.uid)
-		xhash ^= hash(self.recipient)
-		return xhash

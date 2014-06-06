@@ -22,6 +22,7 @@ import time
 
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
+from nti.externalization.tests import assert_does_not_pickle
 
 from nti.badges import model
 from nti.badges import interfaces
@@ -31,12 +32,13 @@ from nti.testing.matchers import verifiably_provides
 from nti.badges.tests import NTIBadgesTestCase
 
 class TestNTIModel(NTIBadgesTestCase):
-		
+
 	def _issuer(self):
 		result = model.NTIIssuer(name="FOSS@RIT",
 								 origin=b"http://foss.rit.edu/badges",
 								 organization=b"http://foss.rit.edu",
 								 email="foss@rit.edu")
+		assert_does_not_pickle(result)
 		return result
 
 	def test_issuer(self):
@@ -67,6 +69,7 @@ class TestNTIModel(NTIBadgesTestCase):
 								criteria="http://foss.rit.edu/fossbox",
 								createdTime=time.time(),
 								tags=(['fox', 'box']))
+		assert_does_not_pickle(result)
 		return result
 
 	def test_badge(self):
@@ -97,6 +100,7 @@ class TestNTIModel(NTIBadgesTestCase):
 									person='foo@example.org',
 									recipient='ichigobleach',
 									issuedOn=time.time())
+		assert_does_not_pickle(result)
 		return result
 
 	def test_assertion(self):
@@ -116,7 +120,7 @@ class TestNTIModel(NTIBadgesTestCase):
 		assert_that(new_ast, has_property('issuedOn', is_not(none())))
 		assert_that(new_ast, has_property('person', is_('foo@example.org')))
 		assert_that(new_ast, has_property('recipient', is_('ichigobleach')))
-		
+
 		assert_that(assertion, equal_to(new_ast))
 
 	def _person(self):
@@ -125,6 +129,7 @@ class TestNTIModel(NTIBadgesTestCase):
 								 email='foo@example.org',
 								 createdTime=time.time(),
 								 assertions=[assertion])
+		assert_does_not_pickle(result)
 		return result
 
 	def test_person(self):

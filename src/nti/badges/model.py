@@ -11,9 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope.container import contained
 
-import persistent
+import operator
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
+from nti.externalization.externalization import NoPickle
 
 from nti.utils.property import alias
 from nti.utils.schema import SchemaConfigured
@@ -27,11 +28,14 @@ from nti.utils.schema import createFieldProperties
 from . import interfaces
 from .interfaces import INTIBadge
 
-# XXX: JAM: Why are these persistent? We don't expect them to be
-# stored in the ZODB anywhere do we?
+from nti.utils.schema import EqHash as _EqHash
 
 @interface.implementer(INTIBadge)
-class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
+@WithRepr
+@NoPickle
+@_EqHash('issuer', 'name')
+class NTIBadge(SchemaConfigured,
+			   contained.Contained):
 	createFieldProperties(INTIBadge)
 
 	__external_can_create__ = True
@@ -43,26 +47,14 @@ class NTIBadge(SchemaConfigured, persistent.Persistent, contained.Contained):
 	def __init__(self, *args, **kwargs):
 		if 'tags' in kwargs:
 			kwargs['tags'] = INTIBadge['tags'].fromObject(kwargs['tags'])
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.issuer == other.issuer
-									 and self.name == other.name)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.name)
-		xhash ^= hash(self.issuer)
-		return xhash
-
 @interface.implementer(interfaces.INTIPerson)
-class NTIPerson(SchemaConfigured, persistent.Persistent, contained.Contained):
+@WithRepr
+@NoPickle
+@_EqHash('name', 'email')
+class NTIPerson(SchemaConfigured,
+				contained.Contained):
 	createFieldProperties(interfaces.INTIPerson)
 
 	__external_can_create__ = True
@@ -70,26 +62,14 @@ class NTIPerson(SchemaConfigured, persistent.Persistent, contained.Contained):
 	mime_type = mimeType = 'application/vnd.nextthought.badges.person'
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.name == other.name and
-									 self.email == other.email)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.name)
-		xhash ^= hash(self.email)
-		return xhash
-
 @interface.implementer(interfaces.INTIIssuer)
-class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
+@WithRepr
+@NoPickle
+@_EqHash('name', 'origin')
+class NTIIssuer(SchemaConfigured,
+				contained.Contained):
 	createFieldProperties(interfaces.INTIIssuer)
 
 	__external_can_create__ = True
@@ -99,26 +79,14 @@ class NTIIssuer(SchemaConfigured, persistent.Persistent, contained.Contained):
 	org = alias('organization')
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.name == other.name and
-									 self.origin == other.origin)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.name)
-		xhash ^= hash(self.origin)
-		return xhash
-
 @interface.implementer(interfaces.INTIAssertion)
-class NTIAssertion(SchemaConfigured, persistent.Persistent, contained.Contained):
+@WithRepr
+@NoPickle
+@_EqHash('badge', 'recipient', 'issuedOn')
+class NTIAssertion(SchemaConfigured,
+				   contained.Contained):
 	createFieldProperties(interfaces.INTIAssertion)
 
 	__external_can_create__ = True
@@ -126,22 +94,4 @@ class NTIAssertion(SchemaConfigured, persistent.Persistent, contained.Contained)
 	mime_type = mimeType = 'application/vnd.nextthought.badges.assertion'
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
-
-	def __eq__(self, other):
-		try:
-			return self is other or (self.badge == other.badge and
-									 self.recipient == other.recipient and
-									 self.issuedOn == other.issuedOn)
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.badge)
-		xhash ^= hash(self.issuedOn)
-		xhash ^= hash(self.recipient)
-		return xhash

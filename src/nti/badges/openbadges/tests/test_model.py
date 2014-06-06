@@ -72,7 +72,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         internalization.update_from_external_object(new_vo, ext_obj)
         assert_that(new_vo, has_property('type', is_('hosted')))
         assert_that(new_vo, has_property('url', is_('http://foo.json')))
-        
+
         assert_that(vo, equal_to(new_vo))
 
     def test_identity_object(self):
@@ -111,14 +111,14 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(new_ao, has_property('name', is_('my-alignment')))
         assert_that(new_ao, has_property('url', is_(b'http://foo.xyz')))
         assert_that(new_ao, has_property('description', is_('foo')))
-        
+
         assert_that(ao, equal_to(new_ao))
 
     def test_badge_class(self):
-        
+
         ao1 = model.AlignmentObject(name="my-alignment-1", url=u"http://foo-1.xyz",
                                         description="foo-1")
-        
+
         ao2 = model.AlignmentObject(name="my-alignment-2", url=u"http://foo-2.xyz",
                                         description="foo-2")
 
