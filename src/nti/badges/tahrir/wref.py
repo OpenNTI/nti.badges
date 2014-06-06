@@ -58,7 +58,18 @@ class AssertionWeakRef(object):
 	def __hash__(self):
 		return hash(self.__getstate__())
 
-	def __call__(self, allow_cached=True):
+	def __call__(self, allow_cached=False):
+		# NOTE: Caching is disabled by default; there may be a ZODB
+		# object cache interaction with SQLalchemy that leads to
+		# ""DetachedInstanceError: Parent instance <Assertion at
+		# 0x49250d50> is not bound to a Session; lazy load operation
+		# of attribute 'badge' cannot proceed"
+		# If so, it's possible this could be solved by the use of "long-lived"
+		# sessions in the ZopeTransactionExtension, such that the session
+		# stays bound to the thread/greenlet...although it may really
+		# need to be bound to the connection, which we could also do with
+		# an approriate session scope
+
 		if allow_cached and self._v_assertion is not None:
 			return self._v_assertion
 
