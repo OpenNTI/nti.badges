@@ -10,7 +10,7 @@ from zope import interface
 
 # XXX: Note: These will move, pending a better separation
 # of the base utility packages.
-from nti.utils.schema import ValidTextLine
+from nti.utils.schema import DecodingValidTextLine as ValidTextLine
 from nti.utils.schema import ValidText
 TextLine = ValidTextLine
 from nti.utils.schema import ListOrTuple

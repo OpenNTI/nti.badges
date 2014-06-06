@@ -10,6 +10,16 @@ from zope import interface
 
 from nti.utils import schema as nti_schema
 
+from nti.utils.schema import DecodingValidTextLine as ValidTextLine
+from nti.utils.schema import ValidText
+TextLine = ValidTextLine
+from nti.utils.schema import Variant
+from nti.utils.schema import HTTPURL
+from nti.utils.schema import Int
+from nti.utils.schema import Bool
+from nti.utils.schema import ValidDatetime
+
+
 from .. import interfaces as badge_interfaces
 
 class ITahrirModel(interface.Interface):
@@ -18,65 +28,66 @@ class ITahrirModel(interface.Interface):
 	"""
 
 class IIssuer(ITahrirModel, badge_interfaces.IBadgeIssuer):
-	id = nti_schema.Int(title=" Issuer id")
-	origin = nti_schema.ValidTextLine(title="Issuer origin")
-	name = nti_schema.ValidTextLine(title=" Issuer name")
-	org = nti_schema.ValidTextLine(title=" Issuer organization")
-	contact = nti_schema.ValidTextLine(title=" Issuer contact")
-	created_on =  nti_schema.ValidDatetime(title="Created time")
+	id = Int(title=" Issuer id")
+	origin = ValidTextLine(title="Issuer origin")
+	name = ValidTextLine(title=" Issuer name")
+	org = ValidTextLine(title=" Issuer organization")
+	contact = ValidTextLine(title=" Issuer contact")
+	created_on =  ValidDatetime(title="Created time")
 
 class IBadge(ITahrirModel, badge_interfaces.IBadgeClass):
-	name = nti_schema.ValidTextLine(title="Badge name")
+	name = ValidTextLine(title="Badge name")
 
-	image = nti_schema.ValidTextLine(title="Image name/URL")
+	image = ValidTextLine(title="Image name/URL")
 
-	description = nti_schema.ValidText(title="Badge description")
+	description = ValidText(title="Badge description")
 
-	criteria = nti_schema.ValidTextLine(title="Badge criteria")
+	criteria = ValidTextLine(title="Criteria URL")
 
-	issuer_id = nti_schema.Int(title='Issuer id')
 
-	created_on =  nti_schema.ValidDatetime(title="Created time")
+	issuer_id = Int(title='Issuer id')
 
-	tags = nti_schema.ValidTextLine(title=" Badge tags")
+	created_on =  ValidDatetime(title="Created time")
+
+	tags = ValidTextLine(title=" Badge tags")
 
 class IPerson(ITahrirModel):
-	id = nti_schema.Int(title="Person's id")
+	id = Int(title="Person's id")
 
-	email = nti_schema.ValidTextLine(title=" Person's email")
+	email = ValidTextLine(title=" Person's email")
 
-	nickname = nti_schema.ValidTextLine(title=" Person's nickname", required=False)
+	nickname = ValidTextLine(title=" Person's nickname", required=False)
 
-	website = nti_schema.ValidTextLine(title="Person Website")
+	website = ValidTextLine(title="Image name/URL")
 
-	bio = nti_schema.ValidText(title="Person's bio", required=False)
+	bio = ValidText(title="Person's bio", required=False)
 
-	created_on = nti_schema.ValidDatetime(title="Created time")
+	created_on = ValidDatetime(title="Created time")
 
-	last_login = nti_schema.ValidDatetime(title="Last login", required=False)
-	opt_out = nti_schema.Bool(title="Opt out flag", required=False)
-	rank = nti_schema.Int(title="Person's rank", required=False)
+	last_login = ValidDatetime(title="Last login", required=False)
+	opt_out = Bool(title="Opt out flag", required=False)
+	rank = Int(title="Person's rank", required=False)
 
 class IInvitation(ITahrirModel):
-	id = nti_schema.ValidTextLine(title=" Invitation id")
-	created_on = nti_schema.ValidDatetime(title="Created time")
-	expires_on = nti_schema.ValidDatetime(title="Expiration time")
-	badge_id = nti_schema.Int(title='Badge id')
-	created_by = nti_schema.Int(title='Person id')
+	id = ValidTextLine(title=" Invitation id")
+	created_on = ValidDatetime(title="Created time")
+	expires_on = ValidDatetime(title="Expiration time")
+	badge_id = Int(title='Badge id')
+	created_by = Int(title='Person id')
 
 class IAuthorization(ITahrirModel):
-	id = nti_schema.Int(title="Authorization's id")
-	badge_id = nti_schema.ValidTextLine(title=" Badge id")
-	person_id = nti_schema.Int(title="Person id")
+	id = Int(title="Authorization's id")
+	badge_id = ValidTextLine(title=" Badge id")
+	person_id = Int(title="Person id")
 
 class IAssertion(ITahrirModel, badge_interfaces.IBadgeAssertion):
-	id = nti_schema.ValidTextLine(title="Assertion id")
-	badge_id = nti_schema.ValidTextLine(title="Badge id")
-	person_id = nti_schema.Int(title="Person's id")
-	salt = nti_schema.ValidTextLine(title="Salt")
-	issued_on = nti_schema.ValidDatetime(title="Issue date")
-	issued_for = nti_schema.ValidTextLine(title="Issue for", required=False)
-	recipient = nti_schema.ValidTextLine(title="Recipient ", required=False)
+	id = ValidTextLine(title="Assertion id")
+	badge_id = ValidTextLine(title="Badge id")
+	person_id = Int(title="Person's id")
+	salt = ValidTextLine(title="Salt")
+	issued_on = ValidDatetime(title="Issue date")
+	issued_for = ValidTextLine(title="Issue for", required=False)
+	recipient = ValidTextLine(title="Recipient ", required=False)
 
 class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""
