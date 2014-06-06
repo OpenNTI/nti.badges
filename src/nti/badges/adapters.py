@@ -34,6 +34,10 @@ from .model import NTIIssuer
 from .model import NTIPerson
 from .model import NTIAssertion
 
+from . import get_tahrir_badge_by_id
+from . import get_tahrir_person_by_id
+from . import get_tahrir_issuer_by_id
+
 def safestr(s):
 	s = s.decode("utf-8") if isinstance(s, bytes) else s
 	return unicode(s) if s is not None else None
@@ -119,11 +123,17 @@ def tahrir_issuer_to_mozilla_issuer(issuer):
 @interface.implementer(open_interfaces.IBadgeClass)
 def tahrir_badge_to_mozilla_badge(badge):
 	tags = tuple(safestr(x.lower()) for x in ((badge.tags or '').split(',')) if x)
+	# request from the db if possible. We've seen some some NoSuchColumnError in MySQL when
+	# trying to use the badge issuer reference
+	issuer_id = badge.issuer_id
+	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else badge.issuer
+	issuer_origin = issuer.origin if issuer is not None else None
+	# we have an issuer origin. Should return the whole issuer?
 	result = BadgeClass(tags=tags,
 						name=safestr(badge.name),
 						image=safestr(badge.image),
 						criteria=safestr(badge.criteria),
-						issuer=safestr(badge.issuer.origin),
+						issuer=safestr(issuer_origin),
 						description=safestr(badge.description))
 	tag_badge_interfaces(badge, result)
 	return result
@@ -131,19 +141,27 @@ def tahrir_badge_to_mozilla_badge(badge):
 @component.adapter(tahrir_interfaces.IAssertion)
 @interface.implementer(open_interfaces.IBadgeAssertion)
 def tahrir_assertion_to_mozilla_assertion(assertion):
-	badge = assertion.badge
+	badge_id = assertion.badge_id
+	badge = get_tahrir_badge_by_id(badge_id) if badge_id is not None else assertion.badge
+	
+	person_id = assertion.person_id
+	person = get_tahrir_person_by_id(badge_id) if person_id is not None else assertion.person
+
 	# issuer
-	issuer = badge.issuer
+	issuer_id = badge.issuer_id
+	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else badge.issuer
 	verify = open_interfaces.IVerificationObject(issuer)
+
 	# recipient
 	salt = getattr(assertion, 'salt', None)
-	identity = assertion.recipient if salt else assertion.person.email
+	identity = assertion.recipient if salt else person.email
 	recipient = IdentityObject(salt=salt,
 							   identity=identity,
 							   hashed=(True if salt else False),
 							   type=open_interfaces.ID_TYPE_EMAIL)
+
 	# assertion
-	aid = assertion.id or u"%s -> %s" % (badge.name, assertion.person.email)
+	aid = assertion.id or u"%s -> %s" % (badge.name, person.email)
 	result = BadgeAssertion(uid=aid,
 							verify=verify,
 							recipient=recipient,

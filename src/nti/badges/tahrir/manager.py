@@ -127,6 +127,10 @@ class TahrirBadgeManager(object):
 			result.append(badge)
 		return result
 
+	def get_badge_by_id(self, badge_id):
+		result = self.db.get_badge(badge_id)
+		return result
+
 	# Assertions
 
 	def _get_assertion(self, person, badge):
@@ -216,6 +220,10 @@ class TahrirBadgeManager(object):
 		self.delete_person_assertions(email)
 		return self.db.delete_person(email)
 
+	def get_person_by_id(self, person_id):
+		result = self.db.get_person(id=person_id)
+		return result
+
 	# Issuers
 
 	def _issuer_tuple(self, issuer, origin=None):
@@ -248,6 +256,10 @@ class TahrirBadgeManager(object):
 									contact=issuer.contact)
 		return result
 
+	def get_issuer_by_id(self, issuer_id):
+		result = self.db.get_issuer(issuer_id)
+		return result
+		
 def create_badge_manager(dburi=None, twophase=False, salt=None, defaultSQLite=False,
 						 autocommit=False, config=None):
 	if defaultSQLite:

@@ -88,3 +88,13 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""
 	Interface for Tahrir database managers
 	"""
+
+	def get_issuer_by_id(issuer_id):
+		"""
+		return the issuer by its id
+		"""
+
+	def get_person_by_id(badge_id):
+		"""
+		return the badge by its id
+		"""
