@@ -133,8 +133,11 @@ def tahrir_badge_to_mozilla_badge(badge):
 						name=safestr(badge.name),
 						image=safestr(badge.image),
 						criteria=safestr(badge.criteria),
-						issuer=safestr(issuer_origin),
 						description=safestr(badge.description))
+	if issuer_origin:
+		result.issuer = safestr(issuer_origin)
+	else:
+		logger.warn("Could not set issuer for badge %s", result.name)
 	tag_badge_interfaces(badge, result)
 	return result
 
