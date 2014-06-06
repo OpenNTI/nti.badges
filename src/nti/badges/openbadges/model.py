@@ -14,7 +14,7 @@ from zope.container import contained
 import persistent
 
 from nti.externalization.externalization import WithRepr
-#from nti.externalization.externalization import NoPickle
+from nti.externalization.externalization import NoPickle
 from nti.utils.schema import EqHash
 
 from nti.utils.property import alias
@@ -32,8 +32,10 @@ from .interfaces import IBadgeClass
 
 @interface.implementer(interfaces.IVerificationObject)
 @WithRepr
+@NoPickle
 @EqHash('url', 'type')
-class VerificationObject(SchemaConfigured, persistent.Persistent, contained.Contained):
+class VerificationObject(SchemaConfigured,
+						 contained.Contained):
 	createFieldProperties(interfaces.IVerificationObject)
 
 	__external_can_create__ = True
@@ -46,8 +48,10 @@ class VerificationObject(SchemaConfigured, persistent.Persistent, contained.Cont
 
 @interface.implementer(interfaces.IIdentityObject)
 @WithRepr
+@NoPickle
 @EqHash('identity', 'type')
-class IdentityObject(SchemaConfigured, persistent.Persistent, contained.Contained):
+class IdentityObject(SchemaConfigured,
+					 contained.Contained):
 	createFieldProperties(interfaces.IIdentityObject)
 
 	__external_can_create__ = True
@@ -60,8 +64,10 @@ class IdentityObject(SchemaConfigured, persistent.Persistent, contained.Containe
 
 @interface.implementer(interfaces.IAlignmentObject)
 @WithRepr
+@NoPickle
 @EqHash('url', 'name')
-class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contained):
+class AlignmentObject(SchemaConfigured,
+					  contained.Contained):
 	createFieldProperties(interfaces.IAlignmentObject)
 
 	__external_can_create__ = True
@@ -74,8 +80,10 @@ class AlignmentObject(SchemaConfigured, persistent.Persistent, contained.Contain
 
 @interface.implementer(interfaces.IIssuerOrganization)
 @WithRepr
+@NoPickle
 @EqHash('name', 'url')
-class IssuerOrganization(SchemaConfigured, persistent.Persistent, contained.Contained):
+class IssuerOrganization(SchemaConfigured,
+						 contained.Contained):
 	createFieldProperties(interfaces.IIssuerOrganization)
 
 	__external_can_create__ = True
@@ -92,8 +100,10 @@ class IssuerOrganization(SchemaConfigured, persistent.Persistent, contained.Cont
 
 @interface.implementer(IBadgeClass)
 @WithRepr
+@NoPickle
 @EqHash('name')
-class BadgeClass(SchemaConfigured, persistent.Persistent, contained.Contained):
+class BadgeClass(SchemaConfigured,
+				 contained.Contained):
 	createFieldProperties(IBadgeClass)
 
 	__external_can_create__ = True
@@ -110,8 +120,10 @@ class BadgeClass(SchemaConfigured, persistent.Persistent, contained.Contained):
 
 @interface.implementer(interfaces.IBadgeAssertion)
 @WithRepr
+@NoPickle
 @EqHash('uid', 'recipient')
-class BadgeAssertion(SchemaConfigured, persistent.Persistent, contained.Contained):
+class BadgeAssertion(SchemaConfigured,
+					 contained.Contained):
 	createFieldProperties(interfaces.IBadgeAssertion)
 
 	__external_can_create__ = True
