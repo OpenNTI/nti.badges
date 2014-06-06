@@ -39,31 +39,34 @@ class TahrirBadgeManager(object):
 		self.dburi = dburi
 		self.twophase = twophase
 		self.autocommit = autocommit
+		self._checked = False
 
-	@Lazy
+	@property
 	def engine(self):
 		result = create_engine(self.dburi)
 		return result
 
-	@Lazy
+	@property
 	def sessionmaker(self):
 		result = sessionmaker(bind=self.engine,
 							  twophase=self.twophase,
 							  extension=ZopeTransactionExtension())
 		return result
 
-	@Lazy
+	@property
 	def session(self):
-		result = scoped_session(self.sessionmaker)
+		result = self.sessionmaker()
 		return result
 
-	@Lazy
+	@property
 	def db(self):
 		result = NTITahrirDatabase(session=self.session,
 								   autocommit=self.autocommit,
 							 	   salt=self.salt)
-		metadata = getattr(tahrir_base, 'metadata')
-		metadata.create_all(self.engine, checkfirst=True)
+		if not self._checked:
+			metadata = getattr(tahrir_base, 'metadata')
+			metadata.create_all(self.engine, checkfirst=True)
+			self._checked = True
 		return result
 
 	# DB operations
