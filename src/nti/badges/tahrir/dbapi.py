@@ -12,6 +12,11 @@ import base64
 import hashlib
 from datetime import datetime
 
+from sqlalchemy import func, exists, and_
+
+from tahrir_api.model import Badge
+from tahrir_api.model import Person
+from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
@@ -35,6 +40,30 @@ class NTITahrirDatabase(TahrirDatabase):
 	def recipient(self, email):
 		hexdigest = unicode(hashlib.sha256(email + self.salt).hexdigest())
 		return u"sha256$" + hexdigest
+	
+	def issuer_exists(self, origin, name):
+		query = self.session.query(
+						exists().where(
+							and_(func.lower(Issuer.origin) == func.lower(origin),
+								 func.lower(Issuer.name) == func.lower(name))))
+		return query.scalar()
+
+	def badge_exists(self, badge_id):
+		result = self.session.query(exists().where(
+							func.lower(Badge.id) == func.lower(badge_id))).scalar()
+		return result
+
+	def person_exists(self, email=None, id=None, nickname=None):
+		result = False
+		if email:
+			result = self.session.query(exists().where(
+							func.lower(Person.email) == func.lower(email))).scalar()
+		elif id:
+			result = self.session.query(exists().where(Person.id == id)).scalar()
+		elif nickname:
+			result = self.session.query(exists().where(
+							func.lower(Person.nickname) == func.lower(nickname))).scalar()
+		return result
 
 	@autocommit
 	def add_assertion(self,
