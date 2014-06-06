@@ -15,7 +15,7 @@ from zope import interface
 
 from sqlalchemy import func
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session, Session
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -24,12 +24,29 @@ from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
 from tahrir_api.model import DeclarativeBase as tahrir_base
 
-# from nti.utils.property import Lazy
+from nti.utils.property import Lazy
 
 from .dbapi import NTITahrirDatabase
 
 from . import interfaces
 from .. import interfaces as badge_interfaces
+
+from contextlib import contextmanager
+
+@contextmanager
+def session_scope(bind, autocommit, extension):
+	"""Provide a transactional scope around a series of operations."""
+	session = Session(bind=bind, autocommit=autocommit, extension=extension)
+	try:
+		yield session
+		if autocommit:
+			session.commit()
+	except:
+		if autocommit:
+			session.rollback()
+		raise
+	finally:
+		session.close()
 
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
@@ -52,20 +69,22 @@ class TahrirBadgeManager(object):
 							  extension=ZopeTransactionExtension())
 		return result
 
-	@property
+	@Lazy
 	def session(self):
-		result = scoped_session(self.sessionmaker)
-		return result
+		#result = scoped_session(self.sessionmaker)
+		#return result
+		return None
 
 	@property
 	def db(self):
-		result = NTITahrirDatabase(session=self.session,
+		with session_scope(self.engine, self.autocommit, ZopeTransactionExtension()) as session:
+			result = NTITahrirDatabase(session=session,
 								   autocommit=self.autocommit,
 							 	   salt=self.salt)
-		self.session.configure(bind=self.engine)
-		metadata = getattr(tahrir_base, 'metadata')
-		metadata.create_all(self.engine, checkfirst=True)
-		return result
+			# session.configure(bind=self.engine)
+			metadata = getattr(tahrir_base, 'metadata')
+			metadata.create_all(self.engine, checkfirst=True)
+			return result
 
 	# DB operations
 
