@@ -34,11 +34,11 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_issuer_object(self):
         io = model.IssuerOrganization(name="foo",
-                                      image=b"https://example.org/foo.png",
-                                      url=b"http://example.org",
+                                      image=u"https://example.org/foo.png",
+                                      url=u"http://example.org",
                                       email="foo@example.org",
                                       description="example issuer",
-                                      revocationList=b"https://example.org/revoked.json")
+                                      revocationList=u"https://example.org/revoked.json")
         assert_that(io, verifiably_provides(interfaces.IIssuerOrganization))
 
         ext_obj = toExternalObject(io)
@@ -96,7 +96,7 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(io, equal_to(new_io))
 
     def test_alignment_object(self):
-        ao = model.AlignmentObject(name="my-alignment", url=b"http://foo.xyz",
+        ao = model.AlignmentObject(name="my-alignment", url=u"http://foo.xyz",
                                    description="foo")
         assert_that(ao, verifiably_provides(interfaces.IAlignmentObject))
 
@@ -116,17 +116,17 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_badge_class(self):
         
-        ao1 = model.AlignmentObject(name="my-alignment-1", url=b"http://foo-1.xyz",
+        ao1 = model.AlignmentObject(name="my-alignment-1", url=u"http://foo-1.xyz",
                                         description="foo-1")
         
-        ao2 = model.AlignmentObject(name="my-alignment-2", url=b"http://foo-2.xyz",
+        ao2 = model.AlignmentObject(name="my-alignment-2", url=u"http://foo-2.xyz",
                                         description="foo-2")
 
         bc = model.BadgeClass(name="my-badge",
                               description="super badge",
-                              image=b"https://badge.png",
-                              criteria=b"https://badge-criteria.com",
-                              issuer=b"https://badge-issuer.com",
+                              image=u"https://badge.png",
+                              criteria=u"https://badge-criteria.com",
+                              issuer=u"https://badge-issuer.com",
                               alignment=[ao1, ao2])
         assert_that(bc, verifiably_provides(interfaces.IBadgeClass))
 
@@ -156,10 +156,10 @@ class TestOpenBadges(NTIBadgesTestCase):
         ba = model.BadgeAssertion(uid="my-uid",
                                   recipient=recipient,
                                   verify=verify,
-                                  badge=b"http://badge.json",
+                                  badge=u"http://badge.json",
                                   issuedOn=now,
-                                  image=b"http://foo.jpg",
-                                  evidence=b"http://foo.com",
+                                  image=u"http://foo.jpg",
+                                  evidence=u"http://foo.com",
                                   expires=now)
         assert_that(ba, verifiably_provides(interfaces.IBadgeAssertion))
 

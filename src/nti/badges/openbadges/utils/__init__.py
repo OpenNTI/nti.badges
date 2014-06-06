@@ -82,8 +82,8 @@ def json_source_to_map(source, **kwargs):
 def issuer_from_source(source, **kwargs):
 	data = json_source_to_map(source, **kwargs)
 	result = model.IssuerOrganization()
-	for field, func in (('name', _unicode), ('image', str), ('url', str),
-						('email', _unicode), ('revocationList', str),
+	for field, func in (('name', _unicode), ('image', _unicode), ('url', _unicode),
+						('email', _unicode), ('revocationList', _unicode),
 						('description', _unicode)):
 		value = data.get(field)
 		value = func(value) if value else None
@@ -100,7 +100,7 @@ def badge_from_source(source, **kwargs):
 
 	# parse common single value fields
 	for field, func in (('name', _unicode), ('description', _unicode),
-						('criteria', str), ('image', _unicode)):
+						('criteria', _unicode), ('image', _unicode)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
@@ -108,7 +108,7 @@ def badge_from_source(source, **kwargs):
 	# issuer
 	issuer = data['issuer']
 	result.issuer = issuer_from_source(issuer, **kwargs) \
-					if isinstance(issuer, Mapping) else str(issuer)
+					if isinstance(issuer, Mapping) else _unicode(issuer)
 
 	# tags
 	tags = [_unicode(x) for x in data.get('tags', ())]
@@ -118,7 +118,7 @@ def badge_from_source(source, **kwargs):
 	result.alignment = alignment = []
 	for data in data.get('alignment', ()):
 		ao = model.AlignmentObject()
-		ao.url = str(data['url'])
+		ao.url = _unicode(data['url'])
 		ao.name = _unicode(data['name'])
 		ao.description = _unicode(data.get('description'))
 		alignment.append(ao)
@@ -130,8 +130,8 @@ def assertion_from_source(source, **kwargs):
 	result = model.BadgeAssertion()
 
 	# parse common single value fields
-	for field, func in (('uid', _unicode), ('image', str), ('issuedOn', _datetime),
-						('evidence', str), ('expires', _datetime)):
+	for field, func in (('uid', _unicode), ('image', _unicode), ('issuedOn', _datetime),
+						('evidence', _unicode), ('expires', _datetime)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
@@ -139,7 +139,7 @@ def assertion_from_source(source, **kwargs):
 	# badge
 	badge = data['badge']
 	result.badge = badge_from_source(badge, **kwargs) \
-				   if isinstance(badge, Mapping) else str(badge)
+				   if isinstance(badge, Mapping) else _unicode(badge)
 
 	# recipient
 	recipient = data['recipient']
@@ -159,6 +159,6 @@ def assertion_from_source(source, **kwargs):
 	# verify
 	verify = data['verify']
 	result.verify = model.VerificationObject(type=verify["type"],
-											 url=str(verify['url']))
+											 url=_unicode(verify['url']))
 
 	return result

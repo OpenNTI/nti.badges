@@ -28,17 +28,11 @@ class IIssuer(ITahrirModel, badge_interfaces.IBadgeIssuer):
 class IBadge(ITahrirModel, badge_interfaces.IBadgeClass):
 	name = nti_schema.ValidTextLine(title="Badge name")
 
-	image = nti_schema.Variant((
-					nti_schema.ValidTextLine(title="Image URL"),
-					nti_schema.HTTPURL(title='Image URL')),
-					title="Badge image")
+	image = nti_schema.ValidTextLine(title="Image name/URL")
 
 	description = nti_schema.ValidText(title="Badge description")
 
-	criteria = nti_schema.Variant((
-					nti_schema.ValidTextLine(title="Criteria URL"),
-					nti_schema.HTTPURL(title='Criteria URL')),
-					title="Badge criteria")
+	criteria = nti_schema.ValidTextLine(title="Badge criteria")
 
 	issuer_id = nti_schema.Int(title='Issuer id')
 
@@ -53,10 +47,7 @@ class IPerson(ITahrirModel):
 
 	nickname = nti_schema.ValidTextLine(title=" Person's nickname", required=False)
 
-	website = nti_schema.Variant((
-					nti_schema.ValidTextLine(title="Website URL"),
-					nti_schema.HTTPURL(title='Website URL')),
-					title="Person Website")
+	website = nti_schema.ValidTextLine(title="Person Website")
 
 	bio = nti_schema.ValidText(title="Person's bio", required=False)
 

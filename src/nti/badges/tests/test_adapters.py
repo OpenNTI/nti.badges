@@ -179,16 +179,16 @@ class TestAdapters(NTIBadgesTestCase):
 		issuer.name = 'FOSS@RIT'
 		issuer.email = 'foss@rit.ed'
 		issuer.createdTime = self._time_now
-		issuer.organization = b'http://foss.rit.ed'
-		issuer.origin = b'http://foss.rit.edu/foss.json'
+		issuer.organization = u'http://foss.rit.ed'
+		issuer.origin = u'http://foss.rit.edu/foss.json'
 		return issuer
 
 	def _ntibadge(self):
 		result = NTIBadge(name="fossbox",
 						  issuer=self._ntiissuer(),
 						  description=u"Welcome to the FOSSBox. A member is you!",
-						  image=b"http://foss.rit.edu/files/fossboxbadge.png",
-						  criteria=b"http://foss.rit.edu/fossbox",
+						  image=u"http://foss.rit.edu/files/fossboxbadge.png",
+						  criteria=u"http://foss.rit.edu/fossbox",
 						  createdTime=self._time_now,
 						  tags=(['fox', 'box']))
 		return result
@@ -262,11 +262,11 @@ class TestAdapters(NTIBadgesTestCase):
 
 	def _open_issuer(self):
 		issuer = IssuerOrganization(name="FOSS@RIT",
-									image=b"http://foss.rit.edu/foss.png",
-									url=b"http://foss.rit.edu/foss.json",
+									image=u"http://foss.rit.edu/foss.png",
+									url=u"http://foss.rit.edu/foss.json",
 									email="foss@rit.edu",
 									description="example issuer",
-									revocationList=b"https://example.org/revoked.json")
+									revocationList=u"https://example.org/revoked.json")
 		return issuer
 
 	def _open_identityobject(self):
@@ -277,9 +277,9 @@ class TestAdapters(NTIBadgesTestCase):
 	def _open_badge(self):
 		result = BadgeClass(name="fossbox",
 							description="Welcome to the FOSSBox. A member is you!",
-							image=b"http://foss.rit.edu/files/fossboxbadge.png",
-							criteria=b"http://foss.rit.edu/fossbox",
-							issuer=b"http://foss.rit.edu/foss.json",
+							image=u"http://foss.rit.edu/files/fossboxbadge.png",
+							criteria=u"http://foss.rit.edu/fossbox",
+							issuer=u"http://foss.rit.edu/foss.json",
 							tags=(['fox', 'box']))
 		return result
 
