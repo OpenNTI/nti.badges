@@ -8,17 +8,12 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
-from nti.utils import schema as nti_schema
-
 from nti.utils.schema import DecodingValidTextLine as ValidTextLine
 from nti.utils.schema import ValidText
-TextLine = ValidTextLine
-from nti.utils.schema import Variant
-from nti.utils.schema import HTTPURL
 from nti.utils.schema import Int
 from nti.utils.schema import Bool
 from nti.utils.schema import ValidDatetime
-
+TextLine = ValidTextLine
 
 from .. import interfaces as badge_interfaces
 

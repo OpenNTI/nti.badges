@@ -12,12 +12,10 @@ from zope import interface
 # of the base utility packages.
 from nti.utils.schema import DecodingValidTextLine as ValidTextLine
 from nti.utils.schema import ValidText
-TextLine = ValidTextLine
 from nti.utils.schema import ListOrTuple
-from nti.utils.schema import Variant
-from nti.utils.schema import HTTPURL
 from nti.utils.schema import Number
 from nti.utils.schema import Object
+TextLine = ValidTextLine
 
 # XXX: Note: These are temporary, pending a better
 # separation of the base content model. This package
@@ -46,13 +44,9 @@ class INTIIssuer(IBadgeIssuer,
 				 ICreatedTime):
 	name = ValidTextLine(title='Issuer name')
 
-	origin = Variant((ValidTextLine(title='Issuer origin'),
-					  HTTPURL(title='Issuer origin URL')),
-					 title="Issuer origin")
+	origin = ValidTextLine(title='Issuer origin')
 
-	organization = Variant((TextLine(title='Issuer organization'),
-							HTTPURL(title='Issuer organization URL')),
-						   title="Issuer organization")
+	organization = TextLine(title='Issuer organization')
 
 	email = ValidTextLine(title="Issuer email")
 
@@ -70,14 +64,9 @@ class INTIBadge(ITaggedContent,
 							required=False,
 							default='')
 
-	image = Variant((ValidTextLine(title='Badge image identifier'),
-					 HTTPURL(title='Badge URL')),
-					title="Badge image")
+	image = ValidTextLine(title='Badge image identifier/URL')
 
-	criteria = Variant((TextLine(title='Badge criteria identifier'),
-						HTTPURL(title='Badge criteria URL')),
-					   title="Badge criteria")
-
+	criteria = TextLine(title='Badge criteria identifier/URL')
 
 class INTIAssertion(IBadgeAssertion):
 	badge = Object(INTIBadge, title="Badge")
@@ -90,8 +79,7 @@ class INTIAssertion(IBadgeAssertion):
 class INTIPerson(ICreatedTime):
 	name = ValidTextLine(title="Person [unique] name")
 	email = ValidTextLine(title="Person [unique] email")
-	assertions = ListOrTuple(Object(INTIAssertion,
-									title="Assertion"),
+	assertions = ListOrTuple(Object(INTIAssertion, title="Assertion"),
 							 title="Assertions",
 							 min_length=0,
 							 default=(), required=False)
