@@ -18,16 +18,16 @@ from hamcrest import contains
 does_not = is_not
 
 import os
+import pickle
 import shutil
 import tempfile
-import pickle
 import ConfigParser
 from datetime import datetime
 
 from zope import component
 from zope.component import eventtesting
-from zope.lifecycleevent import ObjectCreatedEvent
 from zope.lifecycleevent import ObjectAddedEvent
+from zope.lifecycleevent import ObjectCreatedEvent
 
 from tahrir_api.model import Badge, Person, Issuer
 
@@ -45,6 +45,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 	def test_registration(self):
 		manager = component.queryUtility(interfaces.ITahrirBadgeManager)
 		assert_that(manager, is_not(none()))
+
 	def test_config(self):
 		tmp_dir = tempfile.mkdtemp(dir="/tmp")
 		try:

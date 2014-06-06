@@ -221,7 +221,7 @@ class TahrirBadgeManager(object):
 		return self.db.delete_person(email)
 
 	def get_person_by_id(self, person_id):
-		result = self.db.get_person(id=person_id)
+		result = self.db.get_person(person_email=person_id, id=person_id)
 		return result
 
 	# Issuers
