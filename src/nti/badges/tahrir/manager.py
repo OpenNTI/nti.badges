@@ -24,8 +24,6 @@ from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
 from tahrir_api.model import DeclarativeBase as tahrir_base
 
-from nti.utils.property import Lazy
-
 from .dbapi import NTITahrirDatabase
 
 from . import interfaces
@@ -34,16 +32,28 @@ from .. import interfaces as badge_interfaces
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
-	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
+	__cached_engine = None
+	__cached_session = None
+	__metadata_created = False
+
+	_engine = None
+	def __init__(self, dburi, twophase=False, autocommit=False, salt=None,
+				 use_scoped_session=True, cache_session=True):
 		self.salt = salt
 		self.dburi = dburi
 		self.twophase = twophase
 		self.autocommit = autocommit
-		self._checked = False
+		self.cache_session = cache_session
+		self.use_scoped_session = use_scoped_session
 
 	@property
 	def engine(self):
-		result = create_engine(self.dburi)
+		if self.cache_session:
+			if self.__cached_engine is None:
+				self.__cached_engine = create_engine(self.dburi)
+			result = self.__cached_engine
+		else:
+			result = create_engine(self.dburi)
 		return result
 
 	@property
@@ -55,18 +65,27 @@ class TahrirBadgeManager(object):
 
 	@property
 	def session(self):
-		result = self.sessionmaker()
+		if not self.cache_session:
+			result = scoped_session(self.sessionmaker) \
+					 if self.use_scoped_session else self.sessionmaker()
+		else:
+			if self.__cached_session is None:
+				self.__cached_session = scoped_session(self.sessionmaker) \
+									    if self.use_scoped_session else self.sessionmaker()
+			result = self.__cached_session
 		return result
 
 	@property
 	def db(self):
+		# make sure tables are created
+		if not self.__metadata_created:
+			metadata = getattr(tahrir_base, 'metadata')
+			metadata.create_all(self.engine, checkfirst=True)
+			self.__metadata_created = True
+		# return db
 		result = NTITahrirDatabase(session=self.session,
 								   autocommit=self.autocommit,
 							 	   salt=self.salt)
-		if not self._checked:
-			metadata = getattr(tahrir_base, 'metadata')
-			metadata.create_all(self.engine, checkfirst=True)
-			self._checked = True
 		return result
 
 	# DB operations
@@ -262,8 +281,9 @@ class TahrirBadgeManager(object):
 		result = self.db.get_issuer(issuer_id)
 		return result
 		
-def create_badge_manager(dburi=None, twophase=False, salt=None, defaultSQLite=False,
-						 autocommit=False, config=None):
+def create_badge_manager(dburi=None, twophase=False, salt=None,
+						 use_scoped_session=True, cache_session=True,
+						 autocommit=False, defaultSQLite=False, config=None):
 	if defaultSQLite:
 		data_dir = os.getenv('DATASERVER_DATA_DIR') or '/tmp'
 		data_dir = os.path.expanduser(data_dir)
@@ -280,11 +300,17 @@ def create_badge_manager(dburi=None, twophase=False, salt=None, defaultSQLite=Fa
 			dburi = parser.get('tahrir', 'dburi')
 		if parser.has_option('tahrir', 'twophase'):
 			twophase = parser.getboolean('tahrir', 'twophase')
+		if parser.has_option('tahrir', 'cache_session'):
+			cache_session = parser.getboolean('tahrir', 'cache_session')
+		if parser.has_option('tahrir', 'use_scoped_session'):
+			use_scoped_session = parser.getboolean('tahrir', 'use_scoped_session')
 
 	result = TahrirBadgeManager(dburi=dburi,
 								salt=salt,
 								twophase=twophase,
-								autocommit=autocommit)
+								autocommit=autocommit,
+								cache_session=cache_session,
+								use_scoped_session=use_scoped_session)
 	return result
 
 def create_issuer(name, origin, org, contact):
