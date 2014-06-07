@@ -290,8 +290,7 @@ def create_badge_manager(dburi=None, twophase=False, salt=None,
 		data_file = os.path.join(data_dir, 'tahrir.db')
 		dburi = "sqlite:///%s" % data_file
 	elif config:  # if config file is specified
-		data_dir = os.getenv('DATASERVER_DIR') or '/tmp'
-		config_name = config.replace("$DATASERVER_DIR", data_dir)
+		config_name = os.path.expandvars(config)
 		parser = ConfigParser.ConfigParser()
 		parser.read([config_name])
 		if parser.has_option('tahrir', 'salt'):
