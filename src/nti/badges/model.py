@@ -11,14 +11,13 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope.container import contained
 
-import operator
-
 from nti.externalization.externalization import WithRepr
 from nti.externalization.externalization import NoPickle
 
 from nti.utils.property import alias
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createFieldProperties
+
 # NOTE: None of these classes are inheriting from other
 # schema-configured classes, so we MUST create all the field
 # properties; only when inheritance is involved should we
