@@ -36,7 +36,6 @@ class TahrirBadgeManager(object):
 	__cached_session = None
 	__metadata_created = False
 
-	_engine = None
 	def __init__(self, dburi, twophase=False, autocommit=False, salt=None,
 				 use_scoped_session=True, cache_session=True):
 		self.salt = salt
