@@ -16,9 +16,11 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope import component
 
-from .interfaces import ITahrirBadgeManager
-from .interfaces import IAssertion
 from nti.wref.interfaces import ICachingWeakRef
+
+from .interfaces import IAssertion
+
+from . import get_tahrir_assertion_by_ids
 
 @interface.implementer(ICachingWeakRef)
 @component.adapter(IAssertion)
@@ -74,12 +76,10 @@ class AssertionWeakRef(object):
 			return self._v_assertion
 
 		# NOTE: although we are saving the salt of the manager,
-		# we are only actually checking the default manager.
-		# This is currently fine because there is only one
-		# such manager around but may change.
-		manager = component.getUtility(ITahrirBadgeManager)
+		# let's check all managers. Almost always there is only one
+		# manager registered
 
-		assertion = manager.get_assertion(self._assertion_person_id, self._assertion_badge_id)
+		assertion = get_tahrir_assertion_by_ids(self._assertion_person_id, self._assertion_badge_id)
 		if assertion is not None:
 			self._v_assertion = assertion
 
