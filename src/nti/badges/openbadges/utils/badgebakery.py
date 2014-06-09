@@ -94,9 +94,10 @@ def process_args(args=None):
 		print("Invalid image file", source, file=sys.stderr)
 		sys.exit(2)
 	
-	target = os.path.expanduser(args.target)
+	target = args.target
 	if target is None:
 		target = source
+	target = os.path.expanduser(target)
 
 	url = args.url
 	payload = args.payload
