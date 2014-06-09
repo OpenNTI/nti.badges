@@ -72,7 +72,8 @@ def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
 def process_args(args=None):
 	arg_parser = argparse.ArgumentParser(description="Baked a badge")
 	arg_parser.add_argument('source', help="The image to bake file path")
-	arg_parser.add_argument('target', help="The baked image file path")
+	arg_parser.add_argument('target', nargs='?', help="The baked image file path",
+							default=None)
 	arg_parser.add_argument('-s', '--secret',
 							 dest='secret',
 							 default=DEFAULT_SECRET,
@@ -88,9 +89,14 @@ def process_args(args=None):
 	args = arg_parser.parse_args(args=args)
 
 	source = os.path.expanduser(args.source)
-	if not os.path.exists(source) or not os.path.isfile(source):
+	if 	not os.path.exists(source) or not os.path.isfile(source) or \
+		not source.lower().endswith('.png'):
 		print("Invalid image file", source, file=sys.stderr)
 		sys.exit(2)
+	
+	target = os.path.expanduser(args.target)
+	if target is None:
+		target = source
 
 	url = args.url
 	payload = args.payload
@@ -110,7 +116,6 @@ def process_args(args=None):
 			print("Payload is not a json dictionary", payload, file=sys.stderr)
 			sys.exit(2)
 
-	target = os.path.expanduser(args.target)
 	bake_badge(source, target, url=url, payload=payload, secret=args.secret)
 
 def main(args=None):
