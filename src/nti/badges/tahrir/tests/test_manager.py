@@ -85,6 +85,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 										  u'FOSS@RIT',
 										  u'http://foss.rit.edu', u'foss@rit.edu')
 		assert_that(issuer_id, is_not(none()))
+		assert_that(manager.db.get_issuer(issuer_id), is_not(none()))
 
 		badge_id = manager.db.add_badge(name=u'fossbox',
 										image=u'http://foss.rit.edu/files/fossboxbadge.png',
@@ -177,6 +178,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 		assert_that(assertion, is_(not_none() ) )
 		assert_that( assertion, is_( assertion_from_wref ))
 		assert_that(manager.assertion_exists('foo@example.org', 'fossbox'), is_(True))
+		assert_that(manager.db.assertion_exists('foo@example.org', 'fossbox'), is_(True))
 
 		badge = manager.get_badge('fossbox')
 		assert_that(badge, is_not(none()))

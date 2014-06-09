@@ -40,13 +40,22 @@ class NTITahrirDatabase(TahrirDatabase):
 	def recipient(self, email):
 		hexdigest = unicode(hashlib.sha256(email + self.salt).hexdigest())
 		return u"sha256$" + hexdigest
-	
+
+	# issuers
+
 	def issuer_exists(self, origin, name):
 		query = self.session.query(
 						exists().where(
 							and_(func.lower(Issuer.origin) == func.lower(origin),
 								 func.lower(Issuer.name) == func.lower(name))))
 		return query.scalar()
+
+	def get_issuer(self, issuer_id):
+		query = self.session.query(Issuer).filter_by(id=issuer_id)
+		result = query.scalar()
+		return result
+
+	# badges
 
 	def badge_exists(self, badge_id):
 		result = self.session.query(exists().where(
@@ -60,6 +69,8 @@ class NTITahrirDatabase(TahrirDatabase):
 										"tags":tags})
 		return result
 
+	# persons
+
 	def person_exists(self, email=None, id=None, nickname=None):
 		result = False
 		if email:
@@ -72,9 +83,17 @@ class NTITahrirDatabase(TahrirDatabase):
 							func.lower(Person.nickname) == func.lower(nickname))).scalar()
 		return result
 
-	def get_issuer(self, issuer_id):
-		query = self.session.query(Issuer).filter_by(id=issuer_id)
-		result = query.scalar()
+	# assertion
+
+	def assertion_exists(self, badge_id, email):
+		person = self.get_person(email)
+		if not person:
+			return False
+
+		result = self.session.query(exists().where(
+							and_(func.lower(Assertion.person_id) == func.lower(person.id),
+								 func.lower(Assertion.badge_id) == func.lower(badge_id)))).scalar()
+							
 		return result
 
 	@autocommit
