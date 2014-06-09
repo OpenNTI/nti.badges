@@ -120,13 +120,18 @@ class TahrirBadgeManager(object):
 		return result
 
 	def update_badge(self, badge, description=None, criteria=None, tags=None):
-		result = self._get_badge(badge)
-		if result is not None:
-			self.db.update_badge(badge_id=result.id,
-								 tag=tags or result.tags,
-								 criteria=criteria or result.criteria,
-								 description=description or result.description)
-		return result
+		stored = self._get_badge(badge)
+		if stored is not None:
+			source = interfaces.IBadge(badge)
+			tags = tags or source.tags or stored.tags
+			criteria = criteria or source.criteria or stored.criteria
+			description = description or source.description or stored.description
+			self.db.update_badge(badge_id=stored.id,
+								 tag=tags,
+								 criteria=criteria,
+								 description=description)
+			return True
+		return False
 
 	def _get_person_badges(self, person):
 		email, _ = self._person_tuple(person)
