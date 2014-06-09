@@ -116,6 +116,11 @@ class IBadgeManager(interface.Interface):
 		add the specifed badge
 		"""
 
+	def update_badge(badge, description, criteria):
+		"""
+		update the information regarding a batch
+		"""
+		
 	def get_badge(badge):
 		"""
 		return the specifed badge
@@ -147,7 +152,9 @@ class IBadgeManager(interface.Interface):
 		"""
 
 	def assertion_exists(person, badge):
-		pass
+		"""
+		check if a badge assertion exists
+		"""
 
 	def get_person_assertions(person):
 		"""

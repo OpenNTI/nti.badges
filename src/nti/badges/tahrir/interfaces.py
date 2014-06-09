@@ -39,7 +39,6 @@ class IBadge(ITahrirModel, badge_interfaces.IBadgeClass):
 
 	criteria = ValidTextLine(title="Criteria URL")
 
-
 	issuer_id = Int(title='Issuer id')
 
 	created_on =  ValidDatetime(title="Created time")
@@ -88,6 +87,9 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	"""
 	Interface for Tahrir database managers
 	"""
+
+	def update_badge(badge, description, criteria, tags):
+		pass
 
 	def get_issuer_by_id(issuer_id):
 		"""

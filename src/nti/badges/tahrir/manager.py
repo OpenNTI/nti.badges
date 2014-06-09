@@ -119,6 +119,15 @@ class TahrirBadgeManager(object):
 			result.append(badge)
 		return result
 
+	def update_badge(self, badge, description=None, criteria=None, tags=None):
+		result = self._get_badge(badge)
+		if result is not None:
+			self.db.update_badge(badge_id=result.id,
+								 tag=tags or result.tags,
+								 criteria=criteria or result.criteria,
+								 description=description or result.description)
+		return result
+
 	def _get_person_badges(self, person):
 		email, _ = self._person_tuple(person)
 		assertions = self.db.get_assertions_by_email(email)
@@ -131,6 +140,7 @@ class TahrirBadgeManager(object):
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
 			result.append(badge)
 		return result
+
 
 	def get_badge_by_id(self, badge_id):
 		result = self.db.get_badge(badge_id)

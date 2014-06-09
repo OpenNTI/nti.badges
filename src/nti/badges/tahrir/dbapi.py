@@ -53,6 +53,13 @@ class NTITahrirDatabase(TahrirDatabase):
 							func.lower(Badge.id) == func.lower(badge_id))).scalar()
 		return result
 
+	def update_badge(self, badge_id, description, criteria, tags):
+		result = self.session.query(Badge).filter_by(id=badge_id).\
+   								update({"description":description,
+										"criteria":criteria,
+										"tags":tags})
+		return result
+
 	def person_exists(self, email=None, id=None, nickname=None):
 		result = False
 		if email:
@@ -100,7 +107,6 @@ class NTITahrirDatabase(TahrirDatabase):
 		if (not self.person_exists(email=person_email)
 			or not self.badge_exists(badge_id)):
 			return False # TODO: Should probably be an empty tuple
-
 
 		if issued_on is None:
 			issued_on = datetime.utcnow()

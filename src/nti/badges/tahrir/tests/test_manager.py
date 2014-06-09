@@ -86,12 +86,26 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 										  u'http://foss.rit.edu', u'foss@rit.edu')
 		assert_that(issuer_id, is_not(none()))
 
-		badge = manager.db.add_badge(name=u'fossbox',
-									 image=u'http://foss.rit.edu/files/fossboxbadge.png',
-									 desc=u'Welcome to the FOSSBox. A member is you!',
-									 criteria=u'http://foss.rit.edu',
-									 issuer_id=issuer_id)
-		assert_that(badge, is_not(none()))
+		badge_id = manager.db.add_badge(name=u'fossbox',
+										image=u'http://foss.rit.edu/files/fossboxbadge.png',
+										desc=u'Welcome to the FOSSBox. A member is you!',
+										criteria=u'http://foss.rit.edu',
+										issuer_id=issuer_id)
+		assert_that(badge_id, is_not(none()))
+		badge = manager.db.get_badge(badge_id)
+		assert_that(badge, has_property('description', 'Welcome to the FOSSBox. A member is you!'))
+		assert_that(badge, has_property('criteria', 'http://foss.rit.edu'))
+		assert_that(badge, has_property('tags', is_(none())))
+
+		manager.db.update_badge(badge_id=badge_id,
+								description=u'Welcome to the FOSSBox',
+								criteria=u'http://foss.rit.org',
+								tags="fox, box")
+
+		badge = manager.db.get_badge(badge_id)
+		assert_that(badge, has_property('description', 'Welcome to the FOSSBox'))
+		assert_that(badge, has_property('criteria', 'http://foss.rit.org'))
+		assert_that(badge, has_property('tags', 'fox, box'))
 
 	@WithMockDSTrans
 	def test_operations(self):
@@ -158,7 +172,6 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 		assertion_from_wref = wref(allow_cached=False)
 		assert_that( assertion_from_wref, is_( not_none() ))
 		assert_that( assertion_from_wref, is_( events[0].object ))
-
 
 		assertion = manager.get_assertion('foo@example.org', 'fossbox')
 		assert_that(assertion, is_(not_none() ) )
