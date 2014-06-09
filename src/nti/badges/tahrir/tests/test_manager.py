@@ -178,7 +178,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 		assert_that(assertion, is_(not_none() ) )
 		assert_that( assertion, is_( assertion_from_wref ))
 		assert_that(manager.assertion_exists('foo@example.org', 'fossbox'), is_(True))
-		assert_that(manager.db.assertion_exists('foo@example.org', 'fossbox'), is_(True))
+		assert_that(manager.db.assertion_exists('fossbox', 'foo@example.org'), is_(True))
 
 		badge = manager.get_badge('fossbox')
 		assert_that(badge, is_not(none()))

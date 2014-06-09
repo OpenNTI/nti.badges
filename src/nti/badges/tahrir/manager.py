@@ -102,8 +102,8 @@ class TahrirBadgeManager(object):
 	def _get_badge(self, badge):
 		name = self._badge_name(badge)
 		result = self.db.session.query(Badge) \
-						.filter(func.lower(Badge.name) == func.lower(name)).all()
-		return result[0] if result else None
+						.filter(func.lower(Badge.name) == func.lower(name)).scalar()
+		return result
 
 	def badge_exists(self, badge):
 		result = self._get_badge(badge)
@@ -158,9 +158,8 @@ class TahrirBadgeManager(object):
 		person = self._get_person(person)
 		if badge and person:
 			result = self.db.session.query(Assertion)\
-				   		 .filter_by(person_id=person.id, badge_id=badge.id).all()
-			if result:
-				result = result[0]
+				   		 .filter_by(person_id=person.id, badge_id=badge.id).scalar()
+			if result is not None:
 				result.salt = self.db.salt  # Save salt
 				return result
 		return None
