@@ -39,8 +39,8 @@ class TahrirBadgeManager(object):
 	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
 		self.salt = salt
 		self.dburi = dburi
-		self.twophase = True  # twophase
-		self.autocommit = True  # autocommit
+		self.twophase = twophase
+		self.autocommit = autocommit
 
 	@Lazy
 	def engine(self):
@@ -49,8 +49,13 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def sessionmaker(self):
-		result = sessionmaker(bind=self.engine,
-							  twophase=self.twophase)
+		if self.autocommit:
+			result = sessionmaker(bind=self.engine,
+							  	  twophase=self.twophase)
+		else:
+			result = sessionmaker(bind=self.engine,
+							  	  twophase=self.twophase,
+							  	  extension=ZopeTransactionExtension())
 		return result
 
 	@Lazy
@@ -294,6 +299,8 @@ def create_badge_manager(dburi=None, twophase=False, salt=None,
 			dburi = parser.get('tahrir', 'dburi')
 		if parser.has_option('tahrir', 'twophase'):
 			twophase = parser.getboolean('tahrir', 'twophase')
+		if parser.has_option('tahrir', 'autocommit'):
+			autocommit = parser.getboolean('tahrir', 'autocommit')
 
 	result = TahrirBadgeManager(dburi=dburi,
 								salt=salt,
