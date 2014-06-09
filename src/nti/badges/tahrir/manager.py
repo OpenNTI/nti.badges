@@ -16,7 +16,6 @@ from zope import interface
 from sqlalchemy import func
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.exc import NoSuchColumnError
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -32,22 +31,6 @@ from .dbapi import NTITahrirDatabase
 from . import interfaces
 from .. import interfaces as badge_interfaces
 
-def SafetyDecorator(f):
-	def wrapper(*args, **kwargs):
-		self = args[0]
-		try:
-			return f(*args, **kwargs)
-		except NoSuchColumnError:
-			# CS HACK to recreate all lazy attributes if an exception
-			# like this occurs
-			del self.db
-			del self.engine
-			del self.session
-			del self.sessionmaker
-			# reraise
-			raise
-	return wrapper
-
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
@@ -56,8 +39,8 @@ class TahrirBadgeManager(object):
 	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
 		self.salt = salt
 		self.dburi = dburi
-		self.twophase = twophase
-		self.autocommit = autocommit
+		self.twophase = True  # twophase
+		self.autocommit = True  # autocommit
 
 	@Lazy
 	def engine(self):
@@ -67,8 +50,7 @@ class TahrirBadgeManager(object):
 	@Lazy
 	def sessionmaker(self):
 		result = sessionmaker(bind=self.engine,
-							  twophase=self.twophase,
-							  extension=ZopeTransactionExtension())
+							  twophase=self.twophase)
 		return result
 
 	@Lazy
@@ -104,7 +86,6 @@ class TahrirBadgeManager(object):
 		name = badge.name
 		return name
 
-	@SafetyDecorator
 	def add_badge(self, badge, issuer=None):
 		badge = interfaces.IBadge(badge)
 		issuer = self._get_issuer(issuer) if issuer is not None else None
@@ -117,7 +98,6 @@ class TahrirBadgeManager(object):
 								   issuer_id=issuer_id,)
 		return result
 
-	@SafetyDecorator
 	def _get_badge(self, badge):
 		name = self._badge_name(badge)
 		result = self.db.session.query(Badge) \
@@ -132,14 +112,12 @@ class TahrirBadgeManager(object):
 		result = self._get_badge(badge)
 		return result
 
-	@SafetyDecorator
 	def get_all_badges(self):
 		result = []
 		for badge in self.db.get_all_badges():
 			result.append(badge)
 		return result
 
-	@SafetyDecorator
 	def update_badge(self, badge, description=None, criteria=None, tags=None):
 		stored = self._get_badge(badge)
 		if stored is not None:
@@ -154,7 +132,6 @@ class TahrirBadgeManager(object):
 			return True
 		return False
 
-	@SafetyDecorator
 	def _get_person_badges(self, person):
 		email, _ = self._person_tuple(person)
 		assertions = self.db.get_assertions_by_email(email)
@@ -168,14 +145,12 @@ class TahrirBadgeManager(object):
 			result.append(badge)
 		return result
 
-	@SafetyDecorator
 	def get_badge_by_id(self, badge_id):
 		result = self.db.get_badge(badge_id)
 		return result
 
 	# Assertions
 
-	@SafetyDecorator
 	def _get_assertion(self, person, badge):
 		badge = self._get_badge(badge)
 		person = self._get_person(person)
@@ -195,7 +170,6 @@ class TahrirBadgeManager(object):
 		result = self._get_assertion(person, badge)
 		return True if result is not None else False
 
-	@SafetyDecorator
 	def delete_assertion(self, person, badge):
 		assertion = self._get_assertion(person, badge)
 		if assertion is not None:
@@ -205,7 +179,6 @@ class TahrirBadgeManager(object):
 		return False
 	remove_assertion = delete_assertion
 
-	@SafetyDecorator
 	def _get_person_assertions(self, person):
 		email, _ = self._person_tuple(person)
 		assertions = self.db.get_assertions_by_email(email)
@@ -219,7 +192,6 @@ class TahrirBadgeManager(object):
 			result.append(assertion)
 		return result
 
-	@SafetyDecorator
 	def add_assertion(self, person, badge, issued_on=None):
 		badge = self._get_badge(badge)
 		person = self._get_person(person)
@@ -227,7 +199,6 @@ class TahrirBadgeManager(object):
 			return self.db.add_assertion(badge.id, person.email, issued_on)
 		return False
 
-	@SafetyDecorator
 	def delete_person_assertions(self, person):
 		result = 0
 		for ast in self._get_person_assertions(person):
@@ -239,7 +210,6 @@ class TahrirBadgeManager(object):
 
 	# Persons
 
-	@SafetyDecorator
 	def _get_person(self, person=None, name=None):
 		email, name = self._person_tuple(person, name)
 		result = self.db.get_person(person_email=email, nickname=name)
@@ -249,7 +219,6 @@ class TahrirBadgeManager(object):
 		result = self._get_person(person, name)
 		return result
 
-	@SafetyDecorator
 	def add_person(self, person):
 		person = interfaces.IPerson(person)
 		result = self.db.add_person(email=person.email,
@@ -258,19 +227,16 @@ class TahrirBadgeManager(object):
 									bio=person.bio)
 		return result
 
-	@SafetyDecorator
 	def person_exists(self, person=None, name=None):
 		email, name, = self._person_tuple(person, name)
 		result = self.db.person_exists(email=email, nickname=name)
 		return result
 
-	@SafetyDecorator
 	def delete_person(self, person):
 		email, _ = self._person_tuple(person)
 		self.delete_person_assertions(email)
 		return self.db.delete_person(email)
 
-	@SafetyDecorator
 	def get_person_by_id(self, person_id):
 		result = self.db.get_person(person_email=person_id, id=person_id)
 		return result
@@ -283,7 +249,6 @@ class TahrirBadgeManager(object):
 		origin = origin or issuer.origin
 		return (name, origin)
 
-	@SafetyDecorator
 	def _get_issuer(self, issuer, origin=None):
 		name, origin = self._issuer_tuple(issuer, origin)
 		if self.db.issuer_exists(name=name, origin=origin):
@@ -300,7 +265,6 @@ class TahrirBadgeManager(object):
 		result = self._get_issuer(issuer, origin)
 		return result
 
-	@SafetyDecorator
 	def add_issuer(self, issuer):
 		issuer = interfaces.IIssuer(issuer)
 		result = self.db.add_issuer(origin=issuer.origin,
@@ -309,7 +273,6 @@ class TahrirBadgeManager(object):
 									contact=issuer.contact)
 		return result
 
-	@SafetyDecorator
 	def get_issuer_by_id(self, issuer_id):
 		result = self.db.get_issuer(issuer_id)
 		return result
