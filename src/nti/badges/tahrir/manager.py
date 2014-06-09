@@ -19,6 +19,8 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
+from nti.utils.property import Lazy
+
 from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
@@ -32,49 +34,32 @@ from .. import interfaces as badge_interfaces
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
-	__cached_engine = None
-	__cached_session = None
 	__metadata_created = False
 
-	def __init__(self, dburi, twophase=False, autocommit=False, salt=None,
-				 use_scoped_session=True, cache_session=True):
+	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
 		self.salt = salt
 		self.dburi = dburi
 		self.twophase = twophase
 		self.autocommit = autocommit
-		self.cache_session = cache_session
-		self.use_scoped_session = use_scoped_session
 
-	@property
+	@Lazy
 	def engine(self):
-		if self.cache_session:
-			if self.__cached_engine is None:
-				self.__cached_engine = create_engine(self.dburi)
-			result = self.__cached_engine
-		else:
-			result = create_engine(self.dburi)
+		result = create_engine(self.dburi)
 		return result
 
-	@property
+	@Lazy
 	def sessionmaker(self):
 		result = sessionmaker(bind=self.engine,
 							  twophase=self.twophase,
 							  extension=ZopeTransactionExtension())
 		return result
 
-	@property
+	@Lazy
 	def session(self):
-		if not self.cache_session:
-			result = scoped_session(self.sessionmaker) \
-					 if self.use_scoped_session else self.sessionmaker()
-		else:
-			if self.__cached_session is None:
-				self.__cached_session = scoped_session(self.sessionmaker) \
-									    if self.use_scoped_session else self.sessionmaker()
-			result = self.__cached_session
+		result = scoped_session(self.sessionmaker)
 		return result
 
-	@property
+	@Lazy
 	def db(self):
 		# make sure tables are created
 		if not self.__metadata_created:
@@ -281,7 +266,6 @@ class TahrirBadgeManager(object):
 		return result
 		
 def create_badge_manager(dburi=None, twophase=False, salt=None,
-						 use_scoped_session=True, cache_session=True,
 						 autocommit=False, defaultSQLite=False, config=None):
 	if defaultSQLite:
 		data_dir = os.getenv('DATASERVER_DATA_DIR') or '/tmp'
@@ -298,17 +282,11 @@ def create_badge_manager(dburi=None, twophase=False, salt=None,
 			dburi = parser.get('tahrir', 'dburi')
 		if parser.has_option('tahrir', 'twophase'):
 			twophase = parser.getboolean('tahrir', 'twophase')
-		if parser.has_option('tahrir', 'cache_session'):
-			cache_session = parser.getboolean('tahrir', 'cache_session')
-		if parser.has_option('tahrir', 'use_scoped_session'):
-			use_scoped_session = parser.getboolean('tahrir', 'use_scoped_session')
 
 	result = TahrirBadgeManager(dburi=dburi,
 								salt=salt,
 								twophase=twophase,
-								autocommit=autocommit,
-								cache_session=cache_session,
-								use_scoped_session=use_scoped_session)
+								autocommit=autocommit)
 	return result
 
 def create_issuer(name, origin, org, contact):

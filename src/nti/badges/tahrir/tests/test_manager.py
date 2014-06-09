@@ -76,20 +76,6 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 	def tearDown(self):
 		component.provideUtility(self.old)
 
-	def test_caching(self):
-		manager = create_badge_manager(dburi='sqlite://', cache_session=False)
-	
-		# requestion engine twice
-		assert_that(id(manager.engine), is_not(id(manager.engine)))
-
-		# requestion session twice
-		assert_that(id(manager.session), is_not(id(manager.session)))
-		
-		manager = create_badge_manager(dburi='sqlite://', cache_session=True)
-
-		assert_that(id(manager.engine), is_(id(manager.engine)))
-		assert_that(id(manager.session), is_(id(manager.session)))
-
 	@WithMockDSTrans
 	def test_fossboxbadge(self):
 		manager = self.new

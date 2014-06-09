@@ -3,7 +3,7 @@
 """
 Directives to be used in ZCML
 
-$Id$
+.. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -24,18 +24,14 @@ class IRegisterTahrirDB(interface.Interface):
 	"""
 	The arguments needed for registering an Tahri db
 	"""
-	name = fields.TextLine(title="db name identifier (site)", required=False, default="")
 	dburi = fields.TextLine(title="db dburi", required=False)
 	salt = fields.TextLine(title='assertion salt', required=False)
 	twophase = fields.Bool(title='two phase commit protocol', required=False, default=False)
-	cache_session = fields.Bool(title='Cache SQLAlchemy session', required=False, default=True)
-	use_scoped_session = fields.Bool(title='Use SQLAlchemy scoped session', required=False, default=True)
 	defaultSQLite = fields.Bool(title='default to SQLLite', required=False, default=False)
 	config = fields.TextLine(title='path to a config file', required=False)
 
 def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
-					  autocommit=False, use_scoped_session=True, cache_session=True,
-					  defaultSQLite=False, config=None, name=u""):
+					  autocommit=False, defaultSQLite=False, config=None):
 	"""
 	Register an db
 	"""
@@ -43,20 +39,15 @@ def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
 	if not dburi and not defaultSQLite and not config:
 		raise ValueError("must specified valid database uri")
 
-	cache_session = True if cache_session is None else cache_session
-	use_scoped_session = True if use_scoped_session is None else use_scoped_session
-
 	factory = functools.partial(create_badge_manager,
 								dburi=dburi,
 								salt=salt,
 								twophase=twophase,
 								autocommit=autocommit,
-								cache_session=cache_session,
-								use_scoped_session=use_scoped_session,
 								defaultSQLite=defaultSQLite,
 								config=config)
 	utility(_context, provides=interfaces.ITahrirBadgeManager,
-			factory=factory, name=name)
+			factory=factory, name="")
 
 class IRegisterTahrirIssuer(interface.Interface):
 	"""
