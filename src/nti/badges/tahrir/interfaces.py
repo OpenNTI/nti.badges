@@ -88,7 +88,7 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	Interface for Tahrir database managers
 	"""
 
-	def update_badge(badge, description, criteria, tags):
+	def update_badge(badge, description=None, criteria=None, tags=None):
 		pass
 
 	def get_issuer_by_id(issuer_id):
