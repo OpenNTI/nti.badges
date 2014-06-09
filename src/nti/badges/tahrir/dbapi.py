@@ -72,6 +72,11 @@ class NTITahrirDatabase(TahrirDatabase):
 							func.lower(Person.nickname) == func.lower(nickname))).scalar()
 		return result
 
+	def get_issuer(self, issuer_id):
+		query = self.session.query(Issuer).filter_by(id=issuer_id)
+		result = query.scalar()
+		return result
+
 	@autocommit
 	def add_assertion(self,
 					  badge_id,
