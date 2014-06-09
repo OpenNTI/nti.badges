@@ -127,7 +127,7 @@ class TahrirBadgeManager(object):
 			criteria = criteria or source.criteria or stored.criteria
 			description = description or source.description or stored.description
 			self.db.update_badge(badge_id=stored.id,
-								 tag=tags,
+								 tags=tags,
 								 criteria=criteria,
 								 description=description)
 			return True
@@ -145,7 +145,6 @@ class TahrirBadgeManager(object):
 			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
 			result.append(badge)
 		return result
-
 
 	def get_badge_by_id(self, badge_id):
 		result = self.db.get_badge(badge_id)
