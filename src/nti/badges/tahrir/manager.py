@@ -48,10 +48,13 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def engine(self):
-		result = create_engine(self.dburi,
-							   pool_size=self.pool_size,
-							   max_overflow=self.max_overflow,
-							   pool_recycle=self.pool_recycle)
+		try:
+			result = create_engine(self.dburi,
+							   	   pool_size=self.pool_size,
+							   	   max_overflow=self.max_overflow,
+							   	   pool_recycle=self.pool_recycle)
+		except TypeError:  # SQLite??
+			result = create_engine(self.dburi)
 		return result
 
 	@Lazy
