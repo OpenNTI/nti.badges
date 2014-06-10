@@ -57,11 +57,16 @@ class TahrirBadgeManager(object):
 								  autoflush=True,
 							  	  twophase=self.twophase,
 							  	  extension=ZopeTransactionExtension())
+			
 		return result
 
 	@Lazy
 	def scoped_session(self):
 		result = scoped_session(self.sessionmaker)
+		def _after_transaction_end(s, trx):
+			result.remove()
+		from sqlalchemy import event
+		event.listen(result, "after_transaction_end", _after_transaction_end)
 		return result
 
 	@property
