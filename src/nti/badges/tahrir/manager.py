@@ -34,6 +34,10 @@ from .. import interfaces as badge_interfaces
 @interface.implementer(interfaces.ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
+	pool_size = 30
+	max_overflow = 10
+	pool_recycle = 300
+
 	__metadata_created = False
 
 	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
@@ -44,7 +48,10 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def engine(self):
-		result = create_engine(self.dburi, pool_size=30, max_overflow=20)
+		result = create_engine(self.dburi,
+							   pool_size=self.pool_size,
+							   max_overflow=self.max_overflow,
+							   pool_recycle=self.pool_recycle)
 		return result
 
 	@Lazy
