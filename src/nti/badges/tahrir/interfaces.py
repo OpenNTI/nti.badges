@@ -88,6 +88,8 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	Interface for Tahrir database managers
 	"""
 
+	scoped_session = interface.Attribute('Scoped session')
+		
 	def update_badge(badge, description=None, criteria=None, tags=None):
 		pass
 

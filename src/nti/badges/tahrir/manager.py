@@ -64,13 +64,14 @@ class TahrirBadgeManager(object):
 		result = scoped_session(self.sessionmaker)
 		return result
 
-	@Lazy
+	@property
 	def db(self):
 		# make sure tables are created
 		if not self.__metadata_created:
 			metadata = getattr(tahrir_base, 'metadata')
 			metadata.create_all(self.engine, checkfirst=True)
 			self.__metadata_created = True
+
 		# return db
 		result = NTITahrirDatabase(session=self.scoped_session,
 								   autocommit=self.autocommit,
