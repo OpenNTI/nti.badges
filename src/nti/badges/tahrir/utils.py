@@ -21,35 +21,18 @@ def _after_transaction_end(success, manager, registry):
 	except AttributeError:
 		pass
 
-class wrapper(object):
+def Closer(clazz):
 
-	def __init__(self, desc, subj):
-		self.desc = desc
-		self.subj = subj
+	def __init__(self, *args, **kwargs):
+		self.registry = threading.local()
+		self.wrapped = clazz(*args, **kwargs)
 
-	def __call__(self, *args, **kwargs):
-		registry = self.desc.registry
+	def __getattr__(self, attrname):
+		registry = self.registry
 		if not hasattr(registry, "value"):
 			registry.value = True
 			transaction.get().addAfterCommitHook(_after_transaction_end,
-												 args=(self.subj, registry))
-		return self.desc(self.subj, *args, **kwargs)
-
-class autoclose(object):
-	"""
-	A decorator that remove scoped sessions
-	"""
-
-	registry = threading.local()
-
-	def  __init__(self, func):
-		self.func = func
-
-	def __call__(self, *args, **kwargs):
-		result = self.func(*args, **kwargs)
-		return result
-	
-	def __get__(self, instance, owner):
-		return wrapper(self, instance)
+												 args=(self.wrapped, registry))
+		return getattr(self.wrapped, attrname)
 
 
