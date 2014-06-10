@@ -44,7 +44,7 @@ class TahrirBadgeManager(object):
 
 	@Lazy
 	def engine(self):
-		result = create_engine(self.dburi)
+		result = create_engine(self.dburi, pool_size=20)
 		return result
 
 	@Lazy
