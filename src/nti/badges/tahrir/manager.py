@@ -54,12 +54,13 @@ class TahrirBadgeManager(object):
 							  	  twophase=self.twophase)
 		else:
 			result = sessionmaker(bind=self.engine,
+								  autoflush=True,
 							  	  twophase=self.twophase,
 							  	  extension=ZopeTransactionExtension())
 		return result
 
 	@Lazy
-	def session(self):
+	def scoped_session(self):
 		result = scoped_session(self.sessionmaker)
 		return result
 
@@ -71,18 +72,10 @@ class TahrirBadgeManager(object):
 			metadata.create_all(self.engine, checkfirst=True)
 			self.__metadata_created = True
 		# return db
-		result = NTITahrirDatabase(session=self.session,
+		result = NTITahrirDatabase(session=self.scoped_session,
 								   autocommit=self.autocommit,
 							 	   salt=self.salt)
 		return result
-
-	# DB operations
-
-	def _person_tuple(self, person=None, name=None):
-		person = interfaces.IPerson(person, None)
-		email = getattr(person, 'email', None)  # Email is used as id
-		name = name or getattr(person, 'nickname', None)
-		return (email, name)
 
 	# Badges
 
@@ -92,21 +85,23 @@ class TahrirBadgeManager(object):
 		return name
 
 	def add_badge(self, badge, issuer=None):
+		database = self.db # get reference
 		badge = interfaces.IBadge(badge)
-		issuer = self._get_issuer(issuer) if issuer is not None else None
+		issuer = self._get_issuer(issuer, database=database) if issuer is not None else None
 		issuer_id = badge.issuer_id or issuer.id
-		result = self.db.add_badge(name=badge.name,
-								   image=badge.image,
-								   desc=badge.description,
-								   criteria=badge.criteria,
-								   tags=badge.tags,
-								   issuer_id=issuer_id,)
+		result = database.add_badge(name=badge.name,
+								    image=badge.image,
+								    desc=badge.description,
+								    criteria=badge.criteria,
+								    tags=badge.tags,
+								    issuer_id=issuer_id,)
 		return result
 
-	def _get_badge(self, badge):
+	def _get_badge(self, badge, database=None):
+		database = self.db if database is None else database
 		name = self._badge_name(badge)
-		result = self.db.session.query(Badge) \
-						.filter(func.lower(Badge.name) == func.lower(name)).scalar()
+		result = database.session.query(Badge) \
+						 .filter(func.lower(Badge.name) == func.lower(name)).scalar()
 		return result
 
 	def badge_exists(self, badge):
@@ -124,22 +119,24 @@ class TahrirBadgeManager(object):
 		return result
 
 	def update_badge(self, badge, description=None, criteria=None, tags=None):
-		stored = self._get_badge(badge)
+		database = self.db  # get reference
+		stored = self._get_badge(badge, database=database)
 		if stored is not None:
 			source = interfaces.IBadge(badge)
 			tags = tags or source.tags or stored.tags
 			criteria = criteria or source.criteria or stored.criteria
 			description = description or source.description or stored.description
-			self.db.update_badge(badge_id=stored.id,
-								 tags=tags,
-								 criteria=criteria,
-								 description=description)
+			database.update_badge(badge_id=stored.id,
+								  tags=tags,
+								  criteria=criteria,
+								  description=description)
 			return True
 		return False
 
-	def _get_person_badges(self, person):
+	def _get_person_badges(self, person, database=None):
 		email, _ = self._person_tuple(person)
-		assertions = self.db.get_assertions_by_email(email)
+		database = self.db if database is None else database
+		assertions = database.get_assertions_by_email(email)
 		result = [x.badge for x in assertions] if assertions else ()
 		return result
 
@@ -156,12 +153,13 @@ class TahrirBadgeManager(object):
 
 	# Assertions
 
-	def _get_assertion(self, person, badge):
-		badge = self._get_badge(badge)
-		person = self._get_person(person)
+	def _get_assertion(self, person, badge, database=None):
+		database = self.db if database is None else database
+		badge = self._get_badge(badge, database=database)
+		person = self._get_person(person, database=database)
 		if badge and person:
-			result = self.db.session.query(Assertion)\
-				   		 .filter_by(person_id=person.id, badge_id=badge.id).scalar()
+			result = database.session.query(Assertion)\
+				   			 .filter_by(person_id=person.id, badge_id=badge.id).scalar()
 			if result is not None:
 				result.salt = self.db.salt  # Save salt
 				return result
@@ -176,17 +174,19 @@ class TahrirBadgeManager(object):
 		return True if result is not None else False
 
 	def delete_assertion(self, person, badge):
-		assertion = self._get_assertion(person, badge)
+		database = self.db  # get reference
+		assertion = self._get_assertion(person, badge, database=database)
 		if assertion is not None:
-			self.db.session.delete(assertion)
-			self.db.session.flush()
+			database.session.delete(assertion)
+			database.session.flush()
 			return True
 		return False
 	remove_assertion = delete_assertion
 
-	def _get_person_assertions(self, person):
+	def _get_person_assertions(self, person, database=None):
 		email, _ = self._person_tuple(person)
-		assertions = self.db.get_assertions_by_email(email)
+		database = self.db if database is None else database
+		assertions = database.get_assertions_by_email(email)
 		return assertions if assertions else ()
 
 	def get_person_assertions(self, person):
@@ -198,26 +198,38 @@ class TahrirBadgeManager(object):
 		return result
 
 	def add_assertion(self, person, badge, issued_on=None):
-		badge = self._get_badge(badge)
-		person = self._get_person(person)
+		database = self.db  # get reference
+		badge = self._get_badge(badge, database=database)
+		person = self._get_person(person, database=database)
 		if badge and person:
-			return self.db.add_assertion(badge.id, person.email, issued_on)
+			return database.add_assertion(badge.id, person.email, issued_on)
 		return False
 
-	def delete_person_assertions(self, person):
+	def _delete_person_assertions(self, person, database=None):
 		result = 0
-		for ast in self._get_person_assertions(person):
-			self.db.session.delete(ast)
+		database = self.db if database is None else database
+		for ast in self._get_person_assertions(person, database):
+			database.session.delete(ast)
 			result += 1
 		if result:
-			self.db.session.flush()
+			database.session.flush()
 		return result
+
+	def delete_person_assertions(self, person):
+		return self._delete_person_assertions(person)
 
 	# Persons
 
-	def _get_person(self, person=None, name=None):
+	def _person_tuple(self, person=None, name=None):
+		person = interfaces.IPerson(person, None)
+		email = getattr(person, 'email', None)  # Email is used as id
+		name = name or getattr(person, 'nickname', None)
+		return (email, name)
+
+	def _get_person(self, person=None, name=None, database=None):
+		database = self.db if database is None else database
 		email, name = self._person_tuple(person, name)
-		result = self.db.get_person(person_email=email, nickname=name)
+		result = database.get_person(person_email=email, nickname=name)
 		return result
 
 	def get_person(self, person=None, name=None):
@@ -238,9 +250,10 @@ class TahrirBadgeManager(object):
 		return result
 
 	def delete_person(self, person):
+		database = self.db  # get reference
 		email, _ = self._person_tuple(person)
-		self.delete_person_assertions(email)
-		return self.db.delete_person(email)
+		self._delete_person_assertions(email, database=database)
+		return database.delete_person(email)
 
 	def get_person_by_id(self, person_id):
 		result = self.db.get_person(person_email=person_id, id=person_id)
@@ -254,11 +267,12 @@ class TahrirBadgeManager(object):
 		origin = origin or issuer.origin
 		return (name, origin)
 
-	def _get_issuer(self, issuer, origin=None):
+	def _get_issuer(self, issuer, origin=None, database=None):
+		database = self.db if database is None else database
 		name, origin = self._issuer_tuple(issuer, origin)
-		if self.db.issuer_exists(name=name, origin=origin):
-			result = self.db.session.query(Issuer) \
-						 	.filter_by(name=name, origin=origin).one()
+		if database.issuer_exists(name=name, origin=origin):
+			result = database.session.query(Issuer) \
+						 	 .filter_by(name=name, origin=origin).one()
 			return result
 		return None
 
