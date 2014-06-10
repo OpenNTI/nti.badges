@@ -43,8 +43,8 @@ class TahrirBadgeManager(object):
 	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
 		self.salt = salt
 		self.dburi = dburi
-		self.twophase = twophase
-		self.autocommit = autocommit
+		self.twophase = True  # twophase
+		self.autocommit = False  # autocommit
 
 	@Lazy
 	def engine(self):
@@ -70,10 +70,6 @@ class TahrirBadgeManager(object):
 	@Lazy
 	def scoped_session(self):
 		result = scoped_session(self.sessionmaker)
-		def _after_transaction_end(s, trx):
-			result.remove()
-		from sqlalchemy import event
-		event.listen(result, "after_transaction_end", _after_transaction_end)
 		return result
 
 	@Lazy
