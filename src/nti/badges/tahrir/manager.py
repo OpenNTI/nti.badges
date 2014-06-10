@@ -76,7 +76,7 @@ class TahrirBadgeManager(object):
 		event.listen(result, "after_transaction_end", _after_transaction_end)
 		return result
 
-	@property
+	@Lazy
 	def db(self):
 		# make sure tables are created
 		if not self.__metadata_created:
