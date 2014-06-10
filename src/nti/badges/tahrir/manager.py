@@ -43,8 +43,8 @@ class TahrirBadgeManager(object):
 	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
 		self.salt = salt
 		self.dburi = dburi
-		self.twophase = True  # twophase
-		self.autocommit = False  # autocommit
+		self.twophase = twophase
+		self.autocommit = autocommit
 
 	@Lazy
 	def engine(self):
