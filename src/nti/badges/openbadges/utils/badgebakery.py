@@ -130,6 +130,7 @@ def process_args(args=None):
 
 	if args.verbose:
 		data = verify(target, payload=payload, secret=args.secret)
+		pprint.pprint("Baked Data")
 		pprint.pprint(data)
 
 def main(args=None):
