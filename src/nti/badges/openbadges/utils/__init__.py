@@ -66,6 +66,8 @@ def process_json_source(source, **kwargs):
 			lower.startswith('https://') or \
 			lower.startswith('file://') or \
 			lower.startswith('ftp://'):
+			__traceback_info__ = source
+			logger.info('Getting json data from %s', source)
 			response = urllib.urlopen(source)
 			source = response.read()
 		# ready to parse
