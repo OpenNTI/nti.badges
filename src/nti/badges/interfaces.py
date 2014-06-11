@@ -10,20 +10,45 @@ from zope import interface
 
 # XXX: Note: These will move, pending a better separation
 # of the base utility packages.
-from nti.utils.schema import DecodingValidTextLine as ValidTextLine
-from nti.utils.schema import ValidText
-from nti.utils.schema import ListOrTuple
+from nti.contentfragments.schema import PlainTextLine
+
+# XXX: Note: These will move, pending a better separation
+# of the base utility packages.
 from nti.utils.schema import Number
 from nti.utils.schema import Object
+from nti.utils.schema import ValidText
+from nti.utils.schema import ListOrTuple
+from nti.utils.schema import TupleFromObject
+from nti.utils.schema import DecodingValidTextLine as ValidTextLine
 TextLine = ValidTextLine
 
 # XXX: Note: These are temporary, pending a better
 # separation of the base content model. This package
 # in general should avoid dependencies on `nti.dataserver`
 from nti.dataserver.interfaces import ICreatedTime
-from nti.dataserver.interfaces import IUserTaggedContent
 
-ITaggedContent = IUserTaggedContent
+class Tag(PlainTextLine):
+	"""
+	Requires its content to be only one plain text word that is lowercased.
+	"""
+
+	def fromUnicode(self, value):
+		return super(Tag, self).fromUnicode(value.lower())
+
+	def constraint(self, value):
+		return super(Tag, self).constraint(value)
+
+
+class ITaggedContent(interface.Interface):
+	"""
+	Something that can contain tags.
+	"""
+
+	tags = TupleFromObject(title="Tags applied by the user.",
+						   value_type=Tag(min_length=1, title="A single tag",
+										  description=Tag.__doc__, __name__='tags'),
+						   unique=True,
+						   default=())
 
 class IBadgeIssuer(interface.Interface):
 	"""
