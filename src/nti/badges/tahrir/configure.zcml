@@ -56,10 +56,10 @@
 		<configure zcml:condition="have testmode">
 			<tdb:registerTahrirDB dburi="sqlite://" />
 			<tdb:registerTahrirIssuer
-				id="NTI"
+				id="NextThought"
 			 	name="NextThought"
 			 	org="http://www.nextthought.com"
-			 	contact="contact@nextthought.com"
+			 	contact="info@nextthought.com"
 			 	origin="http://www.nextthought.com"/>
 		</configure>
 	</configure>
