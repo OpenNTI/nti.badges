@@ -91,7 +91,9 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 	scoped_session = interface.Attribute('Scoped session')
 		
 	def update_badge(badge, description=None, criteria=None, tags=None):
-		pass
+		"""
+		Update badge information
+		"""
 
 	def get_issuer_by_id(issuer_id):
 		"""
@@ -99,6 +101,10 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 		"""
 
 	def get_person_by_id(badge_id):
+		"""
+		return the badge by its id
+		"""
+	def get_assertion_by_ids(person_id, badge_id):
 		"""
 		return the badge by its id
 		"""

@@ -97,6 +97,15 @@ class NTITahrirDatabase(TahrirDatabase):
 							
 		return result
 
+	def get_assertion(self, badge_id, email):
+		if not self.assertion_exists(badge_id, email):
+			return None
+
+		person = self.get_person(email)
+		query = self.session.query(Assertion).filter_by(
+           					 person_id=person.id, badge_id=badge_id)
+		return query.scalar()
+
 	@autocommit
 	def add_assertion(self,
 					  badge_id,
