@@ -38,7 +38,6 @@ class Tag(PlainTextLine):
 	def constraint(self, value):
 		return super(Tag, self).constraint(value)
 
-
 class ITaggedContent(interface.Interface):
 	"""
 	Something that can contain tags.

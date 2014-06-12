@@ -18,7 +18,6 @@ from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Person
 
-
 from .openbadges.model import BadgeClass
 from .openbadges.model import BadgeAssertion
 from .openbadges.model import IdentityObject
@@ -28,19 +27,16 @@ from .openbadges import interfaces as open_interfaces
 
 from .tahrir import interfaces as tahrir_interfaces
 
-from . import interfaces
+from .utils import safestr
 from .model import NTIBadge
 from .model import NTIIssuer
 from .model import NTIPerson
 from .model import NTIAssertion
 
+from . import interfaces
 from . import get_tahrir_badge_by_id
 from . import get_tahrir_person_by_id
 from . import get_tahrir_issuer_by_id
-
-def safestr(s):
-	s = s.decode("utf-8") if isinstance(s, bytes) else s
-	return unicode(s) if s is not None else None
 
 def tag_badge_interfaces(source, target):
 	if interfaces.IEarnableBadge.providedBy(source):

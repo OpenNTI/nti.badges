@@ -23,6 +23,7 @@ from nti.utils.maps import CaseInsensitiveDict
 
 from .. import model
 from .. import interfaces
+from ...utils import safestr
 
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 
@@ -32,10 +33,6 @@ def _datetime(s):
 	else:
 		result = datetime.fromtimestamp(float(s))
 	return result
-
-def safestr(s):
-	s = s.decode("utf-8") if isinstance(s, bytes) else s
-	return unicode(s) if s is not None else None
 
 def load_data(source, encoding='UTF-8', secret=DEFAULT_SECRET):
 	# We must decode the source ourself, to be a unicode
