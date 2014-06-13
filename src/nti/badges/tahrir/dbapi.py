@@ -121,7 +121,8 @@ class NTITahrirDatabase(TahrirDatabase):
 					  badge_id,
 					  person_email,
 					  issued_on=None,
-					  issued_for=None):
+					  issued_for=None,
+					  notify=True):
 		"""
 		Add an assertion (award a badge) to the database.
 
@@ -168,12 +169,14 @@ class NTITahrirDatabase(TahrirDatabase):
 								  recipient=self.recipient(person_email))
 		new_assertion.salt = self.salt
 
-		lifecycleevent.created(new_assertion)
+		if notify:
+			lifecycleevent.created(new_assertion)
 
 		self.session.add(new_assertion)
 		self.session.flush()
 
-		lifecycleevent.added(new_assertion, person, aid)
+		if notify:
+			lifecycleevent.added(new_assertion, person, aid)
 
 		if self.notification_callback:
 			self.notification_callback(
