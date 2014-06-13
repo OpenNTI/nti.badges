@@ -130,6 +130,8 @@ class BadgeAssertion(SchemaConfigured,
 	__external_class_name__ = "Assertion"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.assertion'
 
+	id = alias('uid')
+
 	def __init__(self, *args, **kwargs):
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)

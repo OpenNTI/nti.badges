@@ -58,6 +58,7 @@ class IBadgeAssertion(interface.Interface):
 	"""
 	marker interface for all badge assertion
 	"""
+	uid = ValidTextLine(title="The unique id of the assertion")
 
 class IBadgeClass(interface.Interface):
 	"""

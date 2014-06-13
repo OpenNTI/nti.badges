@@ -12,6 +12,8 @@ import base64
 import hashlib
 from datetime import datetime
 
+from zope import lifecycleevent
+
 from sqlalchemy import func, exists, and_
 
 from tahrir_api.model import Badge
@@ -21,7 +23,10 @@ from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
 
-from zope import lifecycleevent
+from nti.utils.property import alias
+
+# make compliant
+Assertion.uid = alias('id')
 
 def salt_default():
 	return u'23597b11-857a-447f-8129-66b5397b0c7f'
