@@ -59,6 +59,7 @@ class NTITahrirDatabase(TahrirDatabase):
 		query = self.session.query(Issuer).filter_by(id=issuer_id)
 		result = query.scalar()
 		return result
+	get_issuer_by_id = get_issuer
 
 	# badges
 
