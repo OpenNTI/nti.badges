@@ -63,6 +63,7 @@ class IBadgeClass(interface.Interface):
 	"""
 	marker interface for all badges
 	"""
+	name = ValidTextLine(title="The name of the badge")
 
 class INTIIssuer(IBadgeIssuer,
 				 ICreatedTime):
