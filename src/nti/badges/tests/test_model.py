@@ -95,7 +95,8 @@ class TestNTIModel(NTIBadgesTestCase):
 
 	def _assertion(self):
 		badge = self._badge()
-		result = model.NTIAssertion(badge=badge,
+		result = model.NTIAssertion(uid=u'breyAd5u',
+									badge=badge,
 								    salt="2cf24dba",
 									person='foo@example.org',
 									recipient='ichigobleach',
@@ -115,6 +116,7 @@ class TestNTIModel(NTIBadgesTestCase):
 
 		new_ast = factory()
 		internalization.update_from_external_object(new_ast, ext_obj)
+		assert_that(new_ast, has_property('uid', is_('breyAd5u')))
 		assert_that(new_ast, has_property('badge', is_not(none())))
 		assert_that(new_ast, has_property('salt', is_('2cf24dba')))
 		assert_that(new_ast, has_property('issuedOn', is_not(none())))

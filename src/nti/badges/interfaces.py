@@ -94,6 +94,7 @@ class INTIBadge(ITaggedContent,
 	criteria = TextLine(title='Badge criteria identifier/URL')
 
 class INTIAssertion(IBadgeAssertion):
+	uid = ValidTextLine(title="Assertion id")
 	badge = Object(INTIBadge, title="Badge")
 	person = ValidTextLine(title="Badge recipient name")
 	issuedOn = Number(title="Date that the achievement was awarded",

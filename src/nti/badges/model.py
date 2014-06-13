@@ -92,5 +92,7 @@ class NTIAssertion(SchemaConfigured,
 	__external_class_name__ = "Assertion"
 	mime_type = mimeType = 'application/vnd.nextthought.badges.assertion'
 
+	id = alias('uid')
+
 	def __init__(self, *args, **kwargs):
 		SchemaConfigured.__init__(self, *args, **kwargs)

@@ -199,7 +199,8 @@ def tahrir_assertion_to_ntiassertion(ast):
 	badge = interfaces.INTIBadge(ast.badge)
 	interface.alsoProvides(badge, interfaces.IEarnedBadge)
 	issuedOn = time.mktime(ast.issued_on.timetuple())
-	result = NTIAssertion(badge=badge,
+	result = NTIAssertion(uid=ast.id,
+						  badge=badge,
 						  issuedOn=issuedOn,
 						  person=safestr(ast.person.email),
 						  recipient=safestr(ast.recipient),
@@ -285,7 +286,7 @@ def ntiassertion_to_mozilla_assertion(assertion):
 							   type=open_interfaces.ID_TYPE_EMAIL,
 							   hashed=(assertion.salt is not None),
 							   salt=assertion.salt)
-	result = BadgeAssertion(uid=badge.name,
+	result = BadgeAssertion(uid=assertion.id,
 							verify=verify,
 							recipient=recipient,
 							image=safestr(badge.image),

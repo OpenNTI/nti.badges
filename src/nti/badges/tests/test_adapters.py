@@ -75,6 +75,7 @@ class TestAdapters(NTIBadgesTestCase):
 
 	def _tahrir_assertion(self):
 		assertion = Assertion()
+		assertion.id = 'fossbox -> foo@example.org'
 		assertion.salt = 'a7425e'
 		assertion.recipient = 'QxLUF1bgIAdX'
 		assertion.issued_on = datetime.now()
@@ -194,7 +195,8 @@ class TestAdapters(NTIBadgesTestCase):
 		return result
 
 	def _ntiassertion(self):
-		result = NTIAssertion(salt="2cf24dba",
+		result = NTIAssertion(uid='spadAsp4',
+							  salt="2cf24dba",
 							  badge=self._ntibadge(),
 						  	  person='foo@example.org',
 						  	  recipient="ichigobleach",
@@ -251,7 +253,7 @@ class TestAdapters(NTIBadgesTestCase):
 	def test_ntiassertion_to_mozilla_assertion(self):
 		assertion = self._ntiassertion()
 		ast = open_interfaces.IBadgeAssertion(assertion, None)
-		assert_that(ast, has_property('uid', is_('fossbox')))
+		assert_that(ast, has_property('uid', is_('spadAsp4')))
 		assert_that(ast, has_property('badge', has_property('name', 'fossbox')))
 		assert_that(ast, has_property('recipient', has_property('salt', '2cf24dba')))
 		assert_that(ast, has_property('recipient', has_property('identity', 'ichigobleach')))
