@@ -33,9 +33,9 @@ def get_tahrir_person_by_id(person_id):
 		return result
 	return None
 
-def get_tahrir_assertion_by_ids(person_id, badge_id):
+def get_tahrir_assertion_by_id(assertion_id):
 	manager = component.getUtility(tahrir_interfaces.ITahrirBadgeManager)
-	result = manager.get_assertion_by_ids(person_id, badge_id)
+	result = manager.get_assertion_by_id(assertion_id)
 	if result is not None:
 		return result
 	return None

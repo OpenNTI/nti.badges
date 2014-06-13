@@ -163,6 +163,11 @@ class IBadgeManager(interface.Interface):
 		return the earned badges for the specified person
 		"""
 
+	def get_assertion_by_id(assertion_id):
+		"""
+		return the badge assertion for the specified id
+		"""
+		
 	def get_assertion(person, badge):
 		"""
 		return a badge assertion for the specified person

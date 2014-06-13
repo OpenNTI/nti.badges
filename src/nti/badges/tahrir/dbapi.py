@@ -111,6 +111,10 @@ class NTITahrirDatabase(TahrirDatabase):
            					 person_id=person.id, badge_id=badge_id)
 		return query.scalar()
 
+	def get_assertion_by_id(self, assertion_id):
+		query = self.session.query(Assertion).filter_by(id=assertion_id)
+		return query.scalar()
+
 	@autocommit
 	def add_assertion(self,
 					  badge_id,

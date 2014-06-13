@@ -16,17 +16,21 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope import component
 
+from nti.utils.property import alias
+
 from nti.wref.interfaces import ICachingWeakRef
 
 from .interfaces import IAssertion
 
-from . import get_tahrir_assertion_by_ids
+from . import get_tahrir_assertion_by_id
 
 @interface.implementer(ICachingWeakRef)
 @component.adapter(IAssertion)
 class AssertionWeakRef(object):
 
 	_v_assertion = None
+
+	uid = alias('_assertion_id')
 
 	def __init__(self, assertion):
 		self._assertion_id = assertion.id
@@ -79,7 +83,7 @@ class AssertionWeakRef(object):
 		# let's check all managers. Almost always there is only one
 		# manager registered
 
-		assertion = get_tahrir_assertion_by_ids(self._assertion_person_id, self._assertion_badge_id)
+		assertion = get_tahrir_assertion_by_id(self._assertion_id)
 		if assertion is not None:
 			self._v_assertion = assertion
 

@@ -104,7 +104,3 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 		"""
 		return the badge by its id
 		"""
-	def get_assertion_by_ids(person_id, badge_id):
-		"""
-		return the badge by its id
-		"""

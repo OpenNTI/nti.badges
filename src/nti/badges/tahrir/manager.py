@@ -230,8 +230,8 @@ class TahrirBadgeManager(object):
 	def delete_person_assertions(self, person):
 		return self._delete_person_assertions(person)
 
-	def get_assertion_by_ids(self, person_id, badge_id):
-		result = self.db.get_assertion(badge_id=badge_id, email=person_id)
+	def get_assertion_by_id(self, assertion_id):
+		result = self.db.get_assertion_by_id(assertion_id)
 		return result
 
 	# Persons
