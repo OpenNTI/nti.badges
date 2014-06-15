@@ -210,10 +210,8 @@ def tahrir_assertion_to_ntiassertion(ast):
 @component.adapter(tahrir_interfaces.IPerson)
 @interface.implementer(interfaces.INTIPerson)
 def tahrir_person_to_ntiperson(person):
-	assertions = [interfaces.INTIAssertion(x) for x in person.assertions]
 	result = NTIPerson(name=safestr(person.nickname),
 					   email=safestr(person.email),
-					   assertions=assertions,
 					   createdTime=time.mktime(person.created_on.timetuple()))
 	# not part of the interface but keep them
 	result.bio = safestr(person.bio)

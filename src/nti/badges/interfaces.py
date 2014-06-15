@@ -16,8 +16,8 @@ from nti.contentfragments.schema import PlainTextLine
 # of the base utility packages.
 from nti.utils.schema import Number
 from nti.utils.schema import Object
+from nti.utils.schema import Variant
 from nti.utils.schema import ValidText
-from nti.utils.schema import ListOrTuple
 from nti.utils.schema import TupleFromObject
 from nti.utils.schema import DecodingValidTextLine as ValidTextLine
 TextLine = ValidTextLine
@@ -93,22 +93,21 @@ class INTIBadge(ITaggedContent,
 
 	criteria = TextLine(title='Badge criteria identifier/URL')
 
+class INTIPerson(ICreatedTime):
+	name = ValidTextLine(title="Person [unique] name")
+	email = ValidTextLine(title="Person [unique] email")
+
 class INTIAssertion(IBadgeAssertion):
 	uid = ValidTextLine(title="Assertion id")
 	badge = Object(INTIBadge, title="Badge")
-	person = ValidTextLine(title="Badge recipient name")
+	person = Variant((
+				ValidTextLine(title="Badge recipient name/email"),
+				Object(INTIPerson, title="Badge recipient person")),
+				title="Badge recipient")
 	issuedOn = Number(title="Date that the achievement was awarded",
 					  default=0)
 	recipient = ValidTextLine(title="Badge recipient hash", required=False)
 	salt = ValidTextLine(title="One-way function to hash person", required=False)
-
-class INTIPerson(ICreatedTime):
-	name = ValidTextLine(title="Person [unique] name")
-	email = ValidTextLine(title="Person [unique] email")
-	assertions = ListOrTuple(Object(INTIAssertion, title="Assertion"),
-							 title="Assertions",
-							 min_length=0,
-							 default=(), required=False)
 
 class IEarnableBadge(interface.Interface):
 	"""

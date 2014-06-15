@@ -13,7 +13,6 @@ from hamcrest import is_not
 from hamcrest import equal_to
 from hamcrest import not_none
 from hamcrest import has_entry
-from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 does_not = is_not
@@ -126,11 +125,9 @@ class TestNTIModel(NTIBadgesTestCase):
 		assert_that(assertion, equal_to(new_ast))
 
 	def _person(self):
-		assertion = self._assertion()
 		result = model.NTIPerson(name='foo',
 								 email='foo@example.org',
-								 createdTime=time.time(),
-								 assertions=[assertion])
+								 createdTime=time.time())
 		assert_does_not_pickle(result)
 		return result
 
@@ -147,7 +144,6 @@ class TestNTIModel(NTIBadgesTestCase):
 		new_person = factory()
 		internalization.update_from_external_object(new_person, ext_obj)
 		assert_that(new_person, has_property('name', is_('foo')))
-		assert_that(new_person, has_property('assertions', has_length(1)))
 		assert_that(new_person, has_property('createdTime', is_not(none())))
 		assert_that(new_person, has_property('email', is_('foo@example.org')))
 
