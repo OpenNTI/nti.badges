@@ -15,9 +15,10 @@ import persistent
 
 from nti.externalization.externalization import WithRepr
 from nti.externalization.externalization import NoPickle
-from nti.utils.schema import EqHash
 
 from nti.utils.property import alias
+
+from nti.utils.schema import EqHash
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createFieldProperties
 
@@ -25,7 +26,7 @@ from nti.utils.schema import createFieldProperties
 # schema-configured classes, so we MUST create all the field
 # properties; only when inheritance is involved should we
 # create just the direct field properties
-#from nti.utils.schema import createDirectFieldProperties
+# from nti.utils.schema import createDirectFieldProperties
 
 from . import interfaces
 from .interfaces import IBadgeClass
@@ -116,7 +117,6 @@ class BadgeClass(SchemaConfigured,
 
 		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
-
 
 @interface.implementer(interfaces.IBadgeAssertion)
 @WithRepr

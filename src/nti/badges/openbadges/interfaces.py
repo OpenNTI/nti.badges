@@ -9,14 +9,14 @@ __docformat__ = "restructuredtext en"
 from zope import interface
 from zope.schema import vocabulary
 
-from nti.utils.schema import DecodingValidTextLine as ValidTextLine
-from nti.utils.schema import ValidText
-from nti.utils.schema import ListOrTuple
-from nti.utils.schema import Variant
+from nti.utils.schema import Bool
 from nti.utils.schema import Choice
 from nti.utils.schema import Object
-from nti.utils.schema import Bool
+from nti.utils.schema import Variant
+from nti.utils.schema import ValidText
+from nti.utils.schema import ListOrTuple
 from nti.utils.schema import ValidDatetime
+from nti.utils.schema import DecodingValidTextLine as ValidTextLine
 TextLine = ValidTextLine
 
 from .. import interfaces as badge_interfaces
@@ -38,7 +38,6 @@ class IVerificationObject(interface.Interface):
 							title='Verification method',
 							required=True)
 	url = ValidTextLine(title="URL pointing to the assertion or issuer's public key")
-
 
 class IIssuerOrganization(badge_interfaces.IBadgeIssuer):
 	name = ValidTextLine(title="The name of the issuing organization.")
@@ -67,7 +66,6 @@ class IAlignmentObject(interface.Interface):
                                        required=False)
 
 class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass):
-	name = ValidTextLine(title="The name of the achievement")
 
 	description = ValidText(title="A short description of the achievement")
 
@@ -86,9 +84,9 @@ class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass)
                                        min_length=0)
 
 class IBadgeAssertion(badge_interfaces.IBadgeAssertion):
-	uid = ValidTextLine(title=" Unique Identifier for the badge")
 
 	recipient = Object(IIdentityObject, title="The recipient of the achievement")
+
 	badge = Variant((
 					Object(IBadgeClass, title="Badge class"),
 					ValidTextLine(title='Badge URL')),

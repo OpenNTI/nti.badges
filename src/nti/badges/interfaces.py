@@ -76,7 +76,6 @@ class INTIIssuer(IBadgeIssuer,
 
 	email = ValidTextLine(title="Issuer email")
 
-
 class INTIBadge(ITaggedContent,
 				IBadgeClass,
 				ICreatedTime):
