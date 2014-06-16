@@ -202,7 +202,7 @@ def tahrir_assertion_to_ntiassertion(ast):
 	result = NTIAssertion(uid=ast.id,
 						  badge=badge,
 						  issuedOn=issuedOn,
-						  person=safestr(ast.person.email),
+						  person=interfaces.INTIPerson(ast.person),
 						  recipient=safestr(ast.recipient),
 						  salt=getattr(ast, 'salt', None))
 	return result

@@ -162,7 +162,7 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(ast, has_property('badge', is_not(none())))
 		assert_that(ast, has_property('issuedOn', is_not(none())))
 		assert_that(ast, has_property('recipient', is_('QxLUF1bgIAdX')))
-		assert_that(ast, has_property('person', is_('foo@example.org')))
+		assert_that(ast, has_property('person', has_property('email', 'foo@example.org')))
 
 	# NTI
 
