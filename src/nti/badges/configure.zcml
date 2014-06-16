@@ -107,7 +107,11 @@
 	<adapter factory=".adapters.ntiassertion_to_mozilla_assertion"
 			 for=".interfaces.INTIAssertion"
 			 provides=".openbadges.interfaces.IBadgeAssertion" />
-		
+	
+	<adapter factory=".adapters.ntiassertion_to_mozilla_badge"
+			 for=".interfaces.INTIAssertion"
+			 provides=".openbadges.interfaces.IBadgeClass" />
+			 
 	<!-- mozilla-to -->
 	<adapter factory=".adapters.mozilla_identity_object_to_tahrir_person"
 			 for=".openbadges.interfaces.IIdentityObject"

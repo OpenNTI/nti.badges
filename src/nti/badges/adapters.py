@@ -297,6 +297,12 @@ def ntiassertion_to_mozilla_assertion(assertion):
 							issuedOn=datetime.fromtimestamp(issuedOn))
 	return result
 
+@component.adapter(interfaces.INTIAssertion)
+@interface.implementer(open_interfaces.IBadgeClass)
+def ntiassertion_to_mozilla_badge(assertion):
+	result = open_interfaces.IBadgeClass(assertion.badge)
+	return result
+
 @component.adapter(interfaces.INTIPerson)
 @interface.implementer(tahrir_interfaces.IPerson)
 def ntiperson_to_tahrir_person(nti):
