@@ -169,6 +169,11 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 							badge=open_interfaces.IBadgeClass(badge))
 	return result
 
+@component.adapter(tahrir_interfaces.IAssertion)
+@interface.implementer(open_interfaces.IBadgeClass)
+def tahrir_assertion_to_mozilla_badge(assertion):
+	return open_interfaces.IBadgeClass(assertion.badge)
+
 @component.adapter(tahrir_interfaces.IIssuer)
 @interface.implementer(interfaces.INTIIssuer)
 def tahrir_issuer_to_ntiissuer(issuer):

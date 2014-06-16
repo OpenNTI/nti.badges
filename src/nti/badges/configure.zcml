@@ -62,7 +62,11 @@
 	<adapter factory=".adapters.tahrir_assertion_to_mozilla_assertion"
 			 for=".tahrir.interfaces.IAssertion"
 			 provides=".openbadges.interfaces.IBadgeAssertion" />	
-			 
+			
+	<adapter factory=".adapters.tahrir_assertion_to_mozilla_badge"
+			 for=".tahrir.interfaces.IAssertion"
+			 provides=".openbadges.interfaces.IBadgeClass" />
+			  
 	<adapter factory=".adapters.tahrir_issuer_to_ntiissuer"
 			 for=".tahrir.interfaces.IIssuer"
 			 provides=".interfaces.INTIIssuer" />
