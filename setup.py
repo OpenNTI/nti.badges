@@ -38,7 +38,8 @@ setup(
 	install_requires=[
 		'setuptools',
         'tahrir-api',
-        'itsdangerous'
+        'itsdangerous',
+        'nti.schema'
 	],
 	entry_points=entry_points
 )

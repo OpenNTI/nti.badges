@@ -14,12 +14,12 @@ from nti.contentfragments.schema import PlainTextLine
 
 # XXX: Note: These will move, pending a better separation
 # of the base utility packages.
-from nti.utils.schema import Number
-from nti.utils.schema import Object
-from nti.utils.schema import Variant
-from nti.utils.schema import ValidText
-from nti.utils.schema import TupleFromObject
-from nti.utils.schema import DecodingValidTextLine as ValidTextLine
+from nti.schema.field import Number
+from nti.schema.field import Object
+from nti.schema.field import Variant
+from nti.schema.field import ValidText
+from nti.schema.field import TupleFromObject
+from nti.schema.field import DecodingValidTextLine as ValidTextLine
 TextLine = ValidTextLine
 
 # XXX: Note: These are temporary, pending a better
