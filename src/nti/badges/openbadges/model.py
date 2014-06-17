@@ -18,9 +18,9 @@ from nti.externalization.externalization import NoPickle
 
 from nti.utils.property import alias
 
-from nti.utils.schema import EqHash
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import createFieldProperties
+from nti.schema.schema import EqHash
+from nti.schema.field import SchemaConfigured
+from nti.schema.fieldproperty import createFieldProperties
 
 # NOTE: None of these classes are inheriting from other
 # schema-configured classes, so we MUST create all the field

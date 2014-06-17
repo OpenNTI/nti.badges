@@ -15,8 +15,10 @@ from nti.externalization.externalization import WithRepr
 from nti.externalization.externalization import NoPickle
 
 from nti.utils.property import alias
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import createFieldProperties
+
+from nti.schema.field import SchemaConfigured
+from nti.schema.schema import EqHash as _EqHash
+from nti.schema.fieldproperty import createFieldProperties
 
 # NOTE: None of these classes are inheriting from other
 # schema-configured classes, so we MUST create all the field
@@ -26,8 +28,6 @@ from nti.utils.schema import createFieldProperties
 
 from . import interfaces
 from .interfaces import INTIBadge
-
-from nti.utils.schema import EqHash as _EqHash
 
 @interface.implementer(INTIBadge)
 @WithRepr
