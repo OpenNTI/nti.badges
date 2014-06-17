@@ -64,6 +64,7 @@ def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
 		jws = JSONWebSignatureSerializer(secret)
 		data = jws.dumps(payload)
 
+	__traceback_info__ = data
 	source = Image.open(source)
 	meta = PngImagePlugin.PngInfo()
 	meta.add_text("openbadges", data)
