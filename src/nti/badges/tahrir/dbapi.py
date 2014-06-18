@@ -14,7 +14,7 @@ from datetime import datetime
 
 from zope import lifecycleevent
 
-from sqlalchemy import func, exists, and_
+from sqlalchemy import func, exists, and_, or_
 
 from tahrir_api.model import Badge
 from tahrir_api.model import Person
@@ -80,14 +80,15 @@ class NTITahrirDatabase(TahrirDatabase):
 
 	def person_exists(self, email=None, id=None, nickname=None):
 		result = False
-		if email:
+		email = email or u''
+		nickname = nickname or u''
+		if nickname or email:
 			result = self.session.query(exists().where(
-							func.lower(Person.email) == func.lower(email))).scalar()
+							or_(func.lower(Person.nickname) == func.lower(nickname),
+								func.lower(Person.email) == func.lower(email)))).scalar()
 		elif id:
 			result = self.session.query(exists().where(Person.id == id)).scalar()
-		elif nickname:
-			result = self.session.query(exists().where(
-							func.lower(Person.nickname) == func.lower(nickname))).scalar()
+
 		return result
 
 	# assertion
