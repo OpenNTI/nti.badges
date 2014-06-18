@@ -24,7 +24,7 @@ from nti.schema.fieldproperty import createFieldProperties
 # schema-configured classes, so we MUST create all the field
 # properties; only when inheritance is involved should we
 # create just the direct field properties
-#from nti.utils.schema import createDirectFieldProperties
+# from nti.schema.fieldproperty import createDirectFieldProperties
 
 from . import interfaces
 from .interfaces import INTIBadge
