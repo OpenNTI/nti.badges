@@ -146,9 +146,9 @@ class TahrirBadgeManager(object):
 		return False
 
 	def _get_person_badges(self, person, database=None):
-		email, _ = self._person_tuple(person)
+		email, name = self._person_tuple(person)
 		database = self.db if database is None else database
-		assertions = database.get_assertions_by_email(email)
+		assertions = database.get_assertions(email=email, nickname=name)
 		result = [x.badge for x in assertions] if assertions else ()
 		return result
 
@@ -196,15 +196,14 @@ class TahrirBadgeManager(object):
 	remove_assertion = delete_assertion
 
 	def _get_person_assertions(self, person, database=None):
-		email, _ = self._person_tuple(person)
+		email, name = self._person_tuple(person)
 		database = self.db if database is None else database
-		assertions = database.get_assertions_by_email(email)
+		assertions = database.get_assertions(email=email, nickname=name)
 		return assertions if assertions else ()
 
 	def get_person_assertions(self, person):
 		result = []
-		email, _ = self._person_tuple(person)
-		for assertion in self._get_person_assertions(email):
+		for assertion in self._get_person_assertions(person):
 			assertion.salt = self.db.salt  # Save salt
 			result.append(assertion)
 		return result

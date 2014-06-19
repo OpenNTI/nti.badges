@@ -113,6 +113,13 @@ class NTITahrirDatabase(TahrirDatabase):
            					 person_id=person.id, badge_id=badge_id)
 		return query.scalar()
 
+	def get_assertions(self, email=None, id=None, nickname=None):
+		person = self.get_person(person_email=email, id=id, nickname=nickname)
+		if person is not None:
+			person_id = person.id
+			return self.session.query(Assertion).filter_by(person_id=person_id).all()
+		return ()
+
 	def get_assertion_by_id(self, assertion_id):
 		query = self.session.query(Assertion).filter_by(id=assertion_id)
 		return query.scalar()
