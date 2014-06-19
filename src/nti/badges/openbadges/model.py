@@ -13,8 +13,8 @@ from zope.container import contained
 
 import persistent
 
+from nti.externalization.persistence import NoPickle
 from nti.externalization.externalization import WithRepr
-from nti.externalization.externalization import NoPickle
 
 from nti.utils.property import alias
 

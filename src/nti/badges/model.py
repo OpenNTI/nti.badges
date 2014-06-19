@@ -11,8 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope.container import contained
 
+from nti.externalization.persistence import NoPickle
 from nti.externalization.externalization import WithRepr
-from nti.externalization.externalization import NoPickle
 
 from nti.utils.property import alias
 
