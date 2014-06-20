@@ -20,7 +20,6 @@ from nti.schema.field import Variant
 from nti.schema.field import ValidText
 from nti.schema.field import TupleFromObject
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
-TextLine = ValidTextLine
 
 # XXX: Note: These are temporary, pending a better
 # separation of the base content model. This package
@@ -72,7 +71,7 @@ class INTIIssuer(IBadgeIssuer,
 
 	origin = ValidTextLine(title='Issuer origin')
 
-	organization = TextLine(title='Issuer organization')
+	organization = ValidTextLine(title='Issuer organization')
 
 	email = ValidTextLine(title="Issuer email")
 
@@ -91,7 +90,7 @@ class INTIBadge(ITaggedContent,
 
 	image = ValidTextLine(title='Badge image identifier/URL')
 
-	criteria = TextLine(title='Badge criteria identifier/URL')
+	criteria = ValidTextLine(title='Badge criteria identifier/URL')
 
 class INTIPerson(ICreatedTime):
 	name = ValidTextLine(title="Person [unique] name")

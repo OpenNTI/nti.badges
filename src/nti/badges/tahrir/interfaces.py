@@ -13,7 +13,6 @@ from nti.schema.field import Bool
 from nti.schema.field import ValidText
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
-TextLine = ValidTextLine
 
 from .. import interfaces as badge_interfaces
 
