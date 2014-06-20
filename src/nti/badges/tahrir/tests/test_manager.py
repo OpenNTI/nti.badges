@@ -199,3 +199,20 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 		assert_that(assertions, has_length(1))
 
 		assert_that(manager.delete_person(pid), is_('foo@example.org'))
+
+	@WithMockDSTrans
+	def test_person_update(self):
+		manager = self.new
+		person = Person()
+		person.bio = 'Shinigami'
+		person.nickname = 'ichigo'
+		person.email = u'ichigo@bleach.org'
+		person.created_on = datetime.now()
+		person.website = 'http://bleach.com/ichigo'
+
+		pid = manager.add_person(person)
+		assert_that(pid, is_('ichigo@bleach.org'))
+
+		manager.update_person(person, email="ichigo@bleach.com")
+		assert_that(manager.person_exists('ichigo@bleach.com'), is_(True))
+		assert_that(manager.person_exists(name='ichigo'), is_(True))
