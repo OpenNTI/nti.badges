@@ -90,6 +90,11 @@ class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
 
 	scoped_session = interface.Attribute('Scoped session')
 		
+	def update_person(person, email=None, name=None, website=None, bio=None):
+		"""
+		Update person information
+		"""
+
 	def update_badge(badge, description=None, criteria=None, tags=None):
 		"""
 		Update badge information

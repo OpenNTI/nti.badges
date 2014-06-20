@@ -91,6 +91,16 @@ class NTITahrirDatabase(TahrirDatabase):
 
 		return result
 
+	@autocommit
+	def update_person(self, person_id, email=None, nickname=None, website=None, bio=None):
+		data = {"website":website, "bio":bio}
+		if email:
+			data["email"] = email
+		if nickname:
+			data["nickname"] = nickname
+		result = self.session.query(Person).filter_by(id=person_id).update(data)
+		return result
+
 	# assertion
 
 	def assertion_exists(self, badge_id, email):

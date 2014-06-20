@@ -216,6 +216,27 @@ class TahrirBadgeManager(object):
 			return database.add_assertion(badge.id, person.email, issued_on)
 		return False
 
+	def update_person(self, person, email=None, name=None, website=None, bio=None):
+		database = self.db  # get reference
+		stored = self._get_person(person, database=self.db)
+		if stored is not None:
+			source = interfaces.IPerson(person)
+			bio = bio or source.bio or stored.bio
+			email = email or source.email or stored.email
+			website = website or source.website or stored.website
+			nickname = name or source.nickname or stored.nickname
+			# set to none if they are the same
+			email = None if email.lower() == stored.email.lower() else email
+			nickname = None if nickname.lower() == stored.nickname.lower() else nickname
+			# update
+			database.update_person(person_id=stored.id,
+								   bio=bio,
+								   email=email,
+								   website=website,
+								   nickname=nickname)
+			return True
+		return False
+
 	def _delete_person_assertions(self, person, database=None):
 		result = 0
 		database = self.db if database is None else database

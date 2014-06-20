@@ -131,6 +131,11 @@ class IBadgeManager(interface.Interface):
 		return a person
 		"""
 
+	def update_person(person, email=None, name=None):
+		"""
+		update a person
+		"""
+		
 	def badge_exists(badge):
 		"""
 		check if the specifed badge exists

@@ -149,6 +149,12 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 		assert_that(person, has_property('bio', 'I am foo'))
 		assert_that(person, has_property('website', 'http://example.org/foo'))
 
+		update = manager.update_person(person, bio="I am foo!!!")
+		assert_that(update, is_(True))
+		
+		person = manager.get_person(pid)
+		assert_that(person, has_property('bio', 'I am foo!!!'))
+
 		assert_that(manager.person_exists('foo@example.org'), is_(True))
 
 		eventtesting.clearEvents()
