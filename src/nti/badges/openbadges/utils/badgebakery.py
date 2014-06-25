@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 """
 This small module makes it easy to bake PNG images with links to
 Open Badge assertions. It also allows for easy retrieval of the link
