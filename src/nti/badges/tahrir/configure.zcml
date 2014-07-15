@@ -51,6 +51,7 @@
 			 	origin="http://www.nextthought.com" />
 		</configure>
 	</configure>
+
 	<!-- In test mode, we want to use a non-persistent store -->
 	<configure zcml:condition="have devmode">
 		<configure zcml:condition="have testmode">
@@ -64,4 +65,13 @@
 		</configure>
 	</configure>
 
+	<!-- Externalization -->
+	<adapter factory=".externalization._BadgeExternalizer"
+			 provides="nti.externalization.interfaces.IExternalObject"
+			 for=".interfaces.IBadge" />
+		
+	<adapter factory=".externalization._IssuerExternalizer"
+			 provides="nti.externalization.interfaces.IExternalObject"
+			 for=".interfaces.IIssuer" />
+		
 </configure>
