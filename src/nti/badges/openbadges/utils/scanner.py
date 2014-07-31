@@ -16,7 +16,9 @@ from zope.interface.verify import verifyObject
 from . import badgebakery
 from . import badge_from_source
 from . import issuer_from_source
-from .. import interfaces as open_interfaces
+
+from ..interfaces import IBadgeClass
+from ..interfaces import IIssuerOrganization
 
 def get_baked_data(name):
 	try:
@@ -29,7 +31,7 @@ def parse_badge(source, verify=False, **kwargs):
 	try:
 		badge = badge_from_source(source, **kwargs)
 		if verify:
-			verifyObject(open_interfaces.IBadgeClass, badge)
+			verifyObject(IBadgeClass, badge)
 		return badge
 	except Exception as e:
 		logger.error("Could not parse badge data; %s", e)
@@ -38,7 +40,7 @@ def parse_issuer(source, verify=False):
 	try:
 		issuer = issuer_from_source(source)
 		if verify:
-			verifyObject(open_interfaces.IIssuerOrganization, issuer)
+			verifyObject(IIssuerOrganization, issuer)
 		return issuer
 	except Exception as e:
 		logger.error("Could not parse issuer from '%s'; %s", source, e)
