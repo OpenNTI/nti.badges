@@ -18,7 +18,10 @@ from nti.schema.field import ListOrTuple
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
-from .. import interfaces as badge_interfaces
+from ..interfaces import ITaggedContent
+from ..interfaces import IBadgeClass as IBadgeMarker
+from ..interfaces import IBadgeIssuer as IIssuerMarker
+from ..interfaces import IBadgeAssertion as IAssertionMarker
 
 VO_TYPE_HOSTED = 'hosted'
 VO_TYPE_SIGNED = 'signed'
@@ -38,7 +41,7 @@ class IVerificationObject(interface.Interface):
 							required=True)
 	url = ValidTextLine(title="URL pointing to the assertion or issuer's public key")
 
-class IIssuerOrganization(badge_interfaces.IBadgeIssuer):
+class IIssuerOrganization(IIssuerMarker):
 	name = ValidTextLine(title="The name of the issuing organization.")
 	url = ValidTextLine(title='URL of the institution')
 	image = ValidTextLine(title='Issuer URL logo', required=False)
@@ -64,7 +67,7 @@ class IAlignmentObject(interface.Interface):
 	description = ValidText(title="Short description of the standard",
                                        required=False)
 
-class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass):
+class IBadgeClass(ITaggedContent, IBadgeMarker):
 
 	description = ValidText(title="A short description of the achievement")
 
@@ -82,7 +85,7 @@ class IBadgeClass(badge_interfaces.ITaggedContent, badge_interfaces.IBadgeClass)
                                        required=False,
                                        min_length=0)
 
-class IBadgeAssertion(badge_interfaces.IBadgeAssertion):
+class IBadgeAssertion(IAssertionMarker):
 
 	recipient = Object(IIdentityObject, title="The recipient of the achievement")
 

@@ -9,9 +9,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope.container import contained
-
-import persistent
+from zope.container.contained import Contained
 
 from nti.externalization.persistence import NoPickle
 from nti.externalization.externalization import WithRepr
@@ -28,64 +26,61 @@ from nti.schema.fieldproperty import createFieldProperties
 # create just the direct field properties
 # from nti.schema.fieldproperty import createDirectFieldProperties
 
-from . import interfaces
 from .interfaces import IBadgeClass
+from .interfaces import IBadgeAssertion
+from .interfaces import IIdentityObject
+from .interfaces import IAlignmentObject
+from .interfaces import IVerificationObject
+from .interfaces import IIssuerOrganization
 
-@interface.implementer(interfaces.IVerificationObject)
+@interface.implementer(IVerificationObject)
 @WithRepr
 @NoPickle
 @EqHash('url', 'type')
-class VerificationObject(SchemaConfigured,
-						 contained.Contained):
-	createFieldProperties(interfaces.IVerificationObject)
+class VerificationObject(SchemaConfigured, Contained):
+	createFieldProperties(IVerificationObject)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Verification"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.verificationobject'
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(interfaces.IIdentityObject)
+@interface.implementer(IIdentityObject)
 @WithRepr
 @NoPickle
 @EqHash('identity', 'type')
-class IdentityObject(SchemaConfigured,
-					 contained.Contained):
-	createFieldProperties(interfaces.IIdentityObject)
+class IdentityObject(SchemaConfigured, Contained):
+	createFieldProperties(IIdentityObject)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Identity"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.identityobject'
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(interfaces.IAlignmentObject)
+@interface.implementer(IAlignmentObject)
 @WithRepr
 @NoPickle
 @EqHash('url', 'name')
-class AlignmentObject(SchemaConfigured,
-					  contained.Contained):
-	createFieldProperties(interfaces.IAlignmentObject)
+class AlignmentObject(SchemaConfigured, Contained):
+	createFieldProperties(IAlignmentObject)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Alignment"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.alignmentobject'
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(interfaces.IIssuerOrganization)
+@interface.implementer(IIssuerOrganization)
 @WithRepr
 @NoPickle
 @EqHash('name', 'url')
-class IssuerOrganization(SchemaConfigured,
-						 contained.Contained):
-	createFieldProperties(interfaces.IIssuerOrganization)
+class IssuerOrganization(SchemaConfigured, Contained):
+	createFieldProperties(IIssuerOrganization)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Issuer"
@@ -96,15 +91,13 @@ class IssuerOrganization(SchemaConfigured,
 	issued_on = alias('issuedOn')
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
 @interface.implementer(IBadgeClass)
 @WithRepr
 @NoPickle
 @EqHash('name')
-class BadgeClass(SchemaConfigured,
-				 contained.Contained):
+class BadgeClass(SchemaConfigured, Contained):
 	createFieldProperties(IBadgeClass)
 
 	__external_can_create__ = True
@@ -115,16 +108,14 @@ class BadgeClass(SchemaConfigured,
 		if 'tags' in kwargs:
 			kwargs['tags'] = IBadgeClass['tags'].fromObject(kwargs['tags'])
 
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(interfaces.IBadgeAssertion)
+@interface.implementer(IBadgeAssertion)
 @WithRepr
 @NoPickle
 @EqHash('uid', 'recipient')
-class BadgeAssertion(SchemaConfigured,
-					 contained.Contained):
-	createFieldProperties(interfaces.IBadgeAssertion)
+class BadgeAssertion(SchemaConfigured, Contained):
+	createFieldProperties(IBadgeAssertion)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Assertion"
@@ -133,5 +124,4 @@ class BadgeAssertion(SchemaConfigured,
 	id = alias('uid')
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)

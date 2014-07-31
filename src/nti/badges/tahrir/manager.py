@@ -28,10 +28,14 @@ from tahrir_api.model import DeclarativeBase as tahrir_base
 
 from .dbapi import NTITahrirDatabase
 
-from . import interfaces
-from .. import interfaces as badge_interfaces
+from .interfaces import IBadge
+from .interfaces import IIssuer
+from .interfaces import IPerson
+from .interfaces import ITahrirBadgeManager
 
-@interface.implementer(interfaces.ITahrirBadgeManager)
+from ..interfaces import IEarnedBadge
+
+@interface.implementer(ITahrirBadgeManager)
 class TahrirBadgeManager(object):
 
 	pool_size = 30
@@ -92,13 +96,13 @@ class TahrirBadgeManager(object):
 	# Badges
 
 	def _badge_name(self, badge):
-		badge = interfaces.IBadge(badge)
+		badge = IBadge(badge)
 		name = badge.name
 		return name
 
 	def add_badge(self, badge, issuer=None):
 		database = self.db # get reference
-		badge = interfaces.IBadge(badge)
+		badge = IBadge(badge)
 		issuer = self._get_issuer(issuer, database=database) if issuer is not None else None
 		issuer_id = badge.issuer_id or issuer.id
 		result = database.add_badge(name=badge.name,
@@ -134,7 +138,7 @@ class TahrirBadgeManager(object):
 		database = self.db  # get reference
 		stored = self._get_badge(badge, database=database)
 		if stored is not None:
-			source = interfaces.IBadge(badge)
+			source = IBadge(badge)
 			tags = tags or source.tags or stored.tags
 			criteria = criteria or source.criteria or stored.criteria
 			description = description or source.description or stored.description
@@ -155,7 +159,7 @@ class TahrirBadgeManager(object):
 	def get_person_badges(self, person):
 		result = []
 		for badge in self._get_person_badges(person):
-			interface.alsoProvides(badge, badge_interfaces.IEarnedBadge)
+			interface.alsoProvides(badge, IEarnedBadge)
 			result.append(badge)
 		return result
 
@@ -220,7 +224,7 @@ class TahrirBadgeManager(object):
 		database = self.db  # get reference
 		stored = self._get_person(person, database=self.db)
 		if stored is not None:
-			source = interfaces.IPerson(person)
+			source = IPerson(person)
 			bio = bio or source.bio or stored.bio
 			email = email or source.email or stored.email
 			website = website or source.website or stored.website
@@ -257,7 +261,7 @@ class TahrirBadgeManager(object):
 	# Persons
 
 	def _person_tuple(self, person=None, name=None):
-		person = interfaces.IPerson(person, None)
+		person = IPerson(person, None)
 		email = getattr(person, 'email', None)  # Email is used as id
 		name = name or getattr(person, 'nickname', None)
 		return (email, name)
@@ -273,7 +277,7 @@ class TahrirBadgeManager(object):
 		return result
 
 	def add_person(self, person):
-		person = interfaces.IPerson(person)
+		person = IPerson(person)
 		result = self.db.add_person(email=person.email,
 									nickname=person.nickname,
 									website=person.website,
@@ -298,7 +302,7 @@ class TahrirBadgeManager(object):
 	# Issuers
 
 	def _issuer_tuple(self, issuer, origin=None):
-		issuer = interfaces.IIssuer(issuer)
+		issuer = IIssuer(issuer)
 		name = issuer.name
 		origin = origin or issuer.origin
 		return (name, origin)
@@ -321,7 +325,7 @@ class TahrirBadgeManager(object):
 		return result
 
 	def add_issuer(self, issuer):
-		issuer = interfaces.IIssuer(issuer)
+		issuer = IIssuer(issuer)
 		result = self.db.add_issuer(origin=issuer.origin,
 									name=issuer.name,
 									org=issuer.org,

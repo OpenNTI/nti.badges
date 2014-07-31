@@ -16,7 +16,9 @@ from zope import interface
 from zope.configuration import fields
 from zope.component.zcml import utility
 
-from . import interfaces
+from .interfaces import IIssuer
+from .interfaces import ITahrirBadgeManager
+
 from .manager import create_issuer
 from .manager import create_badge_manager
 
@@ -47,8 +49,7 @@ def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
 								autocommit=autocommit,
 								defaultSQLite=defaultSQLite,
 								config=config)
-	utility(_context, provides=interfaces.ITahrirBadgeManager,
-			factory=factory, name="")
+	utility(_context, provides=ITahrirBadgeManager, factory=factory, name="")
 
 class IRegisterTahrirIssuer(interface.Interface):
 	"""
@@ -69,5 +70,5 @@ def registerTahrirIssuer(_context, name, origin, org, contact, id=u''):
 								origin=origin,
 								org=org,
 								contact=contact)
-	utility(_context, provides=interfaces.IIssuer, factory=factory, name=id)
+	utility(_context, provides=IIssuer, factory=factory, name=id)
 

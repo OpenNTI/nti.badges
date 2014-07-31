@@ -9,15 +9,15 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope.container import contained
+from zope.container.contained import Contained
 
 from nti.externalization.persistence import NoPickle
 from nti.externalization.externalization import WithRepr
 
 from nti.utils.property import alias
 
+from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
-from nti.schema.schema import EqHash as _EqHash
 from nti.schema.fieldproperty import createFieldProperties
 
 # NOTE: None of these classes are inheriting from other
@@ -26,15 +26,16 @@ from nti.schema.fieldproperty import createFieldProperties
 # create just the direct field properties
 # from nti.schema.fieldproperty import createDirectFieldProperties
 
-from . import interfaces
 from .interfaces import INTIBadge
+from .interfaces import INTIIssuer
+from .interfaces import INTIPerson
+from .interfaces import INTIAssertion
 
 @interface.implementer(INTIBadge)
 @WithRepr
 @NoPickle
-@_EqHash('issuer', 'name')
-class NTIBadge(SchemaConfigured,
-			   contained.Contained):
+@EqHash('issuer', 'name')
+class NTIBadge(SchemaConfigured, Contained):
 	createFieldProperties(INTIBadge)
 
 	__external_can_create__ = True
@@ -48,13 +49,12 @@ class NTIBadge(SchemaConfigured,
 			kwargs['tags'] = INTIBadge['tags'].fromObject(kwargs['tags'])
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(interfaces.INTIPerson)
+@interface.implementer(INTIPerson)
 @WithRepr
 @NoPickle
-@_EqHash('name', 'email')
-class NTIPerson(SchemaConfigured,
-				contained.Contained):
-	createFieldProperties(interfaces.INTIPerson)
+@EqHash('name', 'email')
+class NTIPerson(SchemaConfigured, Contained):
+	createFieldProperties(INTIPerson)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Person"
@@ -63,13 +63,12 @@ class NTIPerson(SchemaConfigured,
 	def __init__(self, *args, **kwargs):
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(interfaces.INTIIssuer)
+@interface.implementer(INTIIssuer)
 @WithRepr
 @NoPickle
-@_EqHash('name', 'origin')
-class NTIIssuer(SchemaConfigured,
-				contained.Contained):
-	createFieldProperties(interfaces.INTIIssuer)
+@EqHash('name', 'origin')
+class NTIIssuer(SchemaConfigured, Contained):
+	createFieldProperties(INTIIssuer)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Issuer"
@@ -80,13 +79,12 @@ class NTIIssuer(SchemaConfigured,
 	def __init__(self, *args, **kwargs):
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(interfaces.INTIAssertion)
+@interface.implementer(INTIAssertion)
 @WithRepr
 @NoPickle
-@_EqHash('badge', 'recipient', 'issuedOn')
-class NTIAssertion(SchemaConfigured,
-				   contained.Contained):
-	createFieldProperties(interfaces.INTIAssertion)
+@EqHash('badge', 'recipient', 'issuedOn')
+class NTIAssertion(SchemaConfigured, Contained):
+	createFieldProperties(INTIAssertion)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Assertion"

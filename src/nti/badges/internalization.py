@@ -11,12 +11,14 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope import component
 
-from nti.externalization import interfaces as ext_interfaces
 from nti.externalization.datastructures import InterfaceObjectIO
+from nti.externalization.interfaces import IInternalObjectUpdater
 
-from . import interfaces
+from .interfaces import INTIBadge
+from .interfaces import INTIIssuer
+from .interfaces import INTIPerson
 
-@interface.implementer(ext_interfaces.IInternalObjectUpdater)
+@interface.implementer(IInternalObjectUpdater)
 class _NTIModelUpdater(object):
 
     model_interface = None
@@ -32,17 +34,17 @@ class _NTIModelUpdater(object):
             self.obj.createdTime = createdTime
         return result
 
-@interface.implementer(ext_interfaces.IInternalObjectUpdater)
-@component.adapter(interfaces.INTIIssuer)
+@interface.implementer(IInternalObjectUpdater)
+@component.adapter(INTIIssuer)
 class _NTIIssuerUpdater(_NTIModelUpdater):
-    model_interface = interfaces.INTIIssuer
+    model_interface = INTIIssuer
 
-@interface.implementer(ext_interfaces.IInternalObjectUpdater)
-@component.adapter(interfaces.INTIBadge)
+@interface.implementer(IInternalObjectUpdater)
+@component.adapter(INTIBadge)
 class _NTIBadgeUpdater(_NTIModelUpdater):
-    model_interface = interfaces.INTIBadge
+    model_interface = INTIBadge
 
-@interface.implementer(ext_interfaces.IInternalObjectUpdater)
-@component.adapter(interfaces.INTIPerson)
+@interface.implementer(IInternalObjectUpdater)
+@component.adapter(INTIPerson)
 class _NTIPersonUpdater(_NTIModelUpdater):
-    model_interface = interfaces.INTIPerson
+    model_interface = INTIPerson

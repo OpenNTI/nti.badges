@@ -33,17 +33,23 @@ from .model import NTIIssuer
 from .model import NTIPerson
 from .model import NTIAssertion
 
-from . import interfaces
+from .interfaces import INTIBadge
+from .interfaces import INTIIssuer
+from .interfaces import INTIPerson
+from .interfaces import IEarnedBadge
+from .interfaces import INTIAssertion
+from .interfaces import IEarnableBadge
+
 from . import get_tahrir_badge_by_id
 from . import get_tahrir_person_by_id
 from . import get_tahrir_issuer_by_id
 
 def tag_badge_interfaces(source, target):
-	if interfaces.IEarnableBadge.providedBy(source):
-		interface.alsoProvides(target, interfaces.IEarnableBadge)
+	if IEarnableBadge.providedBy(source):
+		interface.alsoProvides(target, IEarnableBadge)
 
-	if interfaces.IEarnedBadge.providedBy(source):
-		interface.alsoProvides(target, interfaces.IEarnedBadge)
+	if IEarnedBadge.providedBy(source):
+		interface.alsoProvides(target, IEarnedBadge)
 
 @interface.implementer(open_interfaces.IIdentityObject)
 def basestring_to_mozilla_indentity_object(source):
@@ -62,7 +68,7 @@ def basestring_to_tahrir_person(source):
 	result.created_on = datetime.now()
 	return result
 
-@interface.implementer(interfaces.INTIPerson)
+@interface.implementer(INTIPerson)
 def basestring_to_ntiperson(source):
 	result = NTIPerson(name=source,
 					   email=source,
@@ -175,7 +181,7 @@ def tahrir_assertion_to_mozilla_badge(assertion):
 	return open_interfaces.IBadgeClass(assertion.badge)
 
 @component.adapter(tahrir_interfaces.IIssuer)
-@interface.implementer(interfaces.INTIIssuer)
+@interface.implementer(INTIIssuer)
 def tahrir_issuer_to_ntiissuer(issuer):
 	result = NTIIssuer(name=safestr(issuer.name),
 					   origin=safestr(issuer.origin),
@@ -185,10 +191,10 @@ def tahrir_issuer_to_ntiissuer(issuer):
 	return result
 
 @component.adapter(tahrir_interfaces.IBadge)
-@interface.implementer(interfaces.INTIBadge)
+@interface.implementer(INTIBadge)
 def tahrir_badge_to_ntibadge(badge):
 	tags = tuple(safestr(x.lower()) for x in ((badge.tags or '').split(',')) if x)
-	issuer = interfaces.INTIIssuer(badge.issuer, None)
+	issuer = INTIIssuer(badge.issuer, None)
 	result = NTIBadge(issuer=issuer,
 					  tags=tuple(tags),
 					  name=safestr(badge.name),
@@ -199,21 +205,21 @@ def tahrir_badge_to_ntibadge(badge):
 	return result
 
 @component.adapter(tahrir_interfaces.IAssertion)
-@interface.implementer(interfaces.INTIAssertion)
+@interface.implementer(INTIAssertion)
 def tahrir_assertion_to_ntiassertion(ast):
-	badge = interfaces.INTIBadge(ast.badge)
-	interface.alsoProvides(badge, interfaces.IEarnedBadge)
+	badge = INTIBadge(ast.badge)
+	interface.alsoProvides(badge, IEarnedBadge)
 	issuedOn = time.mktime(ast.issued_on.timetuple())
 	result = NTIAssertion(uid=ast.id,
 						  badge=badge,
 						  issuedOn=issuedOn,
-						  person=interfaces.INTIPerson(ast.person),
+						  person=INTIPerson(ast.person),
 						  recipient=safestr(ast.recipient),
 						  salt=getattr(ast, 'salt', None))
 	return result
 
 @component.adapter(tahrir_interfaces.IPerson)
-@interface.implementer(interfaces.INTIPerson)
+@interface.implementer(INTIPerson)
 def tahrir_person_to_ntiperson(person):
 	result = NTIPerson(name=safestr(person.nickname),
 					   email=safestr(person.email),
@@ -225,7 +231,7 @@ def tahrir_person_to_ntiperson(person):
 
 # nti->
 
-@component.adapter(interfaces.INTIIssuer)
+@component.adapter(INTIIssuer)
 @interface.implementer(tahrir_interfaces.IIssuer)
 def ntiissuer_to_tahrir_issuer(issuer):
 	result = Issuer()
@@ -235,7 +241,7 @@ def ntiissuer_to_tahrir_issuer(issuer):
 	result.org = safestr(issuer.organization)
 	return result
 
-@component.adapter(interfaces.INTIBadge)
+@component.adapter(INTIBadge)
 @interface.implementer(tahrir_interfaces.IBadge)
 def ntibadge_to_tahrir_badge(badge):
 	# XXX: Issuer is not set
@@ -249,14 +255,14 @@ def ntibadge_to_tahrir_badge(badge):
 	tag_badge_interfaces(badge, result)
 	return result
 
-@component.adapter(interfaces.INTIIssuer)
+@component.adapter(INTIIssuer)
 @interface.implementer(open_interfaces.IVerificationObject)
 def ntiissuer_to_mozilla_verification_object(issuer):
 	verify = VerificationObject(type=open_interfaces.VO_TYPE_HOSTED,
 								url=safestr(issuer.origin))
 	return verify
 
-@component.adapter(interfaces.INTIIssuer)
+@component.adapter(INTIIssuer)
 @interface.implementer(open_interfaces.IIssuerOrganization)
 def ntiissuer_to_mozilla_issuer(issuer):
 	result = IssuerOrganization(name=safestr(issuer.name),
@@ -264,7 +270,7 @@ def ntiissuer_to_mozilla_issuer(issuer):
 						  		email=issuer.email)
 	return result
 
-@component.adapter(interfaces.INTIBadge)
+@component.adapter(INTIBadge)
 @interface.implementer(open_interfaces.IBadgeClass)
 def ntibadge_to_mozilla_badge(badge):
 	issuer = badge.issuer
@@ -277,7 +283,7 @@ def ntibadge_to_mozilla_badge(badge):
 	tag_badge_interfaces(badge, result)
 	return result
 
-@component.adapter(interfaces.INTIAssertion)
+@component.adapter(INTIAssertion)
 @interface.implementer(open_interfaces.IBadgeAssertion)
 def ntiassertion_to_mozilla_assertion(assertion):
 	badge = assertion.badge
@@ -297,13 +303,13 @@ def ntiassertion_to_mozilla_assertion(assertion):
 							issuedOn=datetime.fromtimestamp(issuedOn))
 	return result
 
-@component.adapter(interfaces.INTIAssertion)
+@component.adapter(INTIAssertion)
 @interface.implementer(open_interfaces.IBadgeClass)
 def ntiassertion_to_mozilla_badge(assertion):
 	result = open_interfaces.IBadgeClass(assertion.badge)
 	return result
 
-@component.adapter(interfaces.INTIPerson)
+@component.adapter(INTIPerson)
 @interface.implementer(tahrir_interfaces.IPerson)
 def ntiperson_to_tahrir_person(nti):
 	result = Person()
@@ -335,7 +341,7 @@ def mozilla_issuer_to_tahrir_issuer(issuer):
 	return result
 
 @component.adapter(open_interfaces.IIssuerOrganization)
-@interface.implementer(interfaces.INTIIssuer)
+@interface.implementer(INTIIssuer)
 def mozilla_issuer_to_ntiisuer(issuer):
 	result = NTIIssuer(name=safestr(issuer.name),
 					   origin=safestr(issuer.url),
@@ -344,7 +350,7 @@ def mozilla_issuer_to_ntiisuer(issuer):
 	return result
 
 @component.adapter(open_interfaces.IIdentityObject)
-@interface.implementer(interfaces.INTIPerson)
+@interface.implementer(INTIPerson)
 def mozilla_identityobject_to_ntiperson(iio):
 	result = NTIPerson(email=safestr(iio.identity), name=safestr(iio.identity))
 	return result
@@ -363,7 +369,7 @@ def mozilla_badge_to_tahrir_badge(badge):
 	return result
 
 @component.adapter(open_interfaces.IBadgeClass)
-@interface.implementer(interfaces.INTIBadge)
+@interface.implementer(INTIBadge)
 def mozilla_badge_to_ntibadge(badge):
 	# XXX: Issuer is not set
 	result = NTIBadge(tags=badge.tags,

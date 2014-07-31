@@ -14,14 +14,17 @@ from nti.schema.field import ValidText
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
-from .. import interfaces as badge_interfaces
+from ..interfaces import IBadgeClass
+from ..interfaces import IBadgeIssuer
+from ..interfaces import IBadgeManager
+from ..interfaces import IBadgeAssertion
 
 class ITahrirModel(interface.Interface):
 	"""
 	marker interface for Tahrir model objects
 	"""
 
-class IIssuer(ITahrirModel, badge_interfaces.IBadgeIssuer):
+class IIssuer(ITahrirModel, IBadgeIssuer):
 	id = Int(title=" Issuer id")
 	origin = ValidTextLine(title="Issuer origin")
 	name = ValidTextLine(title=" Issuer name")
@@ -29,7 +32,7 @@ class IIssuer(ITahrirModel, badge_interfaces.IBadgeIssuer):
 	contact = ValidTextLine(title=" Issuer contact")
 	created_on =  ValidDatetime(title="Created time")
 
-class IBadge(ITahrirModel, badge_interfaces.IBadgeClass):
+class IBadge(ITahrirModel, IBadgeClass):
 	name = ValidTextLine(title="Badge name")
 
 	image = ValidTextLine(title="Image name/URL")
@@ -73,7 +76,7 @@ class IAuthorization(ITahrirModel):
 	badge_id = ValidTextLine(title=" Badge id")
 	person_id = Int(title="Person id")
 
-class IAssertion(ITahrirModel, badge_interfaces.IBadgeAssertion):
+class IAssertion(ITahrirModel, IBadgeAssertion):
 	id = ValidTextLine(title="Assertion id")
 	badge_id = ValidTextLine(title="Badge id")
 	person_id = Int(title="Person's id")
@@ -82,11 +85,11 @@ class IAssertion(ITahrirModel, badge_interfaces.IBadgeAssertion):
 	issued_for = ValidTextLine(title="Issue for", required=False)
 	recipient = ValidTextLine(title="Recipient ", required=False)
 
-class ITahrirBadgeManager(badge_interfaces.IBadgeManager):
+class ITahrirBadgeManager(IBadgeManager):
 	"""
 	Interface for Tahrir database managers
 	"""
-
+	
 	scoped_session = interface.Attribute('Scoped session')
 		
 	def update_person(person, email=None, name=None, website=None, bio=None):
