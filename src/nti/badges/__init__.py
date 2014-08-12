@@ -8,6 +8,3 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from .tahrir import get_tahrir_badge_by_id
-from .tahrir import get_tahrir_issuer_by_id
-from .tahrir import get_tahrir_person_by_id

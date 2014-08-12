@@ -32,6 +32,9 @@ from .openbadges.interfaces import IIdentityObject
 from .openbadges.interfaces import IIssuerOrganization
 from .openbadges.interfaces import IVerificationObject
 
+from .tahrir import get_tahrir_badge_by_id
+from .tahrir import get_tahrir_issuer_by_id
+from .tahrir import get_tahrir_person_by_id
 from .tahrir.interfaces import IBadge as ITahrirBadge
 from .tahrir.interfaces import IIssuer as ITahrirIssuer
 from .tahrir.interfaces import IPerson as ITahrirPerson
@@ -49,10 +52,6 @@ from .interfaces import INTIPerson
 from .interfaces import IEarnedBadge
 from .interfaces import INTIAssertion
 from .interfaces import IEarnableBadge
-
-from . import get_tahrir_badge_by_id
-from . import get_tahrir_person_by_id
-from . import get_tahrir_issuer_by_id
 
 def tag_badge_interfaces(source, target):
 	if IEarnableBadge.providedBy(source):
