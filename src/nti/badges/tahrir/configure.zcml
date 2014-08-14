@@ -63,6 +63,7 @@
 			 	org="http://www.nextthought.com"
 			 	origin="http://www.nextthought.com" />
 		</configure>
+		<subscriber handler=".subscribers._closed_dataserver" />
 	</configure>
 
 	<!-- Externalization -->
