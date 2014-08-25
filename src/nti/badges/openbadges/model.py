@@ -12,7 +12,7 @@ from zope import interface
 from zope.container.contained import Contained
 
 from nti.externalization.persistence import NoPickle
-from nti.externalization.externalization import WithRepr
+from nti.externalization.representation import WithRepr
 
 from nti.utils.property import alias
 
