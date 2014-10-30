@@ -31,6 +31,11 @@ Assertion.uid = alias('id')
 def salt_default():
 	return u'23597b11-857a-447f-8129-66b5397b0c7f'
 
+def assertion_id(person_id, badge_id):
+	result = "%s -> %r" % (badge_id, person_id)
+	result = base64.urlsafe_b64encode(result)
+	return unicode(result)
+	
 class NTITahrirDatabase(TahrirDatabase):
 
 	def __init__(self, salt=None, *args, **kwargs):
@@ -38,9 +43,8 @@ class NTITahrirDatabase(TahrirDatabase):
 		self.salt = salt or salt_default()
 
 	def assertion_id(self, person_id, badge_id):
-		result = "%s -> %r" % (badge_id, person_id)
-		result = base64.urlsafe_b64encode(result)
-		return unicode(result)
+		result = assertion_id(person_id, badge_id)
+		return result
 
 	def recipient(self, email):
 		hexdigest = unicode(hashlib.sha256(email + self.salt).hexdigest())
