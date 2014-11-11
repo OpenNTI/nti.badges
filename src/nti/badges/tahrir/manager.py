@@ -293,7 +293,8 @@ class TahrirBadgeManager(object):
 		database = self.db  # get reference
 		email, _ = self._person_tuple(person)
 		self._delete_person_assertions(email, database=database)
-		return database.delete_person(email)
+		result = database.delete_person(email)
+		return result
 
 	def get_person_by_id(self, person_id):
 		result = self.db.get_person(person_email=person_id, id=person_id)
