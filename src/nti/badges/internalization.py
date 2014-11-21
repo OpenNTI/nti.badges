@@ -26,7 +26,7 @@ class _NTIModelUpdater(object):
         self.obj = obj
 
     def updateFromExternalObject(self, parsed, *args, **kwargs):
-        createdTime = parsed.get('CreatedTime', parsed.get('createdTime'))
+        createdTime = parsed.get('CreatedTime') or parsed.get('createdTime')
         result = InterfaceObjectIO(
                     self.obj,
                     self.model_interface).updateFromExternalObject(parsed)
