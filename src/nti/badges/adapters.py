@@ -41,6 +41,7 @@ from .tahrir.interfaces import IPerson as ITahrirPerson
 from .tahrir.interfaces import IAssertion as ITahrirAssertion
 
 from .utils import safestr
+
 from .model import NTIBadge
 from .model import NTIIssuer
 from .model import NTIPerson
