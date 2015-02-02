@@ -3,6 +3,7 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -12,8 +13,6 @@ from zope import interface
 # of the base utility packages.
 from nti.contentfragments.schema import PlainTextLine
 
-# XXX: Note: These will move, pending a better separation
-# of the base utility packages.
 from nti.schema.field import Number
 from nti.schema.field import Object
 from nti.schema.field import Variant
@@ -190,6 +189,11 @@ class IBadgeManager(interface.Interface):
 		check if a badge assertion exists
 		"""
 
+	def get_all_persons():
+		"""
+		return all persons
+		"""
+		
 	def get_person_assertions(person):
 		"""
 		return the assertions for the specified person

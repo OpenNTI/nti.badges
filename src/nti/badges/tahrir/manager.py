@@ -3,6 +3,7 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -300,6 +301,12 @@ class TahrirBadgeManager(object):
 		result = self.db.get_person(person_email=person_id, id=person_id)
 		return result
 
+	def get_all_persons(self):
+		result = []
+		for person in self.db.get_all_persons():
+			result.append(person)
+		return result
+	
 	# Issuers
 
 	def _issuer_tuple(self, issuer, origin=None):

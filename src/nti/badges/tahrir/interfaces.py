@@ -3,6 +3,7 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -107,7 +108,7 @@ class ITahrirBadgeManager(IBadgeManager):
 		return the issuer by its id
 		"""
 
-	def get_person_by_id(badge_id):
+	def get_person_by_id(person_id):
 		"""
-		return the badge by its id
+		return the person by its id
 		"""
