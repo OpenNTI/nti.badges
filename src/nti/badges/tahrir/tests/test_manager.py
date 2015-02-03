@@ -157,6 +157,8 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 
 		assert_that(manager.person_exists('foo@example.org'), is_(True))
 
+		assert_that(manager.get_all_persons(), has_length(1))
+		
 		eventtesting.clearEvents()
 		assert_that(manager.add_assertion('foo@example.org', 'fossbox'), is_not(False))
 
