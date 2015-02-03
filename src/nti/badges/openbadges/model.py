@@ -3,6 +3,7 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -14,7 +15,7 @@ from zope.container.contained import Contained
 from nti.externalization.persistence import NoPickle
 from nti.externalization.representation import WithRepr
 
-from nti.utils.property import alias
+from nti.common.property import alias
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured

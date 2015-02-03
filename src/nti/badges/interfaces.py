@@ -13,17 +13,14 @@ from zope import interface
 # of the base utility packages.
 from nti.contentfragments.schema import PlainTextLine
 
+from nti.dublincore.interfaces import ICreatedTime
+
 from nti.schema.field import Number
 from nti.schema.field import Object
 from nti.schema.field import Variant
 from nti.schema.field import ValidText
 from nti.schema.field import TupleFromObject
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
-
-# XXX: Note: These are temporary, pending a better
-# separation of the base content model. This package
-# in general should avoid dependencies on `nti.dataserver`
-from nti.dataserver.interfaces import ICreatedTime
 
 class Tag(PlainTextLine):
 	"""

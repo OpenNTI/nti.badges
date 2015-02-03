@@ -20,7 +20,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
-from nti.utils.property import Lazy
+from nti.common.property import Lazy
 
 from tahrir_api.model import Badge
 from tahrir_api.model import Issuer

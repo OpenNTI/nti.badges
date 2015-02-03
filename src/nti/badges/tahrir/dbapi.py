@@ -3,6 +3,7 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -23,7 +24,7 @@ from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
 
-from nti.utils.property import alias
+from nti.common.property import alias
 
 # make compliant
 Assertion.uid = alias('id')

@@ -14,7 +14,7 @@ from zope.container.contained import Contained
 from nti.externalization.persistence import NoPickle
 from nti.externalization.representation import WithRepr
 
-from nti.utils.property import alias
+from nti.common.property import alias
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
