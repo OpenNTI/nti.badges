@@ -72,4 +72,3 @@ def registerTahrirIssuer(_context, name, origin, org, contact, id=u''):
 								org=org,
 								contact=contact)
 	utility(_context, provides=IIssuer, factory=factory, name=id)
-

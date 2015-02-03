@@ -3,18 +3,18 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope.container.contained import Contained
+
+from nti.common.property import alias
 
 from nti.externalization.persistence import NoPickle
 from nti.externalization.representation import WithRepr
-
-from nti.common.property import alias
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
@@ -35,7 +35,7 @@ from .interfaces import INTIAssertion
 @WithRepr
 @NoPickle
 @EqHash('issuer', 'name')
-class NTIBadge(SchemaConfigured, Contained):
+class NTIBadge(SchemaConfigured):
 	createFieldProperties(INTIBadge)
 
 	__external_can_create__ = True
@@ -53,7 +53,7 @@ class NTIBadge(SchemaConfigured, Contained):
 @WithRepr
 @NoPickle
 @EqHash('name', 'email')
-class NTIPerson(SchemaConfigured, Contained):
+class NTIPerson(SchemaConfigured):
 	createFieldProperties(INTIPerson)
 
 	__external_can_create__ = True
@@ -67,7 +67,7 @@ class NTIPerson(SchemaConfigured, Contained):
 @WithRepr
 @NoPickle
 @EqHash('name', 'origin')
-class NTIIssuer(SchemaConfigured, Contained):
+class NTIIssuer(SchemaConfigured):
 	createFieldProperties(INTIIssuer)
 
 	__external_can_create__ = True
@@ -83,7 +83,7 @@ class NTIIssuer(SchemaConfigured, Contained):
 @WithRepr
 @NoPickle
 @EqHash('badge', 'recipient', 'issuedOn')
-class NTIAssertion(SchemaConfigured, Contained):
+class NTIAssertion(SchemaConfigured):
 	createFieldProperties(INTIAssertion)
 
 	__external_can_create__ = True

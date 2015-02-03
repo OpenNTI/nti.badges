@@ -176,6 +176,9 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 							   hashed=(True if salt else False),
 							   type=ID_TYPE_EMAIL)
 
+	# exported
+	exported = getattr(assertion, 'exported', None) or False
+	
 	# assertion
 	aid = assertion.id or u"%s -> %s" % (badge.name, person.email)
 	result = BadgeAssertion(uid=aid,
@@ -183,7 +186,8 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 							recipient=recipient,
 							image=safestr(badge.image),
 							issuedOn=assertion.issued_on,
-							badge=IBadgeClass(badge))
+							badge=IBadgeClass(badge),
+							exported=exported)
 	return result
 
 @component.adapter(ITahrirAssertion)
@@ -217,16 +221,18 @@ def tahrir_badge_to_ntibadge(badge):
 
 @component.adapter(ITahrirAssertion)
 @interface.implementer(INTIAssertion)
-def tahrir_assertion_to_ntiassertion(ast):
-	badge = INTIBadge(ast.badge)
+def tahrir_assertion_to_ntiassertion(assertion):
+	badge = INTIBadge(assertion.badge)
 	interface.alsoProvides(badge, IEarnedBadge)
-	issuedOn = time.mktime(ast.issued_on.timetuple())
-	result = NTIAssertion(uid=ast.id,
+	exported = getattr(assertion, 'exported', None) or False
+	issuedOn = time.mktime(assertion.issued_on.timetuple())
+	result = NTIAssertion(uid=assertion.id,
 						  badge=badge,
 						  issuedOn=issuedOn,
-						  person=INTIPerson(ast.person),
-						  recipient=safestr(ast.recipient),
-						  salt=getattr(ast, 'salt', None))
+						  person=INTIPerson(assertion.person),
+						  recipient=safestr(assertion.recipient),
+						  salt=getattr(assertion, 'salt', None),
+						  exported=exported)
 	return result
 
 @component.adapter(ITahrirPerson)
@@ -311,6 +317,7 @@ def ntiassertion_to_mozilla_assertion(assertion):
 							recipient=recipient,
 							image=safestr(badge.image),
 							badge=IBadgeClass(badge),
+							exported=assertion.exported,
 							issuedOn=datetime.fromtimestamp(issuedOn))
 	return result
 

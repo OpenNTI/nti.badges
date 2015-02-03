@@ -12,10 +12,10 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope.container.contained import Contained
 
+from nti.common.property import alias
+
 from nti.externalization.persistence import NoPickle
 from nti.externalization.representation import WithRepr
-
-from nti.common.property import alias
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured

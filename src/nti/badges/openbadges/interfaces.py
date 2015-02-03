@@ -106,3 +106,6 @@ class IBadgeAssertion(IAssertionMarker):
 							 required=False)
 
 	expires = ValidDatetime(title="Achievment expiry", required=False)
+	
+	exported = Bool(title="If the assertion has been exported", default=False, 
+					required=False)

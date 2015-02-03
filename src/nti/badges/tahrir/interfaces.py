@@ -85,6 +85,8 @@ class IAssertion(ITahrirModel, IBadgeAssertion):
 	issued_on = ValidDatetime(title="Issue date")
 	issued_for = ValidTextLine(title="Issue for", required=False)
 	recipient = ValidTextLine(title="Recipient ", required=False)
+	exported = Bool(title="If the assertion has been exported", default=False, 
+					required=False)
 
 class ITahrirBadgeManager(IBadgeManager):
 	"""

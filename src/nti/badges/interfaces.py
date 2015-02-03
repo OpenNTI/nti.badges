@@ -9,12 +9,9 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
-# XXX: Note: These will move, pending a better separation
-# of the base utility packages.
-from nti.contentfragments.schema import PlainTextLine
-
 from nti.dublincore.interfaces import ICreatedTime
 
+from nti.schema.field import Bool
 from nti.schema.field import Number
 from nti.schema.field import Object
 from nti.schema.field import Variant
@@ -22,7 +19,7 @@ from nti.schema.field import ValidText
 from nti.schema.field import TupleFromObject
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
-class Tag(PlainTextLine):
+class Tag(ValidTextLine):
 	"""
 	Requires its content to be only one plain text word that is lowercased.
 	"""
@@ -101,8 +98,10 @@ class INTIAssertion(IBadgeAssertion):
 				title="Badge recipient")
 	issuedOn = Number(title="Date that the achievement was awarded",
 					  default=0)
-	recipient = ValidTextLine(title="Badge recipient hash", required=False)
+	recipient = ValidTextLine(title="Badge recipient email-hash", required=False)
 	salt = ValidTextLine(title="One-way function to hash person", required=False)
+	exported = Bool(title="If the assertion has been exported", default=False, 
+					required=False)
 
 class IEarnableBadge(interface.Interface):
 	"""
