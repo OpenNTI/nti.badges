@@ -261,20 +261,20 @@ class TahrirBadgeManager(object):
 
 	# Persons
 
-	def _person_tuple(self, person=None, name=None):
+	def _person_tuple(self, person=None, name=None, email=None):
 		person = IPerson(person, None)
-		email = getattr(person, 'email', None)  # Email is used as id
+		email = email or getattr(person, 'email', None)
 		name = name or getattr(person, 'nickname', None)
 		return (email, name)
 
-	def _get_person(self, person=None, name=None, database=None):
+	def _get_person(self, person=None, name=None, email=None, database=None):
 		database = self.db if database is None else database
-		email, name = self._person_tuple(person, name)
+		email, name = self._person_tuple(person, name, email)
 		result = database.get_person(person_email=email, nickname=name)
 		return result
 
-	def get_person(self, person=None, name=None):
-		result = self._get_person(person, name)
+	def get_person(self, person=None, name=None, email=None):
+		result = self._get_person(person, name, email)
 		return result
 
 	def add_person(self, person):
