@@ -170,7 +170,7 @@ class IBadgeManager(interface.Interface):
 		return a badge assertion for the specified person
 		"""
 
-	def add_assertion(person, badge):
+	def add_assertion(person, badge, exported=False):
 		"""
 		add a badge assertion for the specified person
 		"""

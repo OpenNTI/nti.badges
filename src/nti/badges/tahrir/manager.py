@@ -213,12 +213,14 @@ class TahrirBadgeManager(object):
 			result.append(assertion)
 		return result
 
-	def add_assertion(self, person, badge, issued_on=None):
+	def add_assertion(self, person, badge, issued_on=None, exported=False):
 		database = self.db  # get reference
 		badge = self._get_badge(badge, database=database)
 		person = self._get_person(person, database=database)
 		if badge and person:
-			return database.add_assertion(badge.id, person.email, issued_on)
+			return database.add_assertion(badge.id, person.email,
+										  issued_on=issued_on,
+										  exported=exported)
 		return False
 
 	def update_person(self, person, email=None, name=None, website=None, bio=None):
