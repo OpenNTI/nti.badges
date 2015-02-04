@@ -175,6 +175,11 @@ class IBadgeManager(interface.Interface):
 		add a badge assertion for the specified person
 		"""
 
+	def update_assertion(uid, email=None, exported=True):
+		"""
+		update an assertion
+		"""
+
 	def remove_assertion(person, badge):
 		"""
 		remove a badge assertion from the specified person

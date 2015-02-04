@@ -189,7 +189,11 @@ class TahrirBadgeManager(object):
 	def assertion_exists(self, person, badge):
 		result = self._get_assertion(person, badge)
 		return True if result is not None else False
-
+	
+	def update_assertion(self, uid, email=None, exported=True):
+		result = self.db.update_assertion(uid, email=email, exported=exported)
+		return True if result is not None else False
+		
 	def delete_assertion(self, person, badge):
 		database = self.db  # get reference
 		assertion = self._get_assertion(person, badge, database=database)

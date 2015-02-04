@@ -15,6 +15,8 @@ from datetime import datetime
 
 from zope import lifecycleevent
 
+from sqlalchemy import Column
+from sqlalchemy.types import Boolean
 from sqlalchemy import func, exists, and_, or_
 
 from tahrir_api.model import Badge
@@ -28,6 +30,11 @@ from nti.common.property import alias
 
 # make compliant
 Assertion.uid = alias('id')
+
+# add exported
+if not hasattr(Assertion, 'exported'):
+	exported = Column('exported', Boolean(), nullable=True, unique=False)
+	Assertion.exported = exported
 
 def salt_default():
 	return u'23597b11-857a-447f-8129-66b5397b0c7f'
@@ -108,36 +115,44 @@ class NTITahrirDatabase(TahrirDatabase):
 
 	# assertion
 
-	def assertion_exists(self, badge_id, email):
-		person = self.get_person(email)
-		if not person:
-			return False
-
-		result = self.session.query(exists().where(
-							and_(func.lower(Assertion.person_id) == func.lower(person.id),
-								 func.lower(Assertion.badge_id) == func.lower(badge_id)))).scalar()
-							
+	def assertion_exists(self, badge_id=None, email=None, nickname=None, assertion_id=None):
+		if assertion_id is not None:
+			query = self.session.query(exists().where(Assertion.id == assertion_id))
+			result = query.scalar()
+		else:
+			assert badge_id is not None
+			person = self.get_person(email, nickname=nickname)
+			if not person:
+				result = False
+			else:
+				result = self.session.query(exists().where(
+								and_(func.lower(Assertion.person_id) == func.lower(person.id),
+									 func.lower(Assertion.badge_id) == func.lower(badge_id)))).scalar()
 		return result
 
-	def get_assertion(self, badge_id, email):
-		if not self.assertion_exists(badge_id, email):
-			return None
+	def get_assertion_by_id(self, assertion_id):
+		query = self.session.query(Assertion).filter_by(id=assertion_id)
+		result = query.scalar()
+		return result
+	
+	def get_assertion(self, badge_id=None, email=None, nickname=None, assertion_id=None):
+		if not self.assertion_exists(badge_id, email, assertion_id):
+			result = None
+		elif assertion_id is not None:
+			result = self.get_assertion_by_id(assertion_id)
+		else:
+			person = self.get_person(email, nickname=nickname)
+			query = self.session.query(Assertion).filter_by(
+	           					 person_id=person.id, badge_id=badge_id)
+			result = query.scalar()
+		return result
 
-		person = self.get_person(email)
-		query = self.session.query(Assertion).filter_by(
-           					 person_id=person.id, badge_id=badge_id)
-		return query.scalar()
-
-	def get_assertions(self, email=None, id=None, nickname=None):
-		person = self.get_person(person_email=email, id=id, nickname=nickname)
+	def get_assertions(self, email=None, person_id=None, nickname=None):
+		person = self.get_person(person_email=email, id=person_id, nickname=nickname)
 		if person is not None:
 			person_id = person.id
 			return self.session.query(Assertion).filter_by(person_id=person_id).all()
 		return ()
-
-	def get_assertion_by_id(self, assertion_id):
-		query = self.session.query(Assertion).filter_by(id=assertion_id)
-		return query.scalar()
 
 	@autocommit
 	def add_assertion(self,
@@ -222,3 +237,17 @@ class NTITahrirDatabase(TahrirDatabase):
 
 		self._adjust_ranks(person, old_rank)
 		return (person_email, badge_id)
+
+	@autocommit
+	def update_assertion(self, assertion_id, email=None, exported=True, notify=True):
+		if not self.assertion_exists(assertion_id=assertion_id):
+			return None
+		else:
+			data = {"exported":exported}
+			if email:
+				data["recipient"] = self.recipient(email)
+			result = self.session.query(Assertion).filter_by(id=assertion_id).update(data)
+			if notify:
+				assertion = self.get_assertion_by_id(assertion_id)
+				lifecycleevent.modified(assertion)
+			return result
