@@ -93,6 +93,8 @@ class ITahrirBadgeManager(IBadgeManager):
 	Interface for Tahrir database managers
 	"""
 	
+	defaultSQLite = interface.Attribute('SQLite attribute')
+	
 	scoped_session = interface.Attribute('Scoped session')
 		
 	def update_person(person, email=None, name=None, website=None, bio=None):

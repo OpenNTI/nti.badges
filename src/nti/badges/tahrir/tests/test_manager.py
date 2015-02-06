@@ -63,6 +63,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
 			assert_that(manager, has_property('salt', 'ichigo'))
 			assert_that(manager, has_property('twophase', is_(True)))
 			assert_that(manager, has_property('dburi', 'mysql://Users:Users@myhost/Tahrir'))
+			assert_that(manager, has_property('defaultSQLite', is_(False)))
 		finally:
 			shutil.rmtree(tmp_dir, True)
 
@@ -80,7 +81,8 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 	def test_fossboxbadge(self):
 		manager = self.new
 		assert_that(manager, is_not(none()))
-
+		assert_that(manager, has_property('defaultSQLite', is_(True)))
+		
 		issuer_id = manager.db.add_issuer(u'http://foss.rit.edu/badges',
 										  u'FOSS@RIT',
 										  u'http://foss.rit.edu', u'foss@rit.edu')
