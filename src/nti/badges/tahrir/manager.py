@@ -43,6 +43,8 @@ class TahrirBadgeManager(object):
 	max_overflow = 10
 	pool_recycle = 300
 
+	defaultSQLite = False
+
 	__metadata_created = False
 
 	def __init__(self, dburi, twophase=False, autocommit=False, salt=None):
@@ -374,6 +376,7 @@ def create_badge_manager(dburi=None, twophase=False, salt=None,
 								salt=salt,
 								twophase=twophase,
 								autocommit=autocommit)
+	result.defaultSQLite = dburi.lower().startswith('sqlite:')
 	return result
 
 def create_issuer(name, origin, org, contact):
