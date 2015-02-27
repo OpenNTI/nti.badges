@@ -6,8 +6,7 @@ VERSION = '0.0.0'
 entry_points = {
 	'console_scripts': [
 		"nti_bake_badge = nti.badges.openbadges.utils.badgebakery:main",
-	],
-
+	]
 }
 
 setup(
