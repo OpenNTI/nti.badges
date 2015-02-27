@@ -7,15 +7,8 @@ entry_points = {
 	'console_scripts': [
 		"nti_bake_badge = nti.badges.openbadges.utils.badgebakery:main",
 	],
-	'z3c.autoinclude.plugin': [
-		'target = nti.dataserver',
-	],
+
 }
-
-import platform
-py_impl = getattr(platform, 'python_implementation', lambda: None)
-IS_PYPY = py_impl() == 'PyPy'
-
 
 setup(
 	name='nti.badges',
