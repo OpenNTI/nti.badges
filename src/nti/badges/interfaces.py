@@ -9,7 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
-from nti.dublincore.interfaces import ICreatedTime
+from nti.coremetadata.interfaces import ICreatedTime
 
 from nti.schema.field import Bool
 from nti.schema.field import Number

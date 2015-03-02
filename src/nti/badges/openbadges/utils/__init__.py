@@ -22,9 +22,10 @@ from itsdangerous import JSONWebSignatureSerializer
 
 from nti.common.maps import CaseInsensitiveDict
 
+from ...utils import safestr
+
 from .. import model
 from .. import interfaces
-from ...utils import safestr
 
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 

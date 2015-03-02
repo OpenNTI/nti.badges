@@ -10,7 +10,6 @@
 	<include package="zope.security" />
 
 	<!-- Implements -->
-
 	<class class="tahrir_api.model.Issuer">
 		<implements interface=".interfaces.IIssuer" />
 	</class>
@@ -63,7 +62,6 @@
 			 	org="http://www.nextthought.com"
 			 	origin="http://www.nextthought.com" />
 		</configure>
-		<subscriber handler=".subscribers._closed_dataserver" />
 	</configure>
 
 	<!-- Externalization -->

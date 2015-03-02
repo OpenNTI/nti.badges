@@ -21,8 +21,6 @@ from nti.badges.tahrir import get_tahrir_badge_by_id
 from nti.badges.tahrir.manager import create_badge_manager
 from nti.badges.tahrir import interfaces as tahrir_interfaces
 
-from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
-
 from nti.badges.tests import NTIBadgesTestCase
 
 class TestTahrirAdapters(NTIBadgesTestCase):
@@ -35,7 +33,6 @@ class TestTahrirAdapters(NTIBadgesTestCase):
 	def tearDown(self):
 		component.provideUtility(self.old)
 
-	@WithMockDSTrans
 	def test_adapters(self):
 		manager = self.new
 		assert_that(manager, is_not(none()))
@@ -61,4 +58,3 @@ class TestTahrirAdapters(NTIBadgesTestCase):
 		assertion = manager.get_assertion("person@site.com", 'fossbox')
 		open_assertion = open_interfaces.IBadgeAssertion(assertion, None)
 		assert_that(open_assertion, is_not(none()))
-		

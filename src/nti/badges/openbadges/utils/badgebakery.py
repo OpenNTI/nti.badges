@@ -80,7 +80,8 @@ def verify(source, payload=None, secret=DEFAULT_SECRET):
 
 def process_args(args=None):
 	arg_parser = argparse.ArgumentParser(description="Baked a badge")
-	arg_parser.add_argument('-v', '--verbose', help="Verbose", action='store_true',
+	arg_parser.add_argument('-v', '--verbose', help="Verbose", 
+							 action='store_true',
 							 dest='verbose')
 	arg_parser.add_argument('source', help="The image to bake file path")
 	arg_parser.add_argument('target', nargs='?', help="The baked image file path",

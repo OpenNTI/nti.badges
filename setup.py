@@ -9,6 +9,18 @@ entry_points = {
 	]
 }
 
+TESTS_REQUIRE = [
+	'nose',
+	'nose-timer',
+	'nose-pudb',
+	'nose-progressive',
+	'nose2[coverage_plugin]',
+	'pyhamcrest',
+	'zope.testing',
+	'nti.nose_traceback_info',
+	'nti.testing'
+]
+
 setup(
 	name='nti.badges',
 	version=VERSION,
@@ -24,16 +36,38 @@ setup(
 		'Operating System :: OS Independent',
 		'Programming Language :: Python :: 2',
 		'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: Implementation :: CPython'
-    ],
+		'Programming Language :: Python :: Implementation :: CPython'
+	],
 	packages=find_packages('src'),
 	package_dir={'': 'src'},
 	namespace_packages=['nti'],
+	tests_require=TESTS_REQUIRE,
 	install_requires=[
 		'setuptools',
-		'tahrir-api',
 		'itsdangerous',
+		'Pillow',
+		'python-dateutil',
+		'simplejson',
+		'six',
+		'sqlalchemy',
+		'tahrir-api',
+		'transaction',
+		'zope.component',
+		'zope.interface',
+		'zope.lifecycleevent',
+		'zope.security',
+		'zope.sqlalchemy',
+		'nti.common',
+		'nti.coremetadata',
+		'nti.externalization',
 		'nti.schema'
+	],
+	extras_require={
+		'test': TESTS_REQUIRE,
+	},
+	dependency_links=[
+		'git+https://github.com/NextThought/nti.schema.git#egg=nti.schema',
+		'git+https://github.com/NextThought/nti.nose_traceback_info.git#egg=nti.nose_traceback_info'
 	],
 	entry_points=entry_points
 )

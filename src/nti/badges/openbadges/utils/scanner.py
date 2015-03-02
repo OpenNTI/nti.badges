@@ -48,7 +48,7 @@ def parse_issuer(source, verify=False):
 
 def flat_scan(path, verify=False, **kwargs):
 	result = []
-	issuers = {}  # cache
+	issuers = {}
 	path = os.path.expanduser(path)
 	pathname = os.path.join(path, '*')
 	for name in glob.iglob(pathname):

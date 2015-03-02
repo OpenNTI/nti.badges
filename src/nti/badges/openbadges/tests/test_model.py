@@ -8,28 +8,27 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
-from hamcrest import is_not
 from hamcrest import equal_to
 from hamcrest import not_none
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
-does_not = is_not
 
 import time
 from datetime import datetime
 
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
-from nti.externalization.tests import assert_does_not_pickle
 
 from nti.badges.openbadges import model
 from nti.badges.openbadges import interfaces
 
-from nti.testing.matchers import verifiably_provides
+from nti.externalization.tests import assert_does_not_pickle
 
 from nti.badges.tests import NTIBadgesTestCase
+
+from nti.testing.matchers import verifiably_provides
 
 class TestOpenBadges(NTIBadgesTestCase):
 

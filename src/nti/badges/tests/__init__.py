@@ -14,23 +14,18 @@ import tempfile
 from nti.dataserver.tests.mock_dataserver import WithMockDS
 from nti.dataserver.tests.mock_dataserver import mock_db_trans
 
-from nti.app.testing.application_webtest import ApplicationTestLayer
-
 from nti.testing.layers import find_test
 from nti.testing.layers import GCLayerMixin
 from nti.testing.layers import ZopeComponentLayer
 from nti.testing.layers import ConfiguringLayerMixin
 
-from nti.dataserver.tests.mock_dataserver import DSInjectorMixin
-
 import zope.testing.cleanup
 
 class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  GCLayerMixin,
-                                 ConfiguringLayerMixin,
-                                 DSInjectorMixin):
+                                 ConfiguringLayerMixin):
 
-    set_up_packages = ('nti.dataserver', 'nti.badges')
+    set_up_packages = ('nti.dataserver', 'nti.badges',)
 
     @classmethod
     def setUp(cls):
@@ -46,7 +41,6 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
 
     @classmethod
     def testSetUp(cls, test=None):
-        cls.setUpTestDS(test)
         shutil.rmtree(cls.new_data_dir, True)
         os.environ['DATASERVER_DATA_DIR'] = cls.old_data_dir or '/tmp'
         
@@ -58,13 +52,3 @@ import unittest
 
 class NTIBadgesTestCase(unittest.TestCase):
     layer = SharedConfiguringTestLayer
-
-class NTIBadgesApplicationTestLayer(ApplicationTestLayer):
-
-    @classmethod
-    def setUp(cls):
-        pass
-
-    @classmethod
-    def tearDown(cls):
-        pass

@@ -20,8 +20,6 @@ from nti.badges.tahrir import get_tahrir_issuer_by_id
 from nti.badges.tahrir import get_tahrir_person_by_id
 from nti.badges.tahrir.manager import create_badge_manager
 
-from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
-
 from nti.badges.tests import NTIBadgesTestCase
 
 class TestTahrir(NTIBadgesTestCase):
@@ -34,7 +32,6 @@ class TestTahrir(NTIBadgesTestCase):
 	def tearDown(self):
 		component.provideUtility(self.old)
 
-	@WithMockDSTrans
 	def test_get_by_id(self):
 		manager = self.new
 		assert_that(manager, is_not(none()))

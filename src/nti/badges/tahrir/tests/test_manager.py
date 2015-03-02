@@ -36,8 +36,6 @@ from nti.wref.interfaces import IWeakRef
 from nti.badges.tahrir import interfaces
 from nti.badges.tahrir.manager import create_badge_manager
 
-from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
-
 from nti.badges.tests import NTIBadgesTestCase
 
 class TestTahrirBadgeManager(NTIBadgesTestCase):
@@ -77,7 +75,6 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 	def tearDown(self):
 		component.provideUtility(self.old)
 
-	@WithMockDSTrans
 	def test_fossboxbadge(self):
 		manager = self.new
 		assert_that(manager, is_not(none()))
@@ -110,7 +107,6 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 		assert_that(badge, has_property('criteria', 'http://foss.rit.org'))
 		assert_that(badge, has_property('tags', 'fox, box'))
 
-	@WithMockDSTrans
 	def test_operations(self):
 		manager = self.new
 
@@ -210,7 +206,6 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 
 		assert_that(manager.delete_person(pid), is_('foo@example.org'))
 
-	@WithMockDSTrans
 	def test_person_update(self):
 		manager = self.new
 		person = Person()

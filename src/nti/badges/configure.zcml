@@ -13,7 +13,6 @@
 	<include package=".openbadges" file="configure.zcml" />
 	
 	<!-- Adpaters -->
-	
 	<adapter factory=".adapters.basestring_to_mozilla_indentity_object"
 			 for="basestring"
 			 provides=".openbadges.interfaces.IIdentityObject" />
