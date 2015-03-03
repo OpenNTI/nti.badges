@@ -9,9 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-def safestr(s):
-    s = s.decode("utf-8") if isinstance(s, bytes) else s
-    return unicode(s) if s is not None else None
+from nti.common.string import safestr
+safestr = safestr
 
 class MetaBadgeObject(type):
 
