@@ -11,6 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from zope.mimetype.interfaces import IContentTypeAware
+
 from nti.common.property import alias
 
 from nti.externalization.persistence import NoPickle
@@ -18,27 +20,23 @@ from nti.externalization.representation import WithRepr
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
-from nti.schema.fieldproperty import createFieldProperties
+from nti.schema.fieldproperty import createDirectFieldProperties
 
-# NOTE: None of these classes are inheriting from other
-# schema-configured classes, so we MUST create all the field
-# properties; only when inheritance is involved should we
-# create just the direct field properties
-# from nti.schema.fieldproperty import createDirectFieldProperties
+from .utils import MetaBadgeObject
 
 from .interfaces import INTIBadge
 from .interfaces import INTIIssuer
 from .interfaces import INTIPerson
 from .interfaces import INTIAssertion
 
-@interface.implementer(INTIBadge)
+@interface.implementer(INTIBadge, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('issuer', 'name')
 class NTIBadge(SchemaConfigured):
-	createFieldProperties(INTIBadge)
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(INTIBadge)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Badge"
 	mime_type = mimeType = 'application/vnd.nextthought.badges.badge'
 
@@ -49,26 +47,24 @@ class NTIBadge(SchemaConfigured):
 			kwargs['tags'] = INTIBadge['tags'].fromObject(kwargs['tags'])
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(INTIPerson)
+@interface.implementer(INTIPerson, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name', 'email')
 class NTIPerson(SchemaConfigured):
-	createFieldProperties(INTIPerson)
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(INTIPerson)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Person"
 	mime_type = mimeType = 'application/vnd.nextthought.badges.person'
 
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)
-
-@interface.implementer(INTIIssuer)
+@interface.implementer(INTIIssuer, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name', 'origin')
 class NTIIssuer(SchemaConfigured):
-	createFieldProperties(INTIIssuer)
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(INTIIssuer)
 
 	__external_can_create__ = True
 	__external_class_name__ = "Issuer"
@@ -76,21 +72,15 @@ class NTIIssuer(SchemaConfigured):
 
 	org = alias('organization')
 
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)
-
-@interface.implementer(INTIAssertion)
+@interface.implementer(INTIAssertion, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('badge', 'recipient', 'issuedOn')
 class NTIAssertion(SchemaConfigured):
-	createFieldProperties(INTIAssertion)
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(INTIAssertion)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Assertion"
 	mime_type = mimeType = 'application/vnd.nextthought.badges.assertion'
 
 	id = alias('uid')
-
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)

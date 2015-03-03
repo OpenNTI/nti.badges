@@ -44,6 +44,7 @@ class TestOpenBadges(NTIBadgesTestCase):
 
 		ext_obj = toExternalObject(io)
 		assert_that(ext_obj, has_entry('Class', 'Issuer'))
+		assert_that(ext_obj, has_entry('MimeType', 'application/vnd.nextthought.openbadges.issuer'))
 
 		factory = internalization.find_factory_for(ext_obj)
 		assert_that(factory, is_(not_none()))
@@ -66,7 +67,8 @@ class TestOpenBadges(NTIBadgesTestCase):
 
 		ext_obj = toExternalObject(vo)
 		assert_that(ext_obj, has_entry('Class', 'Verification'))
-
+		assert_that(ext_obj, has_entry('MimeType', 'application/vnd.nextthought.openbadges.verificationobject'))
+		
 		factory = internalization.find_factory_for(ext_obj)
 		assert_that(factory, is_(not_none()))
 
@@ -85,6 +87,7 @@ class TestOpenBadges(NTIBadgesTestCase):
 
 		ext_obj = toExternalObject(io)
 		assert_that(ext_obj, has_entry('Class', 'Identity'))
+		assert_that(ext_obj, has_entry('MimeType', 'application/vnd.nextthought.openbadges.identityobject'))
 
 		factory = internalization.find_factory_for(ext_obj)
 		assert_that(factory, is_(not_none()))
@@ -106,6 +109,7 @@ class TestOpenBadges(NTIBadgesTestCase):
 
 		ext_obj = toExternalObject(ao)
 		assert_that(ext_obj, has_entry('Class', 'Alignment'))
+		assert_that(ext_obj, has_entry('MimeType', 'application/vnd.nextthought.openbadges.alignmentobject'))
 
 		factory = internalization.find_factory_for(ext_obj)
 		assert_that(factory, is_(not_none()))
@@ -137,7 +141,8 @@ class TestOpenBadges(NTIBadgesTestCase):
 
 		ext_obj = toExternalObject(bc)
 		assert_that(ext_obj, has_entry('Class', 'Badge'))
-
+		assert_that(ext_obj, has_entry('MimeType', 'application/vnd.nextthought.openbadges.badge'))
+		
 		factory = internalization.find_factory_for(ext_obj)
 		assert_that(factory, is_(not_none()))
 
@@ -171,6 +176,7 @@ class TestOpenBadges(NTIBadgesTestCase):
 
 		ext_obj = toExternalObject(ba)
 		assert_that(ext_obj, has_entry('Class', 'Assertion'))
+		assert_that(ext_obj, has_entry('MimeType', 'application/vnd.nextthought.openbadges.assertion'))
 
 		factory = internalization.find_factory_for(ext_obj)
 		assert_that(factory, is_(not_none()))

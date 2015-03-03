@@ -24,8 +24,15 @@ from nti.common.maps import CaseInsensitiveDict
 
 from ...utils import safestr
 
-from .. import model
-from .. import interfaces
+from ..model import BadgeClass
+from ..model import BadgeAssertion
+from ..model import IdentityObject
+from ..model import AlignmentObject
+from ..model import IssuerOrganization
+from ..model import VerificationObject
+
+from ..interfaces import IBadgeClass
+from ..interfaces import ID_TYPE_EMAIL
 
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 
@@ -82,7 +89,7 @@ def json_source_to_map(source, **kwargs):
 
 def issuer_from_source(source, **kwargs):
 	data = json_source_to_map(source, **kwargs)
-	result = model.IssuerOrganization()
+	result = IssuerOrganization()
 	for field, func in (('name', safestr), ('image', safestr), ('url', safestr),
 						('email', safestr), ('revocationList', safestr),
 						('description', safestr)):
@@ -93,7 +100,7 @@ def issuer_from_source(source, **kwargs):
 
 def badge_from_source(source, **kwargs):
 	data = json_source_to_map(source, **kwargs)
-	result = model.BadgeClass()
+	result = BadgeClass()
 
 	# XXX: This should really go through the standard
 	# nti.externalization process. As it is, we are clearly
@@ -113,12 +120,12 @@ def badge_from_source(source, **kwargs):
 
 	# tags
 	tags = [safestr(x) for x in data.get('tags', ())]
-	result.tags = type(result).__dict__['tags'].bind(result).fromObject(tags)
+	result.tags = IBadgeClass['tags'].bind(result).fromObject(tags)
 
 	# alignment objects
 	result.alignment = alignment = []
 	for data in data.get('alignment', ()):
-		ao = model.AlignmentObject()
+		ao = AlignmentObject()
 		ao.url = safestr(data['url'])
 		ao.name = safestr(data['name'])
 		ao.description = safestr(data.get('description'))
@@ -128,7 +135,7 @@ def badge_from_source(source, **kwargs):
 
 def assertion_from_source(source, **kwargs):
 	data = json_source_to_map(source, **kwargs)
-	result = model.BadgeAssertion()
+	result = BadgeAssertion()
 
 	# parse common single value fields
 	for field, func in (('uid', safestr), ('image', safestr), ('issuedOn', _datetime),
@@ -152,14 +159,14 @@ def assertion_from_source(source, **kwargs):
 
 	salt = safestr(recipient.get("salt"))
 	hashed = recipient.get('hashed', True if salt else False)
-	result.recipient = model.IdentityObject(type=interfaces.ID_TYPE_EMAIL,
-											identity=identity,
-											hashed=hashed,
-											salt=salt)
+	result.recipient = IdentityObject(type=ID_TYPE_EMAIL,
+									  identity=identity,
+									  hashed=hashed,
+									  salt=salt)
 
 	# verify
 	verify = data['verify']
-	result.verify = model.VerificationObject(type=verify["type"],
-											 url=safestr(verify['url']))
+	result.verify = VerificationObject(	type=verify["type"],
+										url=safestr(verify['url']))
 
 	return result

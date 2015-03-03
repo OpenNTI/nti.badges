@@ -10,7 +10,8 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope.container.contained import Contained
+
+from zope.mimetype.interfaces import IContentTypeAware
 
 from nti.common.property import alias
 
@@ -19,13 +20,9 @@ from nti.externalization.representation import WithRepr
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
-from nti.schema.fieldproperty import createFieldProperties
+from nti.schema.fieldproperty import createDirectFieldProperties
 
-# NOTE: None of these classes are inheriting from other
-# schema-configured classes, so we MUST create all the field
-# properties; only when inheritance is involved should we
-# create just the direct field properties
-# from nti.schema.fieldproperty import createDirectFieldProperties
+from ..utils import MetaBadgeObject
 
 from .interfaces import IBadgeClass
 from .interfaces import IBadgeAssertion
@@ -34,56 +31,47 @@ from .interfaces import IAlignmentObject
 from .interfaces import IVerificationObject
 from .interfaces import IIssuerOrganization
 
-@interface.implementer(IVerificationObject)
+@interface.implementer(IVerificationObject, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('url', 'type')
-class VerificationObject(SchemaConfigured, Contained):
-	createFieldProperties(IVerificationObject)
+class VerificationObject(SchemaConfigured):
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(IVerificationObject)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Verification"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.verificationobject'
 
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)
-
-@interface.implementer(IIdentityObject)
+@interface.implementer(IIdentityObject, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('identity', 'type')
-class IdentityObject(SchemaConfigured, Contained):
-	createFieldProperties(IIdentityObject)
+class IdentityObject(SchemaConfigured):
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(IIdentityObject)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Identity"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.identityobject'
 
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)
-
-@interface.implementer(IAlignmentObject)
+@interface.implementer(IAlignmentObject, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('url', 'name')
-class AlignmentObject(SchemaConfigured, Contained):
-	createFieldProperties(IAlignmentObject)
+class AlignmentObject(SchemaConfigured):
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(IAlignmentObject)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Alignment"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.alignmentobject'
 
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)
-
-@interface.implementer(IIssuerOrganization)
+@interface.implementer(IIssuerOrganization, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name', 'url')
-class IssuerOrganization(SchemaConfigured, Contained):
-	createFieldProperties(IIssuerOrganization)
+class IssuerOrganization(SchemaConfigured):
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(IIssuerOrganization)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Issuer"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.issuer'
 
@@ -91,38 +79,31 @@ class IssuerOrganization(SchemaConfigured, Contained):
 	contact = alias('email')
 	issued_on = alias('issuedOn')
 
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)
-
-@interface.implementer(IBadgeClass)
+@interface.implementer(IBadgeClass, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name')
-class BadgeClass(SchemaConfigured, Contained):
-	createFieldProperties(IBadgeClass)
+class BadgeClass(SchemaConfigured):
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(IBadgeClass)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Badge"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.badge'
 
 	def __init__(self, *args, **kwargs):
 		if 'tags' in kwargs:
 			kwargs['tags'] = IBadgeClass['tags'].fromObject(kwargs['tags'])
-
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(IBadgeAssertion)
+@interface.implementer(IBadgeAssertion, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('uid', 'recipient')
-class BadgeAssertion(SchemaConfigured, Contained):
-	createFieldProperties(IBadgeAssertion)
+class BadgeAssertion(SchemaConfigured):
+	__metaclass__ = MetaBadgeObject
+	createDirectFieldProperties(IBadgeAssertion)
 
-	__external_can_create__ = True
 	__external_class_name__ = "Assertion"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.assertion'
 
 	id = alias('uid')
-
-	def __init__(self, *args, **kwargs):
-		SchemaConfigured.__init__(self, *args, **kwargs)

@@ -39,7 +39,8 @@ class ITaggedContent(interface.Interface):
 						   value_type=Tag(min_length=1, title="A single tag",
 										  description=Tag.__doc__, __name__='tags'),
 						   unique=True,
-						   default=())
+						   default=(),
+						   required=False)
 
 class IBadgeIssuer(interface.Interface):
 	"""

@@ -55,11 +55,13 @@ setup(
 		'zope.component',
 		'zope.interface',
 		'zope.lifecycleevent',
+		'zope.mimetype',
 		'zope.security',
 		'zope.sqlalchemy',
 		'nti.common',
 		'nti.coremetadata',
 		'nti.externalization',
+		'nti.mimetype',
 		'nti.schema'
 	],
 	extras_require={

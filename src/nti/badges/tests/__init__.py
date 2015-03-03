@@ -11,10 +11,6 @@ import os
 import shutil
 import tempfile
 
-from nti.dataserver.tests.mock_dataserver import WithMockDS
-from nti.dataserver.tests.mock_dataserver import mock_db_trans
-
-from nti.testing.layers import find_test
 from nti.testing.layers import GCLayerMixin
 from nti.testing.layers import ZopeComponentLayer
 from nti.testing.layers import ConfiguringLayerMixin
@@ -25,7 +21,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  GCLayerMixin,
                                  ConfiguringLayerMixin):
 
-    set_up_packages = ('nti.dataserver', 'nti.badges',)
+    set_up_packages = ('nti.badges', 'nti.externalization')
 
     @classmethod
     def setUp(cls):
