@@ -62,7 +62,8 @@ setup(
 		'nti.coremetadata',
 		'nti.externalization',
 		'nti.mimetype',
-		'nti.schema'
+		'nti.schema',
+		'nti.wref'
 	],
 	extras_require={
 		'test': TESTS_REQUIRE,

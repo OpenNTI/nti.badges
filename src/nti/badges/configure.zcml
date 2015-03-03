@@ -9,6 +9,7 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 	
+	<include package="nti.wref" />
 	<include package="nti.schema" />
 	<include package="nti.mimetype" />
 	
