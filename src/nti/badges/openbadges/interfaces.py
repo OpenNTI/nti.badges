@@ -109,3 +109,4 @@ class IBadgeAssertion(IAssertionMarker):
 	
 	exported = Bool(title="If the assertion has been exported", default=False, 
 					required=False)
+	exported.setTaggedValue('_ext_excluded_out', True)

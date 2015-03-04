@@ -44,4 +44,3 @@ class _IssuerExternalizer(object):
 
 	def toExternalObject(self, *args, **kwargs):
 		return to_external_object(IIssuerOrganization(self.issuer))
-
