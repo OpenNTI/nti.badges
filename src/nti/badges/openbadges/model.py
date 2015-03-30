@@ -107,3 +107,5 @@ class BadgeAssertion(SchemaConfigured):
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.assertion'
 
 	id = alias('uid')
+	locked = alias('exported')
+

@@ -84,3 +84,5 @@ class NTIAssertion(SchemaConfigured):
 	mime_type = mimeType = 'application/vnd.nextthought.badges.assertion'
 
 	id = alias('uid')
+	locked = alias('exported')
+
