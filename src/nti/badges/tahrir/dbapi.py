@@ -28,13 +28,15 @@ from tahrir_api.dbapi import TahrirDatabase
 
 from nti.common.property import alias
 
-# make compliant
+## make compliant
 Assertion.uid = alias('id')
 
-# add exported
+## add exported / locked
 if not hasattr(Assertion, 'exported'):
 	exported = Column('exported', Boolean(), nullable=True, unique=False)
 	Assertion.exported = exported
+
+Assertion.locked = alias('exported')
 
 def salt_default():
 	return u'23597b11-857a-447f-8129-66b5397b0c7f'
