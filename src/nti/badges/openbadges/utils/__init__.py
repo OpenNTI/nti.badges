@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from __builtin__ import isinstance
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -44,22 +45,27 @@ def _datetime(s):
 	return result
 
 def load_data(source, encoding='UTF-8', secret=DEFAULT_SECRET):
-	# We must decode the source ourself, to be a unicode
-	# string; otherwise, simplejson may return us a dictionary
-	# with byte objects in it, which is clearly wrong
+	## We must decode the source ourself, to be a unicode
+	## string; otherwise, simplejson may return us a dictionary
+	## with byte objects in it, which is clearly wrong
 	if isinstance(source, bytes):
 		source = source.decode(encoding)
-
-	try:
-		result = simplejson.loads(source, encoding=encoding)
-	except simplejson.JSONDecodeError:
-		jws = JSONWebSignatureSerializer(secret)
+		
+	if isinstance(source, six.string_types):
 		try:
-			result = jws.loads(source)
-		except BadSignature:
-			raise ValueError("Bad source signature")
-		except:
-			raise ValueError("Cannot load source data")
+			result = simplejson.loads(source, encoding=encoding)
+		except simplejson.JSONDecodeError:
+			jws = JSONWebSignatureSerializer(secret)
+			try:
+				result = jws.loads(source)
+			except BadSignature:
+				raise ValueError("Bad source signature")
+			except:
+				raise ValueError("Cannot load source data")
+	elif isinstance(source, Mapping):
+		result = source
+	else:
+		raise TypeError("Cannot process source data")
 	return result
 
 def process_json_source(source, **kwargs):

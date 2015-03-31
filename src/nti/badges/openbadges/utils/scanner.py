@@ -18,12 +18,15 @@ from . import badgebakery
 from . import badge_from_source
 from . import issuer_from_source
 
+from . import DEFAULT_SECRET
+
 from ..interfaces import IBadgeClass
 from ..interfaces import IIssuerOrganization
 
-def get_baked_data(name):
+def get_baked_data(name, **kwargs):
 	try:
-		data = badgebakery.get_baked_data(name)
+		secret = kwargs.get('secret') or DEFAULT_SECRET
+		data = badgebakery.get_baked_data(name, secret=secret)
 		return data
 	except Exception as e:
 		logger.error("Could not get baked URL from '%s'; %s", name, e)
@@ -56,7 +59,7 @@ def flat_scan(path, verify=False, **kwargs):
 		_, ext = os.path.splitext(name)
 		if ext.lower() != '.png' or not os.path.isfile(name):
 			continue
-		baked_data = get_baked_data(name)
+		baked_data = get_baked_data(name, **kwargs)
 		badge = parse_badge(baked_data, verify=verify, **kwargs) if baked_data else None
 		if badge is None:
 			continue

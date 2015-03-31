@@ -19,6 +19,7 @@ import os
 import sys
 import pprint
 import argparse
+import urlparse
 import simplejson
 import collections
 
@@ -29,9 +30,9 @@ from itsdangerous import JSONWebSignatureSerializer
 
 from . import DEFAULT_SECRET
 
-def get_baked_data(source):
+def get_baked_data(source, secret=DEFAULT_SECRET):
 	"""
-	Return the assertion URL contained in the given baked PNG. If
+	Return the assertion data contained in the given baked PNG. If
 	the image isn't baked, return None.
 
 	Example:
@@ -41,6 +42,19 @@ def get_baked_data(source):
 	img = Image.open(source)
 	meta = img.info
 	result = meta.get('openbadges')
+	
+	## check if it's a known scheme
+	scheme = urlparse.urlparse(result).scheme if result else None
+	if scheme:
+		return result
+	
+	if result:
+		try:
+			jws = JSONWebSignatureSerializer(secret)
+			data = jws.loads(result)
+			result = data
+		except Exception:
+			pass
 	return result
 
 def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
