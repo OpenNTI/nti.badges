@@ -30,7 +30,7 @@ from itsdangerous import JSONWebSignatureSerializer
 
 from . import DEFAULT_SECRET
 
-def get_baked_data(source, secret=DEFAULT_SECRET):
+def get_baked_data(source, secret=DEFAULT_SECRET, raw=False):
 	"""
 	Return the assertion data contained in the given baked PNG. If
 	the image isn't baked, return None.
@@ -42,7 +42,9 @@ def get_baked_data(source, secret=DEFAULT_SECRET):
 	img = Image.open(source)
 	meta = img.info
 	result = meta.get('openbadges')
-	
+	if raw:
+		return result
+
 	## check if it's a known scheme
 	scheme = urlparse.urlparse(result).scheme if result else None
 	if scheme:
@@ -86,7 +88,7 @@ def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
 	source.save(target, "png", pnginfo=meta)
 
 def verify(source, payload=None, secret=DEFAULT_SECRET):
-	data = get_baked_data(source)
+	data = get_baked_data(source, secret=secret, raw=True)
 	if payload:
 		jws = JSONWebSignatureSerializer(secret)
 		data = jws.loads(data)
