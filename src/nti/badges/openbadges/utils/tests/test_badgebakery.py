@@ -53,7 +53,7 @@ class TestBadgeBakery(NTIBadgesTestCase):
     
         baked = StringIO()
         unbaked = StringIO(PNG)
-        payload = {'manga':'bleach'}
+        payload = {'manga': 'bleach'}
         bake_badge(unbaked, baked, payload=payload)
 
         baked = StringIO(baked.getvalue())

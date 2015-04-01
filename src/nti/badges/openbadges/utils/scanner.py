@@ -18,14 +18,12 @@ from . import badgebakery
 from . import badge_from_source
 from . import issuer_from_source
 
-from . import DEFAULT_SECRET
-
 from ..interfaces import IBadgeClass
 from ..interfaces import IIssuerOrganization
 
 def get_baked_data(name, **kwargs):
 	try:
-		secret = kwargs.get('secret') or DEFAULT_SECRET
+		secret = kwargs.get('secret')
 		data = badgebakery.get_baked_data(name, secret=secret)
 		return data
 	except Exception as e:

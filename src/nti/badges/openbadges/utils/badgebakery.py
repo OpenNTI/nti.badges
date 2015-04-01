@@ -28,9 +28,7 @@ from PIL import PngImagePlugin
 
 from itsdangerous import JSONWebSignatureSerializer
 
-from . import DEFAULT_SECRET
-
-def get_baked_data(source, secret=DEFAULT_SECRET, raw=False):
+def get_baked_data(source, secret=None, raw=False):
 	"""
 	Return the assertion data contained in the given baked PNG. If
 	the image isn't baked, return None.
@@ -51,15 +49,22 @@ def get_baked_data(source, secret=DEFAULT_SECRET, raw=False):
 		return result
 	
 	if result:
-		try:
-			jws = JSONWebSignatureSerializer(secret)
-			data = jws.loads(result)
-			result = data
-		except Exception:
-			pass
+		if secret:
+			try:
+				jws = JSONWebSignatureSerializer(secret)
+				data = jws.loads(result)
+				result = data
+			except Exception:
+				pass
+		else:
+			try:
+				data = simplejson.loads(result)
+				result = data
+			except Exception:
+				pass
 	return result
 
-def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
+def bake_badge(source, target, url=None, payload=None, secret=None):
 	"""
 	Bake the given PNG file with the given assertion URL. The source and
 	destination can be filenames or file objects.
@@ -70,16 +75,16 @@ def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
 	"""
 	if url and payload:
 		raise ValueError("must specify either an URL or payload")
-
-	if payload and not secret:
-		raise ValueError("must specify a valid JWS secret")
 	
 	data = url
 	if payload:
-		# “itsdangerous” only provides HMAC SHA derivatives and the none algorithm
-		# at the moment and does not support the ECC based ones.
-		jws = JSONWebSignatureSerializer(secret)
-		data = jws.dumps(payload)
+		if secret:
+			# “itsdangerous” only provides HMAC SHA derivatives and the none algorithm
+			# at the moment and does not support the ECC based ones.
+			jws = JSONWebSignatureSerializer(secret)
+			data = jws.dumps(payload)
+		else:
+			data = simplejson.dumps(payload)
 
 	__traceback_info__ = data
 	source = Image.open(source)
@@ -87,11 +92,14 @@ def bake_badge(source, target, url=None, payload=None, secret=DEFAULT_SECRET):
 	meta.add_text("openbadges", data)
 	source.save(target, "png", pnginfo=meta)
 
-def verify(source, payload=None, secret=DEFAULT_SECRET):
+def verify(source, payload=None, secret=None):
 	data = get_baked_data(source, secret=secret, raw=True)
 	if payload:
-		jws = JSONWebSignatureSerializer(secret)
-		data = jws.loads(data)
+		if secret:
+			jws = JSONWebSignatureSerializer(secret)
+			data = jws.loads(data)
+		else:
+			data = simplejson.loads(payload)
 	return data
 
 def process_args(args=None):
@@ -104,7 +112,7 @@ def process_args(args=None):
 							default=None)
 	arg_parser.add_argument('-s', '--secret',
 							 dest='secret',
-							 default=DEFAULT_SECRET,
+							 default=None,
 							 help="JSON web signature serializer secret")
 	site_group = arg_parser.add_mutually_exclusive_group()
 	site_group.add_argument('-u', '--url',

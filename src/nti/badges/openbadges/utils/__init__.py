@@ -5,7 +5,6 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from __builtin__ import isinstance
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -44,7 +43,7 @@ def _datetime(s):
 		result = datetime.fromtimestamp(float(s))
 	return result
 
-def load_data(source, encoding='UTF-8', secret=DEFAULT_SECRET):
+def load_data(source, encoding='UTF-8', secret=None):
 	## We must decode the source ourself, to be a unicode
 	## string; otherwise, simplejson may return us a dictionary
 	## with byte objects in it, which is clearly wrong
@@ -83,8 +82,8 @@ def process_json_source(source, **kwargs):
 			response = urllib.urlopen(source)
 			source = response.read()
 		# ready to parse
+		secret = kwargs.get('secret')
 		encoding = kwargs.get('encoding') or 'UTF-8'
-		secret = kwargs.get('secret') or DEFAULT_SECRET
 		source = load_data(source, encoding=encoding, secret=secret)
 	return source
 
