@@ -62,11 +62,10 @@ class NTITahrirDatabase(TahrirDatabase):
 
 	# issuers
 
-	def issuer_exists(self, origin, name):
+	def issuer_exists(self, origin=None, name=''):
+		# origin is ignored
 		query = self.session.query(
-						exists().where(
-							and_(func.lower(Issuer.origin) == func.lower(origin),
-								 func.lower(Issuer.name) == func.lower(name))))
+						exists().where(func.lower(Issuer.name) == func.lower(name)))
 		return query.scalar()
 
 	def get_issuer(self, issuer_id):
