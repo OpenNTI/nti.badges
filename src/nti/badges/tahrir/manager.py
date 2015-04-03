@@ -319,6 +319,12 @@ class TahrirBadgeManager(object):
 	
 	# Issuers
 
+	def get_all_issuers(self):
+		result = []
+		for issuer in self.db.get_all_issuers():
+			result.append(issuer)
+		return result
+	
 	def _issuer_tuple(self, issuer, origin=None):
 		issuer = IIssuer(issuer)
 		name = issuer.name
