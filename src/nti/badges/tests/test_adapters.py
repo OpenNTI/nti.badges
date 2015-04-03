@@ -10,9 +10,9 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import contains
 from hamcrest import assert_that
 from hamcrest import has_property
-from hamcrest import contains
 does_not = is_not
 
 import time
@@ -112,9 +112,9 @@ class TestAdapters(NTIBadgesTestCase):
 		assert_that(bc, has_property('name', 'fossbox'))
 		assert_that(bc, has_property('tags', is_(('fox', 'box'))))
 		assert_that(bc, has_property('criteria', 'http://foss.rit.ed'))
-		assert_that(bc, has_property('issuer', 'http://foss.rit.edu/foss.json'))
 		assert_that(bc, has_property('image', 'http://foss.rit.edu/files/fossboxbadge.png'))
 		assert_that(bc, has_property('description', 'Welcome to the FOSSBox. A member is you!'))
+		assert_that(bc, has_property('issuer', has_property('url','http://foss.rit.edu/foss.json')))
 
 	def test_tahrir_assertion_to_mozilla_assertion(self):
 		assertion = self._tahrir_assertion()

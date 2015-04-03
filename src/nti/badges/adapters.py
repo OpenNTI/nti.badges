@@ -136,19 +136,20 @@ def tahrir_issuer_to_mozilla_issuer(issuer):
 @interface.implementer(IBadgeClass)
 def tahrir_badge_to_mozilla_badge(badge):
 	tags = tuple(safestr(x.lower()) for x in ((badge.tags or '').split(',')) if x)
-	# request from the db if possible. We've seen some some NoSuchColumnError in MySQL when
-	# trying to use the badge issuer reference
+	## request from the db if possible.
+	## We've seen some some NoSuchColumnError in MySQL when
+	## trying to use the badge issuer reference
 	issuer_id = badge.issuer_id
 	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else badge.issuer
-	issuer_origin = issuer.origin if issuer is not None else None
-	# we have an issuer origin. Should return the whole issuer?
+	issuer = IIssuerOrganization(issuer, None)
+	
 	result = BadgeClass(tags=tags,
 						name=safestr(badge.name),
 						image=safestr(badge.image),
 						criteria=safestr(badge.criteria),
 						description=safestr(badge.description))
-	if issuer_origin:
-		result.issuer = safestr(issuer_origin)
+	if issuer:
+		result.issuer = issuer
 	else:
 		logger.warn("Could not set issuer for badge %s", result.name)
 	tag_badge_interfaces(badge, result)

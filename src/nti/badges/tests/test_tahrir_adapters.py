@@ -53,7 +53,8 @@ class TestTahrirAdapters(NTIBadgesTestCase):
 		badge = get_tahrir_badge_by_id(badge_id)
 		open_badge = open_interfaces.IBadgeClass(badge, None)
 		assert_that(open_badge, is_not(none()))
-		assert_that(open_badge, has_property('issuer', 'http://foss.rit.edu/badges'))
+		assert_that(open_badge, has_property('issuer', 
+											has_property('url', 'http://foss.rit.edu/badges')))
 
 		assertion = manager.get_assertion("person@site.com", 'fossbox')
 		open_assertion = open_interfaces.IBadgeAssertion(assertion, None)
