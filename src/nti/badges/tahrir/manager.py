@@ -333,8 +333,8 @@ class TahrirBadgeManager(object):
 
 	def _get_issuer(self, issuer, origin=None, database=None):
 		database = self.db if database is None else database
-		name, _ = self._issuer_tuple(issuer, origin)
-		if database.issuer_exists(name=name):
+		name, origin = self._issuer_tuple(issuer, origin)
+		if database.issuer_exists(name=name, origin=origin):
 			result = database.session.query(Issuer).filter_by(name=name).one()
 			return result
 		return None
