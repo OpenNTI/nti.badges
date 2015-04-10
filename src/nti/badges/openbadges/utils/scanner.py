@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import six
 import glob
 
 from zope.interface.verify import verifyObject
@@ -47,51 +48,49 @@ def parse_issuer(source, verify=False):
 	except Exception as e:
 		logger.error("Could not parse issuer from '%s'; %s", source, e)
 
+def get_issuer_url(issuer):
+	if isinstance(issuer, six.string_types):
+		result = issuer
+	elif IIssuerOrganization.providedBy(issuer):
+		result = issuer.url
+	else:
+		result = str(issuer) if issuer else None
+	return result.lower() if result else ''
+
 def flat_scan(path, verify=False, **kwargs):
 	result = []
 	issuers = {}
-	path = os.path.expanduser(path)
-	pathname = os.path.join(path, '*')
-	for name in glob.iglob(pathname):
-		name = os.path.join(path, name)
-		_, ext = os.path.splitext(name)
-		if ext.lower() != '.png' or not os.path.isfile(name):
-			continue
-		baked_data = get_baked_data(name, **kwargs)
-		badge = parse_badge(baked_data, verify=verify, **kwargs) if baked_data else None
-		if badge is None:
-			continue
-		logger.debug("Badge %s parsed", badge.name)
-		issuer_url = (badge.issuer or u'').lower()
-		issuer = issuers.get(issuer_url)
-		if issuer is None:
-			issuer = parse_issuer(issuer_url)
-			issuers[issuer_url] = issuer
-		result.append((badge, issuer))
-	return result
-
-def flat_scan_json(path, verify=False, **kwargs):
-	result = []
-	issuers = {}
-	path = os.path.expanduser(path)
-	pathname = os.path.join(path, '*')
-	for name in glob.iglob(pathname):
-		name = os.path.join(path, name)
-		_, ext = os.path.splitext(name)
-		if ext.lower() != '.json' or not os.path.isfile(name):
-			continue
-		
-		# parse badge json file
-		with open(name, "r") as fp:
-			badge = parse_badge(fp, verify=verify, **kwargs)
-		if badge is None:
-			continue
-		logger.debug("Badge %s parsed", badge.name)
-		
-		issuer_url = (badge.issuer or u'').lower()
-		issuer = issuers.get(issuer_url)
-		if issuer is None:
-			issuer = parse_issuer(issuer_url)
-			issuers[issuer_url] = issuer
-		result.append((badge, issuer))
-	return result
+	cwd = os.getcwd()
+	try:
+		path = os.path.expanduser(path)
+		os.chdir(path) # change path
+		pathname = os.path.join(path, '*')
+		for name in glob.iglob(pathname):
+			name = os.path.join(path, name)
+			_, ext = os.path.splitext(name)
+			if ext.lower() != '.json' or not os.path.isfile(name):
+				continue
+			
+			# parse badge json file
+			with open(name, "r") as fp:
+				badge = parse_badge(fp, verify=verify, **kwargs)
+			if badge is None:
+				continue
+			logger.debug("Badge %s parsed", badge.name)
+			
+			issuer = badge.issuer
+			if not isinstance(issuer, six.string_types):
+				issuer_url = get_issuer_url(issuer)
+				if issuer_url not in issuers:
+					issuers[issuer_url] = issuer
+			else:
+				issuer_url = issuer
+	
+			issuer = issuers.get(issuer_url)
+			if issuer is None:
+				issuer = parse_issuer(issuer_url)
+				issuers[issuer_url] = issuer
+			result.append((badge, issuer))
+		return result
+	finally:
+		os.chdir(cwd)

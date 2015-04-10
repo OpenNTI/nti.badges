@@ -34,7 +34,7 @@ class TestScanner(NTIBadgesTestCase):
 			issuer_json = os.path.join(os.path.dirname(__file__), 'issuer.json')
 			shutil.copy(issuer_json, os.path.join(img_dir, 'issuer.json'))
 
-			# prepare batch
+			# prepare badge
 			badge_json = os.path.join(os.path.dirname(__file__), 'badge.json')
 			with open(badge_json, "rb") as fp:
 				badge = simplejson.load(fp)
@@ -45,18 +45,21 @@ class TestScanner(NTIBadgesTestCase):
 				simplejson.dump(badge, fp)
 
 			# bake image
-			ichigo_png = os.path.join(os.path.dirname(__file__), 'ichigo.png')
+			ichigo_png = os.path.join(os.path.dirname(__file__), 'ichigo.png')			
 			out_ichigo = os.path.join(img_dir, 'ichigo.png')
-			bake_badge(ichigo_png, out_ichigo, url='file://' + os.path.join(img_dir, 'badge.json'))
+			bake_badge(	ichigo_png, out_ichigo, 
+						url='file://' + os.path.join(img_dir, 'badge.json'))
 
 			results = flat_scan(img_dir, True)
 			assert_that(results, has_length(1))
-			assert_that(results[0], has_length(2))
+			
+			data = results[0]
+			assert_that(data, has_length(2))
 
-			badge = results[0][0]
+			badge = data[0]
 			assert_that(badge, verifiably_provides(interfaces.IBadgeClass))
 
-			issuer = results[0][1]
+			issuer = data[1]
 			assert_that(issuer, verifiably_provides(interfaces.IIssuerOrganization))
 		finally:
 			shutil.rmtree(img_dir)
