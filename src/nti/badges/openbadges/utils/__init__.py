@@ -9,8 +9,11 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import os
 import six
 import urllib
+from urlparse import urljoin
+from urlparse import urlparse
 from datetime import datetime
 from collections import Mapping
 from dateutil.parser import parse
@@ -36,12 +39,25 @@ from ..interfaces import ID_TYPE_EMAIL
 
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 
+VALID_SCHEMES = ('http', 'https','file', 'ftp', 'sftp')
+
 def _datetime(s):
 	if isinstance(s, basestring):
 		result = parse(s)
 	else:
 		result = datetime.fromtimestamp(float(s))
 	return result
+
+def mend_url(url, **kwargs):
+	base = kwargs.get('base') or kwargs.get('base_url')
+	url = safestr(url)
+	if base:
+		base = safestr(base)
+		path = urlparse(url).path
+		path = path[1:] if path.startswith('/') else path
+		base = base + '/' if not base.endswith('/') else base
+		url = urljoin(base, path)
+	return url
 
 def load_data(source, encoding='UTF-8', secret=None):
 	## We must decode the source ourself, to be a unicode
@@ -54,13 +70,16 @@ def load_data(source, encoding='UTF-8', secret=None):
 		try:
 			result = simplejson.loads(source, encoding=encoding)
 		except simplejson.JSONDecodeError:
-			jws = JSONWebSignatureSerializer(secret)
-			try:
-				result = jws.loads(source)
-			except BadSignature:
-				raise ValueError("Bad source signature")
-			except:
-				raise ValueError("Cannot load source data")
+			if secret:
+				jws = JSONWebSignatureSerializer(secret)
+				try:
+					result = jws.loads(source)
+				except BadSignature:
+					raise ValueError("Bad source signature")
+				except:
+					raise ValueError("Cannot load source data")
+			else:
+				raise TypeError("Cannot process source data")
 	elif isinstance(source, Mapping):
 		result = source
 	else:
@@ -73,14 +92,16 @@ def process_json_source(source, **kwargs):
 	if isinstance(source, six.string_types):
 		# check for a remote source
 		lower = source.lower()
-		if  lower.startswith('http://') or \
-			lower.startswith('https://') or \
-			lower.startswith('file://') or \
-			lower.startswith('ftp://'):
+		result = urlparse(lower)
+		if result.scheme in VALID_SCHEMES:
 			__traceback_info__ = source
 			logger.info('Getting json data from %s', source)
 			response = urllib.urlopen(source)
 			source = response.read()
+		# check for a local file
+		elif os.path.exists(source) and os.path.isfile(source):
+			with open(source, "r") as fp:
+				source = fp.read()
 		# ready to parse
 		secret = kwargs.get('secret')
 		encoding = kwargs.get('encoding') or 'UTF-8'
@@ -101,6 +122,7 @@ def issuer_from_source(source, **kwargs):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
+	result.url = mend_url(result.url, **kwargs)
 	return result
 
 def badge_from_source(source, **kwargs):
@@ -117,11 +139,14 @@ def badge_from_source(source, **kwargs):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
+	result.criteria = mend_url(result.criteria, **kwargs)
 
 	# issuer
 	issuer = data['issuer']
-	result.issuer = issuer_from_source(issuer, **kwargs) \
-					if isinstance(issuer, Mapping) else safestr(issuer)
+	if isinstance(issuer, Mapping):
+		result.issuer = issuer_from_source(issuer, **kwargs) 
+	else:
+		result.issuer = mend_url(issuer, **kwargs)
 
 	# tags
 	tags = [safestr(x) for x in data.get('tags', ())]
@@ -131,7 +156,7 @@ def badge_from_source(source, **kwargs):
 	result.alignment = alignment = []
 	for data in data.get('alignment', ()):
 		ao = AlignmentObject()
-		ao.url = safestr(data['url'])
+		ao.url = data['url']
 		ao.name = safestr(data['name'])
 		ao.description = safestr(data.get('description'))
 		alignment.append(ao)
@@ -151,8 +176,10 @@ def assertion_from_source(source, **kwargs):
 
 	# badge
 	badge = data['badge']
-	result.badge = badge_from_source(badge, **kwargs) \
-				   if isinstance(badge, Mapping) else safestr(badge)
+	if isinstance(badge, Mapping):
+		result.badge = badge_from_source(badge, **kwargs)
+	else:
+		result.badge = mend_url(badge, **kwargs)
 
 	# recipient
 	recipient = data['recipient']
