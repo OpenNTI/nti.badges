@@ -104,6 +104,20 @@ class NTITahrirDatabase(TahrirDatabase):
 
 		return result
 
+	def get_person(self, person_email=None, id=None, nickname=None):
+		query = self.session.query(Person)
+		if nickname and self.person_exists(nickname=nickname):
+			result = query.filter(
+				func.lower(Person.nickname) == func.lower(nickname)).one()
+		elif person_email and self.person_exists(email=person_email):
+			result = query.filter(
+				func.lower(Person.email) == func.lower(person_email)).one()
+		elif id and self.person_exists(id=id):
+			result = query.filter_by(id=id).one()
+		else:
+			result = None
+		return result
+
 	@autocommit
 	def update_person(self, person_id, email=None, nickname=None, website=None, bio=None):
 		data = {"website":website, "bio":bio}
