@@ -140,7 +140,8 @@ def tahrir_badge_to_mozilla_badge(badge):
 	## We've seen some some NoSuchColumnError in MySQL when
 	## trying to use the badge issuer reference
 	issuer_id = badge.issuer_id
-	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else badge.issuer
+	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else None
+	issuer = badge.issuer if issuer is None else issuer
 	issuer = IIssuerOrganization(issuer, None)
 	
 	result = BadgeClass(tags=tags,
