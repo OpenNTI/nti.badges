@@ -41,9 +41,17 @@ Assertion.locked = alias('exported')
 def salt_default():
 	return u'23597b11-857a-447f-8129-66b5397b0c7f'
 
+def hexdigest(data, hasher=None):
+	hasher = hashlib.sha256() if hasher is None else hasher	
+	hasher.update(data)
+	result = hasher.hexdigest()
+	return result
+
 def assertion_id(person_id, badge_id):
-	result = "%s -> %r" % (badge_id, person_id)
-	result = base64.urlsafe_b64encode(result)
+	hasher = hashlib.md5()
+	for data in (badge_id, '->', person_id):
+		hasher.update("%s" % data)
+	result = hasher.hexdigest()
 	return unicode(result)
 	
 class NTITahrirDatabase(TahrirDatabase):

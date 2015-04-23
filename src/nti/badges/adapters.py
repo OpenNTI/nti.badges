@@ -159,14 +159,17 @@ def tahrir_badge_to_mozilla_badge(badge):
 @interface.implementer(IBadgeAssertion)
 def tahrir_assertion_to_mozilla_assertion(assertion):
 	badge_id = assertion.badge_id
-	badge = get_tahrir_badge_by_id(badge_id) if badge_id is not None else assertion.badge
+	badge = get_tahrir_badge_by_id(badge_id) if badge_id is not None else None
+	badge = assertion.badge if badge is None else badge
 	
 	person_id = assertion.person_id
-	person = get_tahrir_person_by_id(badge_id) if person_id is not None else assertion.person
+	person = get_tahrir_person_by_id(person_id) if person_id is not None else None
+	person = assertion.person if person is None else person
 
 	# issuer
 	issuer_id = badge.issuer_id
-	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else badge.issuer
+	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else None
+	issuer = badge.issuer if issuer is None else issuer
 	verify = IVerificationObject(issuer)
 
 	# recipient
