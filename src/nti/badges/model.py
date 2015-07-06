@@ -85,4 +85,3 @@ class NTIAssertion(SchemaConfigured):
 
 	id = alias('uid')
 	locked = alias('exported')
-

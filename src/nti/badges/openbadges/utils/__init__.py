@@ -23,9 +23,8 @@ import simplejson
 from itsdangerous import BadSignature
 from itsdangerous import JSONWebSignatureSerializer
 
+from nti.common.string import safestr
 from nti.common.maps import CaseInsensitiveDict
-
-from ...utils import safestr
 
 from ..model import BadgeClass
 from ..model import BadgeAssertion
@@ -39,7 +38,7 @@ from ..interfaces import ID_TYPE_EMAIL
 
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 
-VALID_SCHEMES = ('http', 'https','file', 'ftp', 'sftp')
+VALID_SCHEMES = ('http', 'https', 'file', 'ftp', 'sftp')
 
 def _datetime(s):
 	if isinstance(s, basestring):
@@ -60,12 +59,12 @@ def mend_url(url, **kwargs):
 	return url
 
 def load_data(source, encoding='UTF-8', secret=None):
-	## We must decode the source ourself, to be a unicode
-	## string; otherwise, simplejson may return us a dictionary
-	## with byte objects in it, which is clearly wrong
+	# We must decode the source ourself, to be a unicode
+	# string; otherwise, simplejson may return us a dictionary
+	# with byte objects in it, which is clearly wrong
 	if isinstance(source, bytes):
 		source = source.decode(encoding)
-		
+
 	if isinstance(source, six.string_types):
 		try:
 			result = simplejson.loads(source, encoding=encoding)
@@ -144,7 +143,7 @@ def badge_from_source(source, **kwargs):
 	# issuer
 	issuer = data['issuer']
 	if isinstance(issuer, Mapping):
-		result.issuer = issuer_from_source(issuer, **kwargs) 
+		result.issuer = issuer_from_source(issuer, **kwargs)
 	else:
 		result.issuer = mend_url(issuer, **kwargs)
 
@@ -198,7 +197,7 @@ def assertion_from_source(source, **kwargs):
 
 	# verify
 	verify = data['verify']
-	result.verify = VerificationObject(	type=verify["type"],
+	result.verify = VerificationObject(type=verify["type"],
 										url=safestr(verify['url']))
 
 	return result

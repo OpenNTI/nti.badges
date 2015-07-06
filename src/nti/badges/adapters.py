@@ -19,6 +19,8 @@ from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Person
 
+from nti.common.string import safestr
+
 from .openbadges.model import BadgeClass
 from .openbadges.model import BadgeAssertion
 from .openbadges.model import IdentityObject
@@ -40,8 +42,6 @@ from .tahrir.interfaces import IBadge as ITahrirBadge
 from .tahrir.interfaces import IIssuer as ITahrirIssuer
 from .tahrir.interfaces import IPerson as ITahrirPerson
 from .tahrir.interfaces import IAssertion as ITahrirAssertion
-
-from .utils import safestr
 
 from .model import NTIBadge
 from .model import NTIIssuer
@@ -136,14 +136,14 @@ def tahrir_issuer_to_mozilla_issuer(issuer):
 @interface.implementer(IBadgeClass)
 def tahrir_badge_to_mozilla_badge(badge):
 	tags = tuple(safestr(x.lower()) for x in ((badge.tags or '').split(',')) if x)
-	## request from the db if possible.
-	## We've seen some some NoSuchColumnError in MySQL when
-	## trying to use the badge issuer reference
+	# request from the db if possible.
+	# We've seen some some NoSuchColumnError in MySQL when
+	# trying to use the badge issuer reference
 	issuer_id = badge.issuer_id
 	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else None
 	issuer = badge.issuer if issuer is None else issuer
 	issuer = IIssuerOrganization(issuer, None)
-	
+
 	result = BadgeClass(tags=tags,
 						name=safestr(badge.name),
 						image=safestr(badge.image),
@@ -162,7 +162,7 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 	badge_id = assertion.badge_id
 	badge = get_tahrir_badge_by_id(badge_id) if badge_id is not None else None
 	badge = assertion.badge if badge is None else badge
-	
+
 	person_id = assertion.person_id
 	person = get_tahrir_person_by_id(person_id) if person_id is not None else None
 	person = assertion.person if person is None else person
@@ -183,7 +183,7 @@ def tahrir_assertion_to_mozilla_assertion(assertion):
 
 	# exported
 	exported = getattr(assertion, 'exported', None) or False
-	
+
 	# assertion
 	aid = assertion.id or u"%s -> %s" % (badge.name, person.email)
 	result = BadgeAssertion(uid=aid,

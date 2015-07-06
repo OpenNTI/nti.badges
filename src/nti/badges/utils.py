@@ -9,9 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from nti.common.string import safestr
-safestr = safestr
-
 class MetaBadgeObject(type):
 
     def __new__(cls, name, bases, dct):

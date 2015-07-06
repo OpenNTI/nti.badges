@@ -141,7 +141,6 @@
 			 provides=".tahrir.interfaces.IBadge" />
 			 
 	<!-- Externalization -->
-	
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
 	<ext:registerAutoPackageIO
