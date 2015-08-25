@@ -13,8 +13,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import interface
 from zope import component
+from zope import interface
 
 from nti.common.property import alias
 
@@ -24,8 +24,8 @@ from .interfaces import IAssertion
 
 from . import get_tahrir_assertion_by_id
 
-@interface.implementer(ICachingWeakRef)
 @component.adapter(IAssertion)
+@interface.implementer(ICachingWeakRef)
 class AssertionWeakRef(object):
 
 	_v_assertion = None
@@ -37,7 +37,6 @@ class AssertionWeakRef(object):
 		self._assertion_salt = assertion.salt
 		self._assertion_badge_id = assertion.badge_id
 		self._assertion_person_id = assertion.person.email
-
 		self._v_assertion = assertion
 
 	def __getstate__(self):
@@ -86,5 +85,4 @@ class AssertionWeakRef(object):
 		assertion = get_tahrir_assertion_by_id(self._assertion_id)
 		if assertion is not None:
 			self._v_assertion = assertion
-
 		return assertion

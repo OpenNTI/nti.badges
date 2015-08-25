@@ -8,6 +8,7 @@ from __future__ import print_function, unicode_literals, absolute_import, divisi
 __docformat__ = "restructuredtext en"
 
 from zope import interface
+
 from zope.schema import vocabulary
 
 from nti.schema.field import Bool
@@ -66,7 +67,7 @@ class IAlignmentObject(interface.Interface):
 	name = ValidTextLine(title="The name of the alignment")
 	url = ValidTextLine(title='URL linking to the official description of the standard')
 	description = ValidText(title="Short description of the standard",
-                                       required=False)
+							required=False)
 
 class IBadgeClass(ITaggedContent, IBadgeMarker):
 
@@ -82,9 +83,9 @@ class IBadgeClass(ITaggedContent, IBadgeMarker):
 					title="Image representing the achievement")
 
 	alignment = ListOrTuple(value_type=Object(IAlignmentObject),
-                                       title="Objects describing which educational standards",
-                                       required=False,
-                                       min_length=0)
+									   title="Objects describing which educational standards",
+									   required=False,
+									   min_length=0)
 
 class IBadgeAssertion(IAssertionMarker):
 
@@ -106,7 +107,7 @@ class IBadgeAssertion(IAssertionMarker):
 							 required=False)
 
 	expires = ValidDatetime(title="Achievment expiry", required=False)
-	
-	exported = Bool(title="If the assertion has been exported", default=False, 
+
+	exported = Bool(title="If the assertion has been exported", default=False,
 					required=False)
 	exported.setTaggedValue('_ext_excluded_out', True)

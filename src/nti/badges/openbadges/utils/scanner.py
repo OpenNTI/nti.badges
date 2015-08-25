@@ -63,21 +63,21 @@ def flat_scan(path, verify=False, **kwargs):
 	cwd = os.getcwd()
 	try:
 		path = os.path.expanduser(path)
-		os.chdir(path) # change path
+		os.chdir(path)  # change path
 		pathname = os.path.join(path, '*')
 		for name in glob.iglob(pathname):
 			name = os.path.join(path, name)
 			_, ext = os.path.splitext(name)
 			if ext.lower() != '.json' or not os.path.isfile(name):
 				continue
-			
+
 			# parse badge json file
 			with open(name, "r") as fp:
 				badge = parse_badge(fp, verify=verify, **kwargs)
 			if badge is None:
 				continue
 			logger.debug("Badge %s parsed", badge.name)
-			
+
 			issuer = badge.issuer
 			if not isinstance(issuer, six.string_types):
 				issuer_url = get_issuer_url(issuer)
@@ -85,7 +85,7 @@ def flat_scan(path, verify=False, **kwargs):
 					issuers[issuer_url] = issuer
 			else:
 				issuer_url = issuer
-	
+
 			issuer = issuers.get(issuer_url)
 			if issuer is None:
 				issuer = parse_issuer(issuer_url)

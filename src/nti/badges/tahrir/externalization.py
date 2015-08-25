@@ -32,7 +32,7 @@ class _BadgeExternalizer(object):
 
 	def toExternalObject(self, *args, **kwargs):
 		return to_external_object(IBadgeClass(self.badge))
-	
+
 @interface.implementer(IExternalObject)
 @component.adapter(IIssuer)
 class _IssuerExternalizer(object):

@@ -159,7 +159,6 @@ def badge_from_source(source, **kwargs):
 		ao.name = safestr(data['name'])
 		ao.description = safestr(data.get('description'))
 		alignment.append(ao)
-
 	return result
 
 def assertion_from_source(source, **kwargs):

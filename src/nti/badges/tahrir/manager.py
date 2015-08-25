@@ -14,11 +14,11 @@ import ConfigParser
 
 from zope import interface
 
+from zope.sqlalchemy import ZopeTransactionExtension
+
 from sqlalchemy import func
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-
-from zope.sqlalchemy import ZopeTransactionExtension
 
 from nti.common.property import Lazy
 

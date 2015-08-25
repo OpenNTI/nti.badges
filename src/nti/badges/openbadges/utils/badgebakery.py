@@ -43,11 +43,11 @@ def get_baked_data(source, secret=None, raw=False):
 	if raw:
 		return result
 
-	## check if it's a known scheme
+	# # check if it's a known scheme
 	scheme = urlparse.urlparse(result).scheme if result else None
 	if scheme:
 		return result
-	
+
 	if result:
 		if secret:
 			try:
@@ -75,7 +75,7 @@ def bake_badge(source, target, url=None, payload=None, secret=None):
 	"""
 	if url and payload:
 		raise ValueError("must specify either an URL or payload")
-	
+
 	data = url
 	if payload:
 		if secret:
@@ -104,7 +104,7 @@ def verify(source, payload=None, secret=None):
 
 def process_args(args=None):
 	arg_parser = argparse.ArgumentParser(description="Baked a badge")
-	arg_parser.add_argument('-v', '--verbose', help="Verbose", 
+	arg_parser.add_argument('-v', '--verbose', help="Verbose",
 							 action='store_true',
 							 dest='verbose')
 	arg_parser.add_argument('source', help="The image to bake file path")
@@ -129,7 +129,7 @@ def process_args(args=None):
 		not source.lower().endswith('.png'):
 		print("Invalid image file", source, file=sys.stderr)
 		sys.exit(2)
-	
+
 	target = args.target
 	if target is None:
 		target = source

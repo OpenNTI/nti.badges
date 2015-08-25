@@ -14,8 +14,10 @@ logger = __import__('logging').getLogger(__name__)
 import functools
 
 from zope import interface
-from zope.configuration import fields
+
 from zope.component.zcml import utility
+
+from zope.configuration import fields
 
 from .interfaces import IIssuer
 from .interfaces import ITahrirBadgeManager
@@ -35,7 +37,7 @@ class IRegisterTahrirDB(interface.Interface):
 	config = fields.TextLine(title='path to a config file', required=False)
 
 def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
-					  autocommit=False, defaultSQLite=False, config=None):
+					 autocommit=False, defaultSQLite=False, config=None):
 	"""
 	Register an db
 	"""

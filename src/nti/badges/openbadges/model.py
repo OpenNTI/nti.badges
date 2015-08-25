@@ -108,4 +108,3 @@ class BadgeAssertion(SchemaConfigured):
 
 	id = alias('uid')
 	locked = alias('exported')
-
