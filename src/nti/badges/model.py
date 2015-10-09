@@ -14,9 +14,8 @@ from zope import interface
 from zope.mimetype.interfaces import IContentTypeAware
 
 from nti.common.property import alias
-
-from nti.externalization.persistence import NoPickle
-from nti.externalization.representation import WithRepr
+from nti.common.persistence import NoPickle
+from nti.common.representation import WithRepr
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
