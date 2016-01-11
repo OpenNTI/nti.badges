@@ -28,10 +28,10 @@ from .interfaces import INTIIssuer
 from .interfaces import INTIPerson
 from .interfaces import INTIAssertion
 
-@interface.implementer(INTIBadge, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('issuer', 'name')
+@interface.implementer(INTIBadge, IContentTypeAware)
 class NTIBadge(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(INTIBadge)
@@ -46,10 +46,10 @@ class NTIBadge(SchemaConfigured):
 			kwargs['tags'] = INTIBadge['tags'].fromObject(kwargs['tags'])
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(INTIPerson, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name', 'email')
+@interface.implementer(INTIPerson, IContentTypeAware)
 class NTIPerson(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(INTIPerson)
@@ -57,10 +57,10 @@ class NTIPerson(SchemaConfigured):
 	__external_class_name__ = "Person"
 	mime_type = mimeType = 'application/vnd.nextthought.badges.person'
 
-@interface.implementer(INTIIssuer, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name', 'origin')
+@interface.implementer(INTIIssuer, IContentTypeAware)
 class NTIIssuer(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(INTIIssuer)
@@ -71,10 +71,10 @@ class NTIIssuer(SchemaConfigured):
 
 	org = alias('organization')
 
-@interface.implementer(INTIAssertion, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('badge', 'recipient', 'issuedOn')
+@interface.implementer(INTIAssertion, IContentTypeAware)
 class NTIAssertion(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(INTIAssertion)

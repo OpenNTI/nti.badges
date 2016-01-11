@@ -101,7 +101,7 @@ class INTIAssertion(IBadgeAssertion):
 					  default=0)
 	recipient = ValidTextLine(title="Badge recipient email-hash", required=False)
 	salt = ValidTextLine(title="One-way function to hash person", required=False)
-	exported = Bool(title="If the assertion has been exported", default=False, 
+	exported = Bool(title="If the assertion has been exported", default=False,
 					required=False)
 
 class IEarnableBadge(interface.Interface):
@@ -130,7 +130,7 @@ class IBadgeManager(interface.Interface):
 		"""
 		update a person
 		"""
-		
+
 	def badge_exists(badge):
 		"""
 		check if the specifed badge exists
@@ -145,7 +145,7 @@ class IBadgeManager(interface.Interface):
 		"""
 		update the information regarding a batch
 		"""
-		
+
 	def get_badge(badge):
 		"""
 		return the specifed badge
@@ -165,7 +165,7 @@ class IBadgeManager(interface.Interface):
 		"""
 		return the badge assertion for the specified id
 		"""
-		
+
 	def get_assertion(person, badge):
 		"""
 		return a badge assertion for the specified person
@@ -195,7 +195,7 @@ class IBadgeManager(interface.Interface):
 		"""
 		return all persons
 		"""
-		
+
 	def get_person_assertions(person):
 		"""
 		return the assertions for the specified person

@@ -14,6 +14,8 @@ from zope import component
 
 from nti.externalization.datastructures import InterfaceObjectIO
 from nti.externalization.interfaces import IInternalObjectUpdater
+from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.interfaces import StandardInternalFields
 
 from .interfaces import INTIBadge
 from .interfaces import INTIIssuer
@@ -23,11 +25,13 @@ from .interfaces import INTIPerson
 class _NTIModelUpdater(object):
 
 	model_interface = None
+
 	def __init__(self, obj):
 		self.obj = obj
 
 	def updateFromExternalObject(self, parsed, *args, **kwargs):
-		createdTime = parsed.get('CreatedTime') or parsed.get('createdTime')
+		createdTime = 	parsed.get(StandardExternalFields.CREATED_TIME) \
+					 or	parsed.get(StandardInternalFields.CREATED_TIME)
 		result = InterfaceObjectIO(
 					self.obj,
 					self.model_interface).updateFromExternalObject(parsed)

@@ -14,9 +14,8 @@ from zope import interface
 from zope.mimetype.interfaces import IContentTypeAware
 
 from nti.common.property import alias
-
-from nti.externalization.persistence import NoPickle
-from nti.externalization.representation import WithRepr
+from nti.common.persistence import NoPickle
+from nti.common.representation import WithRepr
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
@@ -31,10 +30,10 @@ from .interfaces import IAlignmentObject
 from .interfaces import IVerificationObject
 from .interfaces import IIssuerOrganization
 
-@interface.implementer(IVerificationObject, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('url', 'type')
+@interface.implementer(IVerificationObject, IContentTypeAware)
 class VerificationObject(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(IVerificationObject)
@@ -42,10 +41,10 @@ class VerificationObject(SchemaConfigured):
 	__external_class_name__ = "Verification"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.verificationobject'
 
-@interface.implementer(IIdentityObject, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('identity', 'type')
+@interface.implementer(IIdentityObject, IContentTypeAware)
 class IdentityObject(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(IIdentityObject)
@@ -53,10 +52,10 @@ class IdentityObject(SchemaConfigured):
 	__external_class_name__ = "Identity"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.identityobject'
 
-@interface.implementer(IAlignmentObject, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('url', 'name')
+@interface.implementer(IAlignmentObject, IContentTypeAware)
 class AlignmentObject(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(IAlignmentObject)
@@ -64,10 +63,10 @@ class AlignmentObject(SchemaConfigured):
 	__external_class_name__ = "Alignment"
 	mime_type = mimeType = 'application/vnd.nextthought.openbadges.alignmentobject'
 
-@interface.implementer(IIssuerOrganization, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name', 'url')
+@interface.implementer(IIssuerOrganization, IContentTypeAware)
 class IssuerOrganization(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(IIssuerOrganization)
@@ -79,10 +78,10 @@ class IssuerOrganization(SchemaConfigured):
 	contact = alias('email')
 	issued_on = alias('issuedOn')
 
-@interface.implementer(IBadgeClass, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('name')
+@interface.implementer(IBadgeClass, IContentTypeAware)
 class BadgeClass(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(IBadgeClass)
@@ -95,10 +94,10 @@ class BadgeClass(SchemaConfigured):
 			kwargs['tags'] = IBadgeClass['tags'].fromObject(kwargs['tags'])
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-@interface.implementer(IBadgeAssertion, IContentTypeAware)
 @WithRepr
 @NoPickle
 @EqHash('uid', 'recipient')
+@interface.implementer(IBadgeAssertion, IContentTypeAware)
 class BadgeAssertion(SchemaConfigured):
 	__metaclass__ = MetaBadgeObject
 	createDirectFieldProperties(IBadgeAssertion)
