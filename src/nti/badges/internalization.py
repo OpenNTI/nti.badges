@@ -12,14 +12,15 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope import component
 
+from nti.badges.interfaces import INTIBadge
+from nti.badges.interfaces import INTIIssuer
+from nti.badges.interfaces import INTIPerson
+
 from nti.externalization.datastructures import InterfaceObjectIO
+
 from nti.externalization.interfaces import IInternalObjectUpdater
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import StandardInternalFields
-
-from .interfaces import INTIBadge
-from .interfaces import INTIIssuer
-from .interfaces import INTIPerson
 
 @interface.implementer(IInternalObjectUpdater)
 class _NTIModelUpdater(object):

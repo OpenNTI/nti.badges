@@ -21,39 +21,40 @@ from tahrir_api.model import Person
 
 from nti.common.string import safestr
 
-from .openbadges.model import BadgeClass
-from .openbadges.model import BadgeAssertion
-from .openbadges.model import IdentityObject
-from .openbadges.model import IssuerOrganization
-from .openbadges.model import VerificationObject
+from nti.badges.interfaces import INTIBadge
+from nti.badges.interfaces import INTIIssuer
+from nti.badges.interfaces import INTIPerson
+from nti.badges.interfaces import IEarnedBadge
+from nti.badges.interfaces import INTIAssertion
+from nti.badges.interfaces import IEarnableBadge
 
-from .openbadges.interfaces import IBadgeClass
-from .openbadges.interfaces import ID_TYPE_EMAIL
-from .openbadges.interfaces import VO_TYPE_HOSTED
-from .openbadges.interfaces import IBadgeAssertion
-from .openbadges.interfaces import IIdentityObject
-from .openbadges.interfaces import IIssuerOrganization
-from .openbadges.interfaces import IVerificationObject
+from nti.badges.model import NTIBadge
+from nti.badges.model import NTIIssuer
+from nti.badges.model import NTIPerson
+from nti.badges.model import NTIAssertion
 
-from .tahrir import get_tahrir_badge_by_id
-from .tahrir import get_tahrir_issuer_by_id
-from .tahrir import get_tahrir_person_by_id
-from .tahrir.interfaces import IBadge as ITahrirBadge
-from .tahrir.interfaces import IIssuer as ITahrirIssuer
-from .tahrir.interfaces import IPerson as ITahrirPerson
-from .tahrir.interfaces import IAssertion as ITahrirAssertion
+from nti.badges.openbadges.model import BadgeClass
+from nti.badges.openbadges.model import BadgeAssertion
+from nti.badges.openbadges.model import IdentityObject
+from nti.badges.openbadges.model import IssuerOrganization
+from nti.badges.openbadges.model import VerificationObject
 
-from .model import NTIBadge
-from .model import NTIIssuer
-from .model import NTIPerson
-from .model import NTIAssertion
+from nti.badges.openbadges.interfaces import IBadgeClass
+from nti.badges.openbadges.interfaces import ID_TYPE_EMAIL
+from nti.badges.openbadges.interfaces import VO_TYPE_HOSTED
+from nti.badges.openbadges.interfaces import IBadgeAssertion
+from nti.badges.openbadges.interfaces import IIdentityObject
+from nti.badges.openbadges.interfaces import IIssuerOrganization
+from nti.badges.openbadges.interfaces import IVerificationObject
 
-from .interfaces import INTIBadge
-from .interfaces import INTIIssuer
-from .interfaces import INTIPerson
-from .interfaces import IEarnedBadge
-from .interfaces import INTIAssertion
-from .interfaces import IEarnableBadge
+from nti.badges.tahrir import get_tahrir_badge_by_id
+from nti.badges.tahrir import get_tahrir_issuer_by_id
+from nti.badges.tahrir import get_tahrir_person_by_id
+
+from nti.badges.tahrir.interfaces import IBadge as ITahrirBadge
+from nti.badges.tahrir.interfaces import IIssuer as ITahrirIssuer
+from nti.badges.tahrir.interfaces import IPerson as ITahrirPerson
+from nti.badges.tahrir.interfaces import IAssertion as ITahrirAssertion
 
 def tag_badge_interfaces(source, target):
 	if IEarnableBadge.providedBy(source):
