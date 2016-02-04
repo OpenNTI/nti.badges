@@ -15,12 +15,12 @@ import glob
 
 from zope.interface.verify import verifyObject
 
-from . import badgebakery
-from . import badge_from_source
-from . import issuer_from_source
+from nti.badges.openbadges.interfaces import IBadgeClass
+from nti.badges.openbadges.interfaces import IIssuerOrganization
 
-from ..interfaces import IBadgeClass
-from ..interfaces import IIssuerOrganization
+from nti.badges.openbadges.utils import badgebakery
+from nti.badges.openbadges.utils import badge_from_source
+from nti.badges.openbadges.utils import issuer_from_source
 
 def get_baked_data(name, **kwargs):
 	try:

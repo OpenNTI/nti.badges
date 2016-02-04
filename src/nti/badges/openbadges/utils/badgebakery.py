@@ -20,8 +20,9 @@ import sys
 import pprint
 import argparse
 import urlparse
-import simplejson
 import collections
+
+import simplejson
 
 from PIL import Image
 from PIL import PngImagePlugin

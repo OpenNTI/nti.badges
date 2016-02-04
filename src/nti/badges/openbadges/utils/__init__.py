@@ -23,21 +23,23 @@ import simplejson
 from itsdangerous import BadSignature
 from itsdangerous import JSONWebSignatureSerializer
 
+from nti.badges.openbadges.interfaces import IBadgeClass
+from nti.badges.openbadges.interfaces import ID_TYPE_EMAIL
+
+from nti.badges.openbadges.model import BadgeClass
+from nti.badges.openbadges.model import BadgeAssertion
+from nti.badges.openbadges.model import IdentityObject
+from nti.badges.openbadges.model import AlignmentObject
+from nti.badges.openbadges.model import IssuerOrganization
+from nti.badges.openbadges.model import VerificationObject
+
 from nti.common.string import safestr
 from nti.common.maps import CaseInsensitiveDict
 
-from ..model import BadgeClass
-from ..model import BadgeAssertion
-from ..model import IdentityObject
-from ..model import AlignmentObject
-from ..model import IssuerOrganization
-from ..model import VerificationObject
-
-from ..interfaces import IBadgeClass
-from ..interfaces import ID_TYPE_EMAIL
-
+#: Default web signature serializer secret
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 
+#: Valid schemes
 VALID_SCHEMES = ('http', 'https', 'file', 'ftp', 'sftp')
 
 def _datetime(s):

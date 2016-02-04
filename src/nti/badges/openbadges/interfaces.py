@@ -11,6 +11,11 @@ from zope import interface
 
 from zope.schema import vocabulary
 
+from nti.badges.interfaces import ITaggedContent
+from nti.badges.interfaces import IBadgeClass as IBadgeMarker
+from nti.badges.interfaces import IBadgeIssuer as IIssuerMarker
+from nti.badges.interfaces import IBadgeAssertion as IAssertionMarker
+
 from nti.schema.field import Bool
 from nti.schema.field import Choice
 from nti.schema.field import Object
@@ -19,11 +24,6 @@ from nti.schema.field import ValidText
 from nti.schema.field import ListOrTuple
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
-
-from ..interfaces import ITaggedContent
-from ..interfaces import IBadgeClass as IBadgeMarker
-from ..interfaces import IBadgeIssuer as IIssuerMarker
-from ..interfaces import IBadgeAssertion as IAssertionMarker
 
 VO_TYPE_HOSTED = 'hosted'
 VO_TYPE_SIGNED = 'signed'
@@ -77,10 +77,9 @@ class IBadgeClass(ITaggedContent, IBadgeMarker):
 
 	criteria = ValidTextLine(title='URL of the criteria for earning the achievement')
 
-	issuer = Variant((
-					ValidTextLine(title='URL of the organization that issued the badge'),
-					Object(IIssuerOrganization, title="Issuer object")),
-					title="Image representing the achievement")
+	issuer = Variant((ValidTextLine(title='URL of the organization that issued the badge'),
+					  Object(IIssuerOrganization, title="Issuer object")),
+					 title="Image representing the achievement")
 
 	alignment = ListOrTuple(value_type=Object(IAlignmentObject),
 									   title="Objects describing which educational standards",
