@@ -23,11 +23,15 @@ from nti.badges.openbadges.interfaces import IIssuerOrganization
 from nti.badges.utils import MetaBadgeObject
 
 from nti.common.property import alias
-from nti.common.persistence import NoPickle
-from nti.common.representation import WithRepr
 
-from nti.schema.schema import EqHash
+from nti.externalization.persistence import NoPickle
+
+from nti.externalization.representation import WithRepr
+
+from nti.schema.eqhash import EqHash
+
 from nti.schema.field import SchemaConfigured
+
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 @WithRepr

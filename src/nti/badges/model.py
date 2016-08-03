@@ -13,12 +13,6 @@ from zope import interface
 
 from zope.mimetype.interfaces import IContentTypeAware
 
-from nti.common.persistence import NoPickle
-
-from nti.common.property import alias
-
-from nti.common.representation import WithRepr
-
 from nti.badges.interfaces import INTIBadge
 from nti.badges.interfaces import INTIIssuer
 from nti.badges.interfaces import INTIPerson
@@ -26,10 +20,17 @@ from nti.badges.interfaces import INTIAssertion
 
 from nti.badges.utils import MetaBadgeObject
 
-from nti.schema.field import SchemaConfigured
-from nti.schema.fieldproperty import createDirectFieldProperties
+from nti.common.property import alias
 
-from nti.schema.schema import EqHash
+from nti.externalization.persistence import NoPickle
+
+from nti.externalization.representation import WithRepr
+
+from nti.schema.eqhash import EqHash
+
+from nti.schema.field import SchemaConfigured
+
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 @WithRepr
 @NoPickle
