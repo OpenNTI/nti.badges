@@ -25,7 +25,7 @@ from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
 
-from nti.common.property import alias
+from nti.property.property import alias
 
 ## make compliant
 Assertion.uid = alias('id')

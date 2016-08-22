@@ -20,8 +20,6 @@ from sqlalchemy import func
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from nti.common.property import Lazy
-
 from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
@@ -35,6 +33,8 @@ from .interfaces import IPerson
 from .interfaces import ITahrirBadgeManager
 
 from ..interfaces import IEarnedBadge
+
+from nti.property.property import Lazy
 
 @interface.implementer(ITahrirBadgeManager)
 class TahrirBadgeManager(object):

@@ -22,11 +22,11 @@ from nti.badges.openbadges.interfaces import IIssuerOrganization
 
 from nti.badges.utils import MetaBadgeObject
 
-from nti.common.property import alias
-
 from nti.externalization.persistence import NoPickle
 
 from nti.externalization.representation import WithRepr
+
+from nti.property.property import alias
 
 from nti.schema.eqhash import EqHash
 

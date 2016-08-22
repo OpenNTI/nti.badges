@@ -16,13 +16,13 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from nti.common.property import alias
+from nti.badges.tahrir import get_tahrir_assertion_by_id
+
+from nti.badges.tahrir.interfaces import IAssertion
+
+from nti.property.property import alias
 
 from nti.wref.interfaces import ICachingWeakRef
-
-from .interfaces import IAssertion
-
-from . import get_tahrir_assertion_by_id
 
 @component.adapter(IAssertion)
 @interface.implementer(ICachingWeakRef)

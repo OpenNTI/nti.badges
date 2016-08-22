@@ -61,6 +61,7 @@ setup(
 		'nti.coremetadata',
 		'nti.externalization',
 		'nti.mimetype',
+		'nti.property',
 		'nti.schema',
 		'nti.wref'
 	],
