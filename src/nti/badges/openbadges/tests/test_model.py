@@ -15,6 +15,8 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 
+from nti.testing.matchers import verifiably_provides
+
 import time
 from datetime import datetime
 
@@ -27,8 +29,6 @@ from nti.badges.openbadges import interfaces
 from nti.externalization.tests import assert_does_not_pickle
 
 from nti.badges.tests import NTIBadgesTestCase
-
-from nti.testing.matchers import verifiably_provides
 
 class TestOpenBadges(NTIBadgesTestCase):
 
