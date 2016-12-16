@@ -11,32 +11,20 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 
-from .interfaces import ITahrirBadgeManager
+from nti.badges.tahrir.interfaces import ITahrirBadgeManager
 
 def get_tahrir_issuer_by_id(issuer_id):
 	manager = component.getUtility(ITahrirBadgeManager)
-	result = manager.get_issuer_by_id(issuer_id)
-	if result is not None:
-		return result
-	return None
+	return manager.get_issuer_by_id(issuer_id)
 
 def get_tahrir_badge_by_id(badge_id):
 	manager = component.getUtility(ITahrirBadgeManager)
-	result = manager.get_badge_by_id(badge_id)
-	if result is not None:
-		return result
-	return None
+	return manager.get_badge_by_id(badge_id)
 
 def get_tahrir_person_by_id(person_id):
 	manager = component.getUtility(ITahrirBadgeManager)
-	result = manager.get_person_by_id(person_id)
-	if result is not None:
-		return result
-	return None
+	return manager.get_person_by_id(person_id)
 
 def get_tahrir_assertion_by_id(assertion_id):
 	manager = component.getUtility(ITahrirBadgeManager)
-	result = manager.get_assertion_by_id(assertion_id)
-	if result is not None:
-		return result
-	return None
+	return manager.get_assertion_by_id(assertion_id)

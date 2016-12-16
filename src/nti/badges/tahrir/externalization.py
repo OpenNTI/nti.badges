@@ -12,17 +12,18 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from nti.externalization.interfaces import IExternalObject
+from nti.badges.openbadges.interfaces import IBadgeClass
+from nti.badges.openbadges.interfaces import IIssuerOrganization
+
+from nti.badges.tahrir.interfaces import IBadge
+from nti.badges.tahrir.interfaces import IIssuer
+
 from nti.externalization.externalization import to_external_object
 
-from ..openbadges.interfaces import IBadgeClass
-from ..openbadges.interfaces import IIssuerOrganization
+from nti.externalization.interfaces import IExternalObject
 
-from .interfaces import IBadge
-from .interfaces import IIssuer
-
-@interface.implementer(IExternalObject)
 @component.adapter(IBadge)
+@interface.implementer(IExternalObject)
 class _BadgeExternalizer(object):
 
 	__slots__ = ('badge',)
@@ -33,8 +34,8 @@ class _BadgeExternalizer(object):
 	def toExternalObject(self, *args, **kwargs):
 		return to_external_object(IBadgeClass(self.badge))
 
-@interface.implementer(IExternalObject)
 @component.adapter(IIssuer)
+@interface.implementer(IExternalObject)
 class _IssuerExternalizer(object):
 
 	__slots__ = ('issuer',)

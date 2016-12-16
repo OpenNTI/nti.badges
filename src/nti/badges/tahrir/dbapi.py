@@ -14,9 +14,13 @@ from datetime import datetime
 
 from zope import lifecycleevent
 
+from sqlalchemy import or_
+from sqlalchemy import and_
+from sqlalchemy import func
+from sqlalchemy import exists
 from sqlalchemy import Column
+
 from sqlalchemy.types import Boolean
-from sqlalchemy import func, exists, and_, or_
 
 from tahrir_api.model import Badge
 from tahrir_api.model import Person
@@ -27,10 +31,10 @@ from tahrir_api.dbapi import TahrirDatabase
 
 from nti.property.property import alias
 
-## make compliant
+# make compliant
 Assertion.uid = alias('id')
 
-## add exported / locked
+# add exported / locked
 if not hasattr(Assertion, 'exported'):
 	exported = Column('exported', Boolean(), nullable=True, unique=False)
 	Assertion.exported = exported

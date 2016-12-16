@@ -9,16 +9,16 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
+from nti.badges.interfaces import IBadgeClass
+from nti.badges.interfaces import IBadgeIssuer
+from nti.badges.interfaces import IBadgeManager
+from nti.badges.interfaces import IBadgeAssertion
+
 from nti.schema.field import Int
 from nti.schema.field import Bool
 from nti.schema.field import ValidText
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
-
-from ..interfaces import IBadgeClass
-from ..interfaces import IBadgeIssuer
-from ..interfaces import IBadgeManager
-from ..interfaces import IBadgeAssertion
 
 class ITahrirModel(interface.Interface):
 	"""

@@ -35,3 +35,4 @@ def Closer(clazz):
 			transaction.get().addAfterCommitHook(_after_transaction_end,
 												 args=(self.wrapped, registry))
 		return getattr(self.wrapped, attrname)
+closer = Closer

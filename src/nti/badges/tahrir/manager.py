@@ -18,21 +18,23 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 from sqlalchemy import func
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
 
 from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Assertion
 from tahrir_api.model import DeclarativeBase as tahrir_base
 
-from .dbapi import NTITahrirDatabase
+from nti.badges.interfaces import IEarnedBadge
 
-from .interfaces import IBadge
-from .interfaces import IIssuer
-from .interfaces import IPerson
-from .interfaces import ITahrirBadgeManager
+from nti.badges.tahrir.dbapi import NTITahrirDatabase
 
-from ..interfaces import IEarnedBadge
+from nti.badges.tahrir.interfaces import IBadge
+from nti.badges.tahrir.interfaces import IIssuer
+from nti.badges.tahrir.interfaces import IPerson
+from nti.badges.tahrir.interfaces import ITahrirBadgeManager
 
 from nti.property.property import Lazy
 
