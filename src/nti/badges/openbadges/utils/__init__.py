@@ -33,8 +33,9 @@ from nti.badges.openbadges.model import AlignmentObject
 from nti.badges.openbadges.model import IssuerOrganization
 from nti.badges.openbadges.model import VerificationObject
 
-from nti.common.string import safestr
 from nti.common.maps import CaseInsensitiveDict
+
+from nti.common.string import to_unicode
 
 #: Default web signature serializer secret
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
@@ -51,9 +52,9 @@ def _datetime(s):
 
 def mend_url(url, **kwargs):
 	base = kwargs.get('base') or kwargs.get('base_url')
-	url = safestr(url)
+	url = to_unicode(url)
 	if base:
-		base = safestr(base)
+		base = to_unicode(base)
 		path = urlparse(url).path
 		path = path[1:] if path.startswith('/') else path
 		base = base + '/' if not base.endswith('/') else base
@@ -117,9 +118,9 @@ def json_source_to_map(source, **kwargs):
 def issuer_from_source(source, **kwargs):
 	data = json_source_to_map(source, **kwargs)
 	result = IssuerOrganization()
-	for field, func in (('name', safestr), ('image', safestr), ('url', safestr),
-						('email', safestr), ('revocationList', safestr),
-						('description', safestr)):
+	for field, func in (('name', to_unicode), ('image', to_unicode), ('url', to_unicode),
+						('email', to_unicode), ('revocationList', to_unicode),
+						('description', to_unicode)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
@@ -135,8 +136,8 @@ def badge_from_source(source, **kwargs):
 	# rolling our own validation and transformation logic.
 
 	# parse common single value fields
-	for field, func in (('name', safestr), ('description', safestr),
-						('criteria', safestr), ('image', safestr)):
+	for field, func in (('name', to_unicode), ('description', to_unicode),
+						('criteria', to_unicode), ('image', to_unicode)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
@@ -150,7 +151,7 @@ def badge_from_source(source, **kwargs):
 		result.issuer = mend_url(issuer, **kwargs)
 
 	# tags
-	tags = [safestr(x) for x in data.get('tags', ())]
+	tags = [to_unicode(x) for x in data.get('tags', ())]
 	result.tags = IBadgeClass['tags'].bind(result).fromObject(tags)
 
 	# alignment objects
@@ -158,8 +159,8 @@ def badge_from_source(source, **kwargs):
 	for data in data.get('alignment', ()):
 		ao = AlignmentObject()
 		ao.url = data['url']
-		ao.name = safestr(data['name'])
-		ao.description = safestr(data.get('description'))
+		ao.name = to_unicode(data['name'])
+		ao.description = to_unicode(data.get('description'))
 		alignment.append(ao)
 	return result
 
@@ -168,8 +169,8 @@ def assertion_from_source(source, **kwargs):
 	result = BadgeAssertion()
 
 	# parse common single value fields
-	for field, func in (('uid', safestr), ('image', safestr), ('issuedOn', _datetime),
-						('evidence', safestr), ('expires', _datetime)):
+	for field, func in (('uid', to_unicode), ('image', to_unicode), ('issuedOn', _datetime),
+						('evidence', to_unicode), ('expires', _datetime)):
 		value = data.get(field)
 		value = func(value) if value else None
 		setattr(result, field, value)
@@ -184,12 +185,12 @@ def assertion_from_source(source, **kwargs):
 	# recipient
 	recipient = data['recipient']
 	if not isinstance(recipient, Mapping):
-		identity = safestr(recipient)
+		identity = to_unicode(recipient)
 		recipient = data
 	else:
-		identity = safestr(recipient["identity"])
+		identity = to_unicode(recipient["identity"])
 
-	salt = safestr(recipient.get("salt"))
+	salt = to_unicode(recipient.get("salt"))
 	hashed = recipient.get('hashed', True if salt else False)
 	result.recipient = IdentityObject(type=ID_TYPE_EMAIL,
 									  identity=identity,
@@ -199,6 +200,6 @@ def assertion_from_source(source, **kwargs):
 	# verify
 	verify = data['verify']
 	result.verify = VerificationObject(type=verify["type"],
-										url=safestr(verify['url']))
+									   url=to_unicode(verify['url']))
 
 	return result
