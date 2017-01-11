@@ -16,8 +16,6 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from zope.interface.interfaces import ComponentLookupError
-
 from nti.badges.tahrir import get_tahrir_assertion_by_id
 
 from nti.badges.tahrir.interfaces import IAssertion
@@ -84,12 +82,7 @@ class AssertionWeakRef(object):
         # NOTE: although we are saving the salt of the manager,
         # let's check all managers. Almost always there is only one
         # manager registered
-
-        try:
-            assertion = get_tahrir_assertion_by_id(self._assertion_id)
-            if assertion is not None:
-                self._v_assertion = assertion
-            return assertion
-        except ComponentLookupError:  # manager not available
-            logger.error("Tahrir Badge Manager is not available")
-        return None
+        assertion = get_tahrir_assertion_by_id(self._assertion_id)
+        if assertion is not None:
+            self._v_assertion = assertion
+        return assertion
