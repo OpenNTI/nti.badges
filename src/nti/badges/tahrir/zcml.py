@@ -32,15 +32,15 @@ class IRegisterTahrirDB(interface.Interface):
     """
     dburi = fields.TextLine(title="db dburi", required=False)
     salt = fields.TextLine(title='assertion salt', required=False)
-    autocommit = fields.Bool(title='autocommit option', 
-							 required=False, 
-							 default=False)
-    twophase = fields.Bool(title='two phase commit protocol', 
-						   required=False,
-						   default=False)
+    autocommit = fields.Bool(title='autocommit option',
+                             required=False,
+                             default=False)
+    twophase = fields.Bool(title='two phase commit protocol',
+                           required=False,
+                           default=False)
     defaultSQLite = fields.Bool(title='default to SQLLite',
-								required=False, 
-								default=False)
+                                required=False,
+                                default=False)
     config = fields.TextLine(title='path to a config file', required=False)
 
 
@@ -71,9 +71,9 @@ class IRegisterTahrirIssuer(interface.Interface):
     origin = fields.TextLine(title="Issuer origin [URL]")
     org = fields.TextLine(title="Issuer organization [URL]")
     contact = fields.TextLine(title="Issuer contact")
-    id = fields.TextLine(title="Issuer zcml identifier", 
-						 required=False,
-						 default='')
+    id = fields.TextLine(title="Issuer zcml identifier",
+                         required=False,
+                         default='')
 
 
 def registerTahrirIssuer(_context, name, origin, org, contact, id=u''):
