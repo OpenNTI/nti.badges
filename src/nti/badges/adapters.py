@@ -19,8 +19,6 @@ from tahrir_api.model import Badge
 from tahrir_api.model import Issuer
 from tahrir_api.model import Person
 
-from nti.badges._compat import to_unicode
-
 from nti.badges.interfaces import INTIBadge
 from nti.badges.interfaces import INTIIssuer
 from nti.badges.interfaces import INTIPerson
@@ -55,6 +53,8 @@ from nti.badges.tahrir.interfaces import IBadge as ITahrirBadge
 from nti.badges.tahrir.interfaces import IIssuer as ITahrirIssuer
 from nti.badges.tahrir.interfaces import IPerson as ITahrirPerson
 from nti.badges.tahrir.interfaces import IAssertion as ITahrirAssertion
+
+from nti.base._compat import to_unicode
 
 def tag_badge_interfaces(source, target):
 	if IEarnableBadge.providedBy(source):

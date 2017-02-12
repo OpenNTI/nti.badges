@@ -25,8 +25,6 @@ from requests.structures import CaseInsensitiveDict
 from itsdangerous import BadSignature
 from itsdangerous import JSONWebSignatureSerializer
 
-from nti.badges._compat import to_unicode
-
 from nti.badges.openbadges.interfaces import IBadgeClass
 from nti.badges.openbadges.interfaces import ID_TYPE_EMAIL
 
@@ -36,6 +34,8 @@ from nti.badges.openbadges.model import IdentityObject
 from nti.badges.openbadges.model import AlignmentObject
 from nti.badges.openbadges.model import IssuerOrganization
 from nti.badges.openbadges.model import VerificationObject
+
+from nti.base._compat import to_unicode
 
 #: Default web signature serializer secret
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
