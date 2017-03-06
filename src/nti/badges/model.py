@@ -21,7 +21,6 @@ from nti.badges.interfaces import INTIAssertion
 from nti.badges.utils import MetaBadgeObject
 
 from nti.externalization.persistence import NoPickle
-
 from nti.externalization.representation import WithRepr
 
 from nti.property.property import alias
@@ -32,59 +31,63 @@ from nti.schema.field import SchemaConfigured
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
+
 @WithRepr
 @NoPickle
 @EqHash('issuer', 'name')
 @interface.implementer(INTIBadge, IContentTypeAware)
 class NTIBadge(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(INTIBadge)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(INTIBadge)
 
-	__external_class_name__ = "Badge"
-	mime_type = mimeType = 'application/vnd.nextthought.badges.badge'
+    __external_class_name__ = "Badge"
+    mime_type = mimeType = 'application/vnd.nextthought.badges.badge'
 
-	id = alias('name')
+    id = alias('name')
 
-	def __init__(self, *args, **kwargs):
-		if 'tags' in kwargs:
-			kwargs['tags'] = INTIBadge['tags'].fromObject(kwargs['tags'])
-		SchemaConfigured.__init__(self, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        if 'tags' in kwargs:
+            kwargs['tags'] = INTIBadge['tags'].fromObject(kwargs['tags'])
+        SchemaConfigured.__init__(self, *args, **kwargs)
+
 
 @WithRepr
 @NoPickle
 @EqHash('name', 'email')
 @interface.implementer(INTIPerson, IContentTypeAware)
 class NTIPerson(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(INTIPerson)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(INTIPerson)
 
-	__external_class_name__ = "Person"
-	mime_type = mimeType = 'application/vnd.nextthought.badges.person'
+    __external_class_name__ = "Person"
+    mime_type = mimeType = 'application/vnd.nextthought.badges.person'
+
 
 @WithRepr
 @NoPickle
 @EqHash('name', 'origin')
 @interface.implementer(INTIIssuer, IContentTypeAware)
 class NTIIssuer(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(INTIIssuer)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(INTIIssuer)
 
-	__external_can_create__ = True
-	__external_class_name__ = "Issuer"
-	mime_type = mimeType = 'application/vnd.nextthought.badges.issuer'
+    __external_can_create__ = True
+    __external_class_name__ = "Issuer"
+    mime_type = mimeType = 'application/vnd.nextthought.badges.issuer'
 
-	org = alias('organization')
+    org = alias('organization')
+
 
 @WithRepr
 @NoPickle
 @EqHash('badge', 'recipient', 'issuedOn')
 @interface.implementer(INTIAssertion, IContentTypeAware)
 class NTIAssertion(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(INTIAssertion)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(INTIAssertion)
 
-	__external_class_name__ = "Assertion"
-	mime_type = mimeType = 'application/vnd.nextthought.badges.assertion'
+    __external_class_name__ = "Assertion"
+    mime_type = mimeType = 'application/vnd.nextthought.badges.assertion'
 
-	id = alias('uid')
-	locked = alias('exported')
+    id = alias('uid')
+    locked = alias('exported')

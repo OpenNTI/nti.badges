@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+
 class MetaBadgeObject(type):
 
     def __new__(cls, name, bases, dct):
@@ -16,6 +17,7 @@ class MetaBadgeObject(type):
         if 'mimeType' not in dct:
             clazzname = getattr(cls, '__external_class_name__', name)
             clazzname = b'.' + clazzname.encode('ascii').lower()
-            t.mime_type = t.mimeType = 'application/vnd.nextthought.badges' + clazzname        
+            t.mimeType = 'application/vnd.nextthought.badges' + clazzname
+            t.mime_type = t.mimeType
         t.parameters = dict()
         return t

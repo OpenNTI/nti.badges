@@ -56,350 +56,385 @@ from nti.badges.tahrir.interfaces import IAssertion as ITahrirAssertion
 
 from nti.base._compat import to_unicode
 
-def tag_badge_interfaces(source, target):
-	if IEarnableBadge.providedBy(source):
-		interface.alsoProvides(target, IEarnableBadge)
 
-	if IEarnedBadge.providedBy(source):
-		interface.alsoProvides(target, IEarnedBadge)
+def tag_badge_interfaces(source, target):
+    if IEarnableBadge.providedBy(source):
+        interface.alsoProvides(target, IEarnableBadge)
+
+    if IEarnedBadge.providedBy(source):
+        interface.alsoProvides(target, IEarnedBadge)
+
 
 @interface.implementer(IIdentityObject)
 def basestring_to_mozilla_indentity_object(source):
-	result = IdentityObject(identity=source,
-							type=ID_TYPE_EMAIL,
-							hashed=False,
-							salt=None)
-	return result
+    result = IdentityObject(identity=source,
+                            type=ID_TYPE_EMAIL,
+                            hashed=False,
+                            salt=None)
+    return result
+
 
 @interface.implementer(ITahrirPerson)
 def basestring_to_tahrir_person(source):
-	result = Person()
-	result.email = source
-	result.nickname = source
-	result.website = result.bio = ''
-	result.created_on = datetime.now()
-	return result
+    result = Person()
+    result.email = source
+    result.nickname = source
+    result.website = result.bio = ''
+    result.created_on = datetime.now()
+    return result
+
 
 @interface.implementer(INTIPerson)
 def basestring_to_ntiperson(source):
-	result = NTIPerson(name=source,
-					   email=source,
-					   createdTime=time.time())
-	return result
+    result = NTIPerson(name=source,
+                       email=source,
+                       createdTime=time.time())
+    return result
+
 
 @interface.implementer(ITahrirBadge)
 def basestring_to_tahrir_badge(source):
-	result = Badge()
-	result.name = source
-	return result
+    result = Badge()
+    result.name = source
+    return result
+
 
 @interface.implementer(ITahrirIssuer)
 def basestring_to_tahrir_issuer(source):
-	result = Issuer()
-	result.name = source
-	return result
+    result = Issuer()
+    result.name = source
+    return result
+
 
 @interface.implementer(ITahrirIssuer)
 def collection_to_tahrir_issuer(lst):
-	result = Issuer()
-	result.name = lst[0]
-	result.origin = lst[1] if len(lst) > 1 else None
-	return result
+    result = Issuer()
+    result.name = lst[0]
+    result.origin = lst[1] if len(lst) > 1 else None
+    return result
 
 # tahrir->
+
 
 @component.adapter(ITahrirIssuer)
 @interface.implementer(IVerificationObject)
 def tahrir_issuer_to_mozilla_verification_object(issuer):
-	verify = VerificationObject(type=VO_TYPE_HOSTED,
-								url=to_unicode(issuer.origin))
-	return verify
+    verify = VerificationObject(type=VO_TYPE_HOSTED,
+                                url=to_unicode(issuer.origin))
+    return verify
+
 
 @component.adapter(ITahrirPerson)
 @interface.implementer(IIdentityObject)
 def tahrir_person_to_mozilla_identity_object(person):
-	result = IdentityObject(identity=person.email,
-							type=ID_TYPE_EMAIL,
-							hashed=False,
-							salt=None)
-	return result
+    result = IdentityObject(identity=person.email,
+                            type=ID_TYPE_EMAIL,
+                            hashed=False,
+                            salt=None)
+    return result
+
 
 @component.adapter(ITahrirIssuer)
 @interface.implementer(IIssuerOrganization)
 def tahrir_issuer_to_mozilla_issuer(issuer):
-	result = IssuerOrganization(url=to_unicode(issuer.origin),
-								name=to_unicode(issuer.name),
-								email=to_unicode(issuer.contact),
-								description=to_unicode(issuer.org))
-	return result
+    result = IssuerOrganization(url=to_unicode(issuer.origin),
+                                name=to_unicode(issuer.name),
+                                email=to_unicode(issuer.contact),
+                                description=to_unicode(issuer.org))
+    return result
+
 
 @component.adapter(ITahrirBadge)
 @interface.implementer(IBadgeClass)
 def tahrir_badge_to_mozilla_badge(badge):
-	tags = tuple(to_unicode(x.lower()) for x in ((badge.tags or '').split(',')) if x)
-	# request from the db if possible.
-	# We've seen some some NoSuchColumnError in MySQL when
-	# trying to use the badge issuer reference
-	issuer_id = badge.issuer_id
-	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else None
-	issuer = badge.issuer if issuer is None else issuer
-	issuer = IIssuerOrganization(issuer, None)
+    tags = tuple(to_unicode(x.lower())
+                 for x in ((badge.tags or '').split(',')) if x)
+    # request from the db if possible.
+    # We've seen some some NoSuchColumnError in MySQL when
+    # trying to use the badge issuer reference
+    issuer_id = badge.issuer_id
+    issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else None
+    issuer = badge.issuer if issuer is None else issuer
+    issuer = IIssuerOrganization(issuer, None)
 
-	result = BadgeClass(tags=tags,
-						name=to_unicode(badge.name),
-						image=to_unicode(badge.image),
-						criteria=to_unicode(badge.criteria),
-						description=to_unicode(badge.description))
-	if issuer:
-		result.issuer = issuer
-	else:
-		logger.warn("Could not set issuer for badge %s", result.name)
-	tag_badge_interfaces(badge, result)
-	return result
+    result = BadgeClass(tags=tags,
+                        name=to_unicode(badge.name),
+                        image=to_unicode(badge.image),
+                        criteria=to_unicode(badge.criteria),
+                        description=to_unicode(badge.description))
+    if issuer:
+        result.issuer = issuer
+    else:
+        logger.warn("Could not set issuer for badge %s", result.name)
+    tag_badge_interfaces(badge, result)
+    return result
+
 
 @component.adapter(ITahrirAssertion)
 @interface.implementer(IBadgeAssertion)
 def tahrir_assertion_to_mozilla_assertion(assertion):
-	badge_id = assertion.badge_id
-	badge = get_tahrir_badge_by_id(badge_id) if badge_id is not None else None
-	badge = assertion.badge if badge is None else badge
+    badge_id = assertion.badge_id
+    badge = get_tahrir_badge_by_id(badge_id) if badge_id is not None else None
+    badge = assertion.badge if badge is None else badge
 
-	person_id = assertion.person_id
-	person = get_tahrir_person_by_id(person_id) if person_id is not None else None
-	person = assertion.person if person is None else person
+    person_id = assertion.person_id
+    person = get_tahrir_person_by_id(person_id) if person_id is not None else None
+    person = assertion.person if person is None else person
 
-	# issuer
-	issuer_id = badge.issuer_id
-	issuer = get_tahrir_issuer_by_id(issuer_id) if issuer_id is not None else None
-	issuer = badge.issuer if issuer is None else issuer
-	verify = IVerificationObject(issuer)
+    # issuer
+    issuer_id = badge.issuer_id
+    issuer = get_tahrir_issuer_by_id(
+        issuer_id) if issuer_id is not None else None
+    issuer = badge.issuer if issuer is None else issuer
+    verify = IVerificationObject(issuer)
 
-	# recipient
-	salt = getattr(assertion, 'salt', None)
-	identity = assertion.recipient if salt else person.email
-	recipient = IdentityObject(salt=salt,
-							   identity=identity,
-							   hashed=(True if salt else False),
-							   type=ID_TYPE_EMAIL)
+    # recipient
+    salt = getattr(assertion, 'salt', None)
+    identity = assertion.recipient if salt else person.email
+    recipient = IdentityObject(salt=salt,
+                               identity=identity,
+                               hashed=(True if salt else False),
+                               type=ID_TYPE_EMAIL)
 
-	# exported
-	exported = getattr(assertion, 'exported', None) or False
+    # exported
+    exported = getattr(assertion, 'exported', None) or False
 
-	# assertion
-	aid = assertion.id or u"%s -> %s" % (badge.name, person.email)
-	result = BadgeAssertion(uid=aid,
-							verify=verify,
-							recipient=recipient,
-							image=to_unicode(badge.image),
-							issuedOn=assertion.issued_on,
-							badge=IBadgeClass(badge),
-							exported=exported)
-	return result
+    # assertion
+    aid = assertion.id or u"%s -> %s" % (badge.name, person.email)
+    result = BadgeAssertion(uid=aid,
+                            verify=verify,
+                            recipient=recipient,
+                            image=to_unicode(badge.image),
+                            issuedOn=assertion.issued_on,
+                            badge=IBadgeClass(badge),
+                            exported=exported)
+    return result
+
 
 @component.adapter(ITahrirAssertion)
 @interface.implementer(IBadgeClass)
 def tahrir_assertion_to_mozilla_badge(assertion):
-	return IBadgeClass(assertion.badge)
+    return IBadgeClass(assertion.badge)
+
 
 @component.adapter(ITahrirIssuer)
 @interface.implementer(INTIIssuer)
 def tahrir_issuer_to_ntiissuer(issuer):
-	result = NTIIssuer(name=to_unicode(issuer.name),
-					   origin=to_unicode(issuer.origin),
-					   email=to_unicode(issuer.contact),
-					   organization=to_unicode(issuer.org),
-					   createdTime=time.mktime(issuer.created_on.timetuple()))
-	return result
+    result = NTIIssuer(name=to_unicode(issuer.name),
+                       origin=to_unicode(issuer.origin),
+                       email=to_unicode(issuer.contact),
+                       organization=to_unicode(issuer.org),
+                       createdTime=time.mktime(issuer.created_on.timetuple()))
+    return result
+
 
 @component.adapter(ITahrirBadge)
 @interface.implementer(INTIBadge)
 def tahrir_badge_to_ntibadge(badge):
-	tags = tuple(to_unicode(x.lower()) for x in ((badge.tags or '').split(',')) if x)
-	issuer = INTIIssuer(badge.issuer, None)
-	result = NTIBadge(issuer=issuer,
-					  tags=tuple(tags),
-					  name=to_unicode(badge.name),
-					  image=to_unicode(badge.image),
-					  criteria=to_unicode(badge.criteria),
-					  description=to_unicode(badge.description),
-					  createdTime=time.mktime(badge.created_on.timetuple()))
-	return result
+    tags = tuple(to_unicode(x.lower())
+                 for x in ((badge.tags or '').split(',')) if x)
+    issuer = INTIIssuer(badge.issuer, None)
+    result = NTIBadge(issuer=issuer,
+                      tags=tuple(tags),
+                      name=to_unicode(badge.name),
+                      image=to_unicode(badge.image),
+                      criteria=to_unicode(badge.criteria),
+                      description=to_unicode(badge.description),
+                      createdTime=time.mktime(badge.created_on.timetuple()))
+    return result
+
 
 @component.adapter(ITahrirAssertion)
 @interface.implementer(INTIAssertion)
 def tahrir_assertion_to_ntiassertion(assertion):
-	badge = INTIBadge(assertion.badge)
-	interface.alsoProvides(badge, IEarnedBadge)
-	exported = getattr(assertion, 'exported', None) or False
-	issuedOn = time.mktime(assertion.issued_on.timetuple())
-	result = NTIAssertion(uid=assertion.id,
-						  badge=badge,
-						  issuedOn=issuedOn,
-						  person=INTIPerson(assertion.person),
-						  recipient=to_unicode(assertion.recipient),
-						  salt=getattr(assertion, 'salt', None),
-						  exported=exported)
-	return result
+    badge = INTIBadge(assertion.badge)
+    interface.alsoProvides(badge, IEarnedBadge)
+    exported = getattr(assertion, 'exported', None) or False
+    issuedOn = time.mktime(assertion.issued_on.timetuple())
+    result = NTIAssertion(uid=assertion.id,
+                          badge=badge,
+                          issuedOn=issuedOn,
+                          person=INTIPerson(assertion.person),
+                          recipient=to_unicode(assertion.recipient),
+                          salt=getattr(assertion, 'salt', None),
+                          exported=exported)
+    return result
+
 
 @component.adapter(ITahrirPerson)
 @interface.implementer(INTIPerson)
 def tahrir_person_to_ntiperson(person):
-	result = NTIPerson(name=to_unicode(person.nickname),
-					   email=to_unicode(person.email),
-					   createdTime=time.mktime(person.created_on.timetuple()))
-	# not part of the interface but keep them
-	result.bio = to_unicode(person.bio)
-	result.website = to_unicode(person.website)
-	return result
+    result = NTIPerson(name=to_unicode(person.nickname),
+                       email=to_unicode(person.email),
+                       createdTime=time.mktime(person.created_on.timetuple()))
+    # not part of the interface but keep them
+    result.bio = to_unicode(person.bio)
+    result.website = to_unicode(person.website)
+    return result
 
 # nti->
+
 
 @component.adapter(INTIIssuer)
 @interface.implementer(ITahrirIssuer)
 def ntiissuer_to_tahrir_issuer(issuer):
-	result = Issuer()
-	result.name = to_unicode(issuer.name)
-	result.contact = to_unicode(issuer.email)
-	result.origin = to_unicode(issuer.origin)
-	result.org = to_unicode(issuer.organization)
-	return result
+    result = Issuer()
+    result.name = to_unicode(issuer.name)
+    result.contact = to_unicode(issuer.email)
+    result.origin = to_unicode(issuer.origin)
+    result.org = to_unicode(issuer.organization)
+    return result
+
 
 @component.adapter(INTIBadge)
 @interface.implementer(ITahrirBadge)
 def ntibadge_to_tahrir_badge(badge):
-	# XXX: Issuer is not set
-	tags = ','.join(badge.tags)
-	result = Badge(tags=tags,
-				   name=to_unicode(badge.name),
-				   image=to_unicode(badge.image),
-				   criteria=to_unicode(badge.criteria),
-				   description=to_unicode(badge.description),
-				   created_on=datetime.fromtimestamp(badge.createdTime))
-	tag_badge_interfaces(badge, result)
-	return result
+    # XXX: Issuer is not set
+    tags = ','.join(badge.tags)
+    result = Badge(tags=tags,
+                   name=to_unicode(badge.name),
+                   image=to_unicode(badge.image),
+                   criteria=to_unicode(badge.criteria),
+                   description=to_unicode(badge.description),
+                   created_on=datetime.fromtimestamp(badge.createdTime))
+    tag_badge_interfaces(badge, result)
+    return result
+
 
 @component.adapter(INTIIssuer)
 @interface.implementer(IVerificationObject)
 def ntiissuer_to_mozilla_verification_object(issuer):
-	verify = VerificationObject(type=VO_TYPE_HOSTED,
-								url=to_unicode(issuer.origin))
-	return verify
+    verify = VerificationObject(type=VO_TYPE_HOSTED,
+                                url=to_unicode(issuer.origin))
+    return verify
+
 
 @component.adapter(INTIIssuer)
 @interface.implementer(IIssuerOrganization)
 def ntiissuer_to_mozilla_issuer(issuer):
-	result = IssuerOrganization(name=to_unicode(issuer.name),
-						  		url=to_unicode(issuer.origin),
-						  		email=issuer.email)
-	return result
+    result = IssuerOrganization(name=to_unicode(issuer.name),
+                                url=to_unicode(issuer.origin),
+                                email=issuer.email)
+    return result
+
 
 @component.adapter(INTIBadge)
 @interface.implementer(IBadgeClass)
 def ntibadge_to_mozilla_badge(badge):
-	issuer = badge.issuer
-	result = BadgeClass(tags=badge.tags,
-						name=to_unicode(badge.name),
-						image=to_unicode(badge.image),
-						issuer=to_unicode(issuer.origin),
-						description=badge.description,
-						criteria=to_unicode(badge.criteria))
-	tag_badge_interfaces(badge, result)
-	return result
+    issuer = badge.issuer
+    result = BadgeClass(tags=badge.tags,
+                        name=to_unicode(badge.name),
+                        image=to_unicode(badge.image),
+                        issuer=to_unicode(issuer.origin),
+                        description=badge.description,
+                        criteria=to_unicode(badge.criteria))
+    tag_badge_interfaces(badge, result)
+    return result
+
 
 @component.adapter(INTIAssertion)
 @interface.implementer(IBadgeAssertion)
 def ntiassertion_to_mozilla_assertion(assertion):
-	badge = assertion.badge
-	issuer = badge.issuer
-	issuedOn = assertion.issuedOn
-	identity = assertion.recipient or assertion.person
-	verify = IVerificationObject(issuer)
-	recipient = IdentityObject(identity=identity,
-							   type=ID_TYPE_EMAIL,
-							   hashed=(assertion.salt is not None),
-							   salt=assertion.salt)
-	result = BadgeAssertion(uid=assertion.id,
-							verify=verify,
-							recipient=recipient,
-							image=to_unicode(badge.image),
-							badge=IBadgeClass(badge),
-							exported=assertion.exported,
-							issuedOn=datetime.fromtimestamp(issuedOn))
-	return result
+    badge = assertion.badge
+    issuer = badge.issuer
+    issuedOn = assertion.issuedOn
+    identity = assertion.recipient or assertion.person
+    verify = IVerificationObject(issuer)
+    recipient = IdentityObject(identity=identity,
+                               type=ID_TYPE_EMAIL,
+                               hashed=(assertion.salt is not None),
+                               salt=assertion.salt)
+    result = BadgeAssertion(uid=assertion.id,
+                            verify=verify,
+                            recipient=recipient,
+                            image=to_unicode(badge.image),
+                            badge=IBadgeClass(badge),
+                            exported=assertion.exported,
+                            issuedOn=datetime.fromtimestamp(issuedOn))
+    return result
+
 
 @component.adapter(INTIAssertion)
 @interface.implementer(IBadgeClass)
 def ntiassertion_to_mozilla_badge(assertion):
-	result = IBadgeClass(assertion.badge)
-	return result
+    result = IBadgeClass(assertion.badge)
+    return result
+
 
 @component.adapter(INTIPerson)
 @interface.implementer(ITahrirPerson)
 def ntiperson_to_tahrir_person(nti):
-	result = Person()
-	result.email = to_unicode(nti.email)
-	result.nickname = to_unicode(nti.name)
-	result.bio = to_unicode(getattr(nti, "bio", None) or '')
-	result.website = to_unicode(getattr(nti, "website", None) or '')
-	result.created_on = datetime.fromtimestamp(nti.createdTime)
-	return result
+    result = Person()
+    result.email = to_unicode(nti.email)
+    result.nickname = to_unicode(nti.name)
+    result.bio = to_unicode(getattr(nti, "bio", None) or '')
+    result.website = to_unicode(getattr(nti, "website", None) or '')
+    result.created_on = datetime.fromtimestamp(nti.createdTime)
+    return result
 
 # mozilla->
+
 
 @component.adapter(IIdentityObject)
 @interface.implementer(ITahrirPerson)
 def mozilla_identity_object_to_tahrir_person(io):
-	result = Person()
-	result.email = to_unicode(io.identity)
-	return result
+    result = Person()
+    result.email = to_unicode(io.identity)
+    return result
+
 
 @component.adapter(IIssuerOrganization)
 @interface.implementer(ITahrirIssuer)
 def mozilla_issuer_to_tahrir_issuer(issuer):
-	result = Issuer()
-	result.org = to_unicode(issuer.url)
-	result.name = to_unicode(issuer.name)
-	result.origin = to_unicode(issuer.url)
-	result.image = to_unicode(issuer.image)
-	result.contact = to_unicode(issuer.email)
-	return result
+    result = Issuer()
+    result.org = to_unicode(issuer.url)
+    result.name = to_unicode(issuer.name)
+    result.origin = to_unicode(issuer.url)
+    result.image = to_unicode(issuer.image)
+    result.contact = to_unicode(issuer.email)
+    return result
+
 
 @component.adapter(IIssuerOrganization)
 @interface.implementer(INTIIssuer)
 def mozilla_issuer_to_ntiisuer(issuer):
-	result = NTIIssuer(name=to_unicode(issuer.name),
-					   origin=to_unicode(issuer.url),
-					   email=to_unicode(issuer.email),
-					   organization=to_unicode(issuer.url))
-	return result
+    result = NTIIssuer(name=to_unicode(issuer.name),
+                       origin=to_unicode(issuer.url),
+                       email=to_unicode(issuer.email),
+                       organization=to_unicode(issuer.url))
+    return result
+
 
 @component.adapter(IIdentityObject)
 @interface.implementer(INTIPerson)
 def mozilla_identityobject_to_ntiperson(iio):
-	result = NTIPerson(email=to_unicode(iio.identity), name=to_unicode(iio.identity))
-	return result
+    result = NTIPerson(email=to_unicode(iio.identity),
+                       name=to_unicode(iio.identity))
+    return result
+
 
 @component.adapter(IBadgeClass)
 @interface.implementer(ITahrirBadge)
 def mozilla_badge_to_tahrir_badge(badge):
-	# XXX: Issuer is not set
-	result = Badge()
-	result.name = to_unicode(badge.name)
-	result.image = to_unicode(badge.image)
-	result.criteria = to_unicode(badge.criteria)
-	result.tags = to_unicode(','.join(badge.tags))
-	result.description = to_unicode(badge.description)
-	tag_badge_interfaces(badge, result)
-	return result
+    # XXX: Issuer is not set
+    result = Badge()
+    result.name = to_unicode(badge.name)
+    result.image = to_unicode(badge.image)
+    result.criteria = to_unicode(badge.criteria)
+    result.tags = to_unicode(','.join(badge.tags))
+    result.description = to_unicode(badge.description)
+    tag_badge_interfaces(badge, result)
+    return result
+
 
 @component.adapter(IBadgeClass)
 @interface.implementer(INTIBadge)
 def mozilla_badge_to_ntibadge(badge):
-	# XXX: Issuer is not set
-	result = NTIBadge(tags=badge.tags,
-					  name=to_unicode(badge.name),
-					  image=to_unicode(badge.image),
-					  criteria=to_unicode(badge.criteria),
-					  description=to_unicode(badge.description),
-					  createdTime=time.time())
-	return result
+    # XXX: Issuer is not set
+    result = NTIBadge(tags=badge.tags,
+                      name=to_unicode(badge.name),
+                      image=to_unicode(badge.image),
+                      criteria=to_unicode(badge.criteria),
+                      description=to_unicode(badge.description),
+                      createdTime=time.time())
+    return result
