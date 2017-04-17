@@ -14,6 +14,8 @@ from zope.interface.interfaces import IObjectEvent
 
 from zope.schema import vocabulary
 
+from zope.security.interfaces import IPrincipal
+
 from nti.badges.interfaces import ITaggedContent
 from nti.badges.interfaces import IBadgeClass as IBadgeMarker
 from nti.badges.interfaces import IBadgeIssuer as IIssuerMarker
@@ -107,10 +109,9 @@ class IBadgeAssertion(IAssertionMarker):
     recipient = Object(IIdentityObject, 
                        title="The recipient of the achievement")
 
-    badge = Variant((
-        Object(IBadgeClass, title="Badge class"),
-        ValidTextLine(title='Badge URL')),
-        title="Badge being awarded")
+    badge = Variant((Object(IBadgeClass, title="Badge class"),
+                     ValidTextLine(title='Badge URL')),
+                    title="Badge being awarded")
 
     verify = Object(IVerificationObject,
                     title="Data to help a third party verify this assertion")
@@ -134,6 +135,9 @@ class IBadgeAwardedEvent(IObjectEvent):
     """
     Interface for an add assertion event
     """
+    giver = Object(IPrincipal, 
+                   title="Person giving of the achievement")
+
     assertion = Object(IBadgeAssertion,
                        title="Assertion added")
 
@@ -144,3 +148,7 @@ class BadgeAwardedEvent(ObjectEvent):
     Add assertion event
     """
     assertion = alias('object')
+    
+    def __init__(self, obj, giver=None):
+        ObjectEvent.__init__(self, obj)
+        self.giver = giver
