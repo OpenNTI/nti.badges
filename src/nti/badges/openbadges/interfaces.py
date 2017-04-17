@@ -140,7 +140,7 @@ class IBadgeAwardedEvent(IObjectEvent):
 
     assertion = Object(IBadgeAssertion,
                        title="Assertion added")
-
+IBadgeAssertionAddedEvent = IBadgeAwardedEvent
 
 @interface.implementer(IBadgeAwardedEvent)
 class BadgeAwardedEvent(ObjectEvent):
@@ -153,3 +153,4 @@ class BadgeAwardedEvent(ObjectEvent):
     def __init__(self, obj, creator=None):
         ObjectEvent.__init__(self, obj)
         self.creator = creator
+BadgeAssertionAddedEvent = BadgeAwardedEvent
