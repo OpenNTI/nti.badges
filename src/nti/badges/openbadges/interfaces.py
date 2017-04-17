@@ -117,8 +117,8 @@ class IBadgeAssertion(IAssertionMarker):
 
     issuedOn = ValidDatetime(title="date that the achievement was awarded")
 
-    image = ValidTextLine(
-        title="Image representing this user's achievement", required=False)
+    image = ValidTextLine(title="Image representing this user's achievement", 
+                          required=False)
 
     evidence = ValidTextLine(title='URL of the work that the recipient did to earn the achievement',
                              required=False)
