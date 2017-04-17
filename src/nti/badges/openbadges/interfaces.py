@@ -147,8 +147,9 @@ class BadgeAwardedEvent(ObjectEvent):
     """
     Add assertion event
     """
+    giver = alias('creator')
     assertion = alias('object')
     
-    def __init__(self, obj, giver=None):
+    def __init__(self, obj, creator=None):
         ObjectEvent.__init__(self, obj)
-        self.giver = giver
+        self.creator = creator
