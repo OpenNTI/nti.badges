@@ -19,6 +19,8 @@ from nti.badges.interfaces import IBadgeClass as IBadgeMarker
 from nti.badges.interfaces import IBadgeIssuer as IIssuerMarker
 from nti.badges.interfaces import IBadgeAssertion as IAssertionMarker
 
+from nti.property.property import alias
+
 from nti.schema.field import Bool
 from nti.schema.field import Choice
 from nti.schema.field import Object
@@ -129,9 +131,16 @@ class IBadgeAssertion(IAssertionMarker):
 
 
 class IBadgeAwardedEvent(IObjectEvent):
-    pass
+    """
+    Interface for an add assertion event
+    """
+    assertion = Object(IBadgeAssertion,
+                       title="Assertion added")
 
 
 @interface.implementer(IBadgeAwardedEvent)
 class BadgeAwardedEvent(ObjectEvent):
-    pass
+    """
+    Add assertion event
+    """
+    assertion = alias('object')
