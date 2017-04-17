@@ -34,80 +34,86 @@ from nti.schema.field import SchemaConfigured
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
+
 @WithRepr
 @NoPickle
 @EqHash('url', 'type')
 @interface.implementer(IVerificationObject, IContentTypeAware)
 class VerificationObject(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(IVerificationObject)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(IVerificationObject)
 
-	__external_class_name__ = "Verification"
-	mime_type = mimeType = 'application/vnd.nextthought.openbadges.verificationobject'
+    __external_class_name__ = "Verification"
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.verificationobject'
+
 
 @WithRepr
 @NoPickle
 @EqHash('identity', 'type')
 @interface.implementer(IIdentityObject, IContentTypeAware)
 class IdentityObject(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(IIdentityObject)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(IIdentityObject)
 
-	__external_class_name__ = "Identity"
-	mime_type = mimeType = 'application/vnd.nextthought.openbadges.identityobject'
+    __external_class_name__ = "Identity"
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.identityobject'
+
 
 @WithRepr
 @NoPickle
 @EqHash('url', 'name')
 @interface.implementer(IAlignmentObject, IContentTypeAware)
 class AlignmentObject(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(IAlignmentObject)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(IAlignmentObject)
 
-	__external_class_name__ = "Alignment"
-	mime_type = mimeType = 'application/vnd.nextthought.openbadges.alignmentobject'
+    __external_class_name__ = "Alignment"
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.alignmentobject'
+
 
 @WithRepr
 @NoPickle
 @EqHash('name', 'url')
 @interface.implementer(IIssuerOrganization, IContentTypeAware)
 class IssuerOrganization(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(IIssuerOrganization)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(IIssuerOrganization)
 
-	__external_class_name__ = "Issuer"
-	mime_type = mimeType = 'application/vnd.nextthought.openbadges.issuer'
+    __external_class_name__ = "Issuer"
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.issuer'
 
-	origin = alias('url')
-	contact = alias('email')
-	issued_on = alias('issuedOn')
+    origin = alias('url')
+    contact = alias('email')
+    issued_on = alias('issuedOn')
+
 
 @WithRepr
 @NoPickle
 @EqHash('name')
 @interface.implementer(IBadgeClass, IContentTypeAware)
 class BadgeClass(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(IBadgeClass)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(IBadgeClass)
 
-	__external_class_name__ = "Badge"
-	mime_type = mimeType = 'application/vnd.nextthought.openbadges.badge'
+    __external_class_name__ = "Badge"
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.badge'
 
-	def __init__(self, *args, **kwargs):
-		if 'tags' in kwargs:
-			kwargs['tags'] = IBadgeClass['tags'].fromObject(kwargs['tags'])
-		SchemaConfigured.__init__(self, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        if 'tags' in kwargs:
+            kwargs['tags'] = IBadgeClass['tags'].fromObject(kwargs['tags'])
+        SchemaConfigured.__init__(self, *args, **kwargs)
+
 
 @WithRepr
 @NoPickle
 @EqHash('uid', 'recipient')
 @interface.implementer(IBadgeAssertion, IContentTypeAware)
 class BadgeAssertion(SchemaConfigured):
-	__metaclass__ = MetaBadgeObject
-	createDirectFieldProperties(IBadgeAssertion)
+    __metaclass__ = MetaBadgeObject
+    createDirectFieldProperties(IBadgeAssertion)
 
-	__external_class_name__ = "Assertion"
-	mime_type = mimeType = 'application/vnd.nextthought.openbadges.assertion'
+    __external_class_name__ = "Assertion"
+    mime_type = mimeType = 'application/vnd.nextthought.openbadges.assertion'
 
-	id = alias('uid')
-	locked = alias('exported')
+    id = alias('uid')
+    locked = alias('exported')
