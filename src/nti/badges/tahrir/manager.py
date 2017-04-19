@@ -181,8 +181,9 @@ class TahrirBadgeManager(object):
 		badge = self._get_badge(badge, database=database)
 		person = self._get_person(person, database=database)
 		if badge and person:
-			result = database.session.query(Assertion)\
-				   			 .filter_by(person_id=person.id, badge_id=badge.id).scalar()
+			result = database.session.query(Assertion) \
+				   			 .filter_by(person_id=person.id, badge_id=badge.id) \
+				   			 .scalar()
 			if result is not None:
 				result.salt = self.db.salt  # Save salt
 				return result

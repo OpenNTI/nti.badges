@@ -22,26 +22,28 @@ from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import IExternalObject
 
+
 @component.adapter(IBadge)
 @interface.implementer(IExternalObject)
 class _BadgeExternalizer(object):
 
-	__slots__ = ('badge',)
+    __slots__ = ('badge',)
 
-	def __init__(self, badge):
-		self.badge = badge
+    def __init__(self, badge):
+        self.badge = badge
 
-	def toExternalObject(self, *args, **kwargs):
-		return to_external_object(IBadgeClass(self.badge))
+    def toExternalObject(self, *args, **kwargs):
+        return to_external_object(IBadgeClass(self.badge))
+
 
 @component.adapter(IIssuer)
 @interface.implementer(IExternalObject)
 class _IssuerExternalizer(object):
 
-	__slots__ = ('issuer',)
+    __slots__ = ('issuer',)
 
-	def __init__(self, issuer):
-		self.issuer = issuer
+    def __init__(self, issuer):
+        self.issuer = issuer
 
-	def toExternalObject(self, *args, **kwargs):
-		return to_external_object(IIssuerOrganization(self.issuer))
+    def toExternalObject(self, *args, **kwargs):
+        return to_external_object(IIssuerOrganization(self.issuer))
