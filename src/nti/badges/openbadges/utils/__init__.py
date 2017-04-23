@@ -16,11 +16,13 @@ from urlparse import urljoin
 from urlparse import urlparse
 from datetime import datetime
 from collections import Mapping
-from dateutil.parser import parse
+from dateutil.parser import parse as dateutil_parse
 
 import simplejson
 
 from requests.structures import CaseInsensitiveDict
+
+from zope.interface.common.idatetime import IDateTime
 
 from itsdangerous import BadSignature
 from itsdangerous import JSONWebSignatureSerializer
@@ -44,9 +46,15 @@ DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
 VALID_SCHEMES = ('http', 'https', 'file', 'ftp', 'sftp')
 
 
-def _datetime(s):
+def parse_datetime(s):
     if isinstance(s, six.string_types):
-        result = parse(s)
+        for func in (dateutil_parse, IDateTime):
+            try:
+                result = func(s)
+                if result is not None:
+                    break
+            except Exception:
+                result = None
     else:
         result = datetime.fromtimestamp(float(s))
     return result
@@ -124,12 +132,12 @@ def json_source_to_map(source, **kwargs):
 def issuer_from_source(source, **kwargs):
     data = json_source_to_map(source, **kwargs)
     result = IssuerOrganization()
-    for field, func in (('name', unicode_), 
-                        ('image', unicode_), 
-                        ('url', unicode_),
+    for field, func in (('url', unicode_),
+                        ('name', unicode_), 
                         ('email', unicode_), 
-                        ('revocationList', unicode_),
-                        ('description', unicode_)):
+                        ('image', unicode_),
+                        ('description', unicode_),
+                        ('revocationList', unicode_)):
         value = data.get(field)
         value = func(value) if value else None
         setattr(result, field, value)
@@ -147,9 +155,9 @@ def badge_from_source(source, **kwargs):
 
     # parse common single value fields
     for field, func in (('name', unicode_),
-                        ('description', unicode_),
+                        ('image', unicode_),
                         ('criteria', unicode_), 
-                        ('image', unicode_)):
+                        ('description', unicode_)):
         value = data.get(field)
         value = func(value) if value else None
         setattr(result, field, value)
@@ -184,9 +192,9 @@ def assertion_from_source(source, **kwargs):
     # parse common single value fields
     for field, func in (('uid', unicode_), 
                         ('image', unicode_), 
-                        ('issuedOn', _datetime),
                         ('evidence', unicode_), 
-                        ('expires', _datetime)):
+                        ('expires', parse_datetime),
+                        ('issuedOn', parse_datetime)):
         value = data.get(field)
         value = func(value) if value else None
         setattr(result, field, value)
