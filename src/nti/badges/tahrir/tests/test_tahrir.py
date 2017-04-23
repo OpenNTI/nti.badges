@@ -14,10 +14,11 @@ does_not = is_not
 
 from zope import component
 
-from nti.badges.tahrir import interfaces
 from nti.badges.tahrir import get_tahrir_badge_by_id
 from nti.badges.tahrir import get_tahrir_issuer_by_id
 from nti.badges.tahrir import get_tahrir_person_by_id
+
+from nti.badges.tahrir.interfaces import ITahrirBadgeManager
 
 from nti.badges.tahrir.manager import create_badge_manager
 
@@ -27,7 +28,7 @@ from nti.badges.tests import NTIBadgesTestCase
 class TestTahrir(NTIBadgesTestCase):
 
     def setUp(self):
-        self.old = component.getUtility(interfaces.ITahrirBadgeManager)
+        self.old = component.getUtility(ITahrirBadgeManager)
         self.new = create_badge_manager(dburi='sqlite://')
         component.provideUtility(self.new)
 
@@ -48,8 +49,8 @@ class TestTahrir(NTIBadgesTestCase):
                                         criteria=u'http://foss.rit.edu',
                                         issuer_id=issuer_id)
 
-        person_id = manager.db.add_person(email="person@site.com",
-                                          nickname="person")
+        person_id = manager.db.add_person(email=u"person@site.com",
+                                          nickname=u"person")
 
         issuer = get_tahrir_issuer_by_id(issuer_id)
         assert_that(issuer, is_not(none()))
