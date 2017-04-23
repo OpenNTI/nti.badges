@@ -15,12 +15,13 @@ from hamcrest import assert_that
 does_not = is_not
 
 import os
-from cStringIO import StringIO
-       
+from six import StringIO
+
 from nti.badges.openbadges.utils import load_data
 from nti.badges.openbadges.utils.badgebakery import get_baked_data, bake_badge
 
 from nti.badges.tests import NTIBadgesTestCase
+
 
 class TestBadgeBakery(NTIBadgesTestCase):
 
@@ -28,7 +29,7 @@ class TestBadgeBakery(NTIBadgesTestCase):
         path = os.path.join(os.path.dirname(__file__), 'ichigo.png')
         with open(path, "rb") as fp:
             PNG = fp.read()
-    
+
         unbaked = StringIO(PNG)
         assert_that(get_baked_data(unbaked), is_(none()))
 
@@ -37,7 +38,8 @@ class TestBadgeBakery(NTIBadgesTestCase):
         bake_badge(unbaked, baked, url='http://foo.org/assertion.json')
 
         baked = StringIO(baked.getvalue())
-        assert_that(get_baked_data(baked), is_('http://foo.org/assertion.json'))
+        assert_that(get_baked_data(baked), 
+                    is_('http://foo.org/assertion.json'))
 
         rebaked = StringIO()
         baked = StringIO(baked.getvalue())
@@ -50,7 +52,7 @@ class TestBadgeBakery(NTIBadgesTestCase):
         path = os.path.join(os.path.dirname(__file__), 'ichigo.png')
         with open(path, "rb") as fp:
             PNG = fp.read()
-    
+
         baked = StringIO()
         unbaked = StringIO(PNG)
         payload = {'manga': 'bleach'}

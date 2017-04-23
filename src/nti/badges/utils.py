@@ -16,7 +16,7 @@ class MetaBadgeObject(type):
         t = type.__new__(cls, name, bases, dct)
         if 'mimeType' not in dct:
             clazzname = getattr(cls, '__external_class_name__', name)
-            clazzname = b'.' + clazzname.encode('ascii').lower()
+            clazzname = '.' + clazzname.encode('ascii').lower()
             t.mimeType = 'application/vnd.nextthought.badges' + clazzname
             t.mime_type = t.mimeType
         t.parameters = dict()

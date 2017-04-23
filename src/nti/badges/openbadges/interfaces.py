@@ -32,14 +32,14 @@ from nti.schema.field import ListOrTuple
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
-VO_TYPE_HOSTED = 'hosted'
-VO_TYPE_SIGNED = 'signed'
+VO_TYPE_HOSTED = u'hosted'
+VO_TYPE_SIGNED = u'signed'
 VO_TYPES = (VO_TYPE_HOSTED, VO_TYPE_SIGNED)
 VO_TYPES_VOCABULARY = \
     vocabulary.SimpleVocabulary([vocabulary.SimpleTerm(_x) for _x in VO_TYPES])
 
-ID_TYPE_EMAIL = 'email'
-ID_TYPE_USERNAME = 'username'
+ID_TYPE_EMAIL = u'email'
+ID_TYPE_USERNAME = u'username'
 ID_TYPES = (ID_TYPE_EMAIL, ID_TYPE_USERNAME)
 ID_TYPES_VOCABULARY = \
     vocabulary.SimpleVocabulary([vocabulary.SimpleTerm(_x) for _x in ID_TYPES])
@@ -47,59 +47,59 @@ ID_TYPES_VOCABULARY = \
 
 class IVerificationObject(interface.Interface):
     type = Choice(vocabulary=VO_TYPES_VOCABULARY,
-                  title='Verification method',
+                  title=u'Verification method',
                   required=True)
     url = ValidTextLine(
-        title="URL pointing to the assertion or issuer's public key")
+        title=u"URL pointing to the assertion or issuer's public key")
 
 
 class IIssuerOrganization(IIssuerMarker):
-    name = ValidTextLine(title="The name of the issuing organization.")
-    url = ValidTextLine(title='URL of the institution')
-    image = ValidTextLine(title='Issuer URL logo', required=False)
-    email = ValidTextLine(title="Issuer email", required=False)
-    description = ValidText(title="Issuer description", required=False)
-    revocationList = ValidTextLine(title='Issuer revocations URL', 
+    name = ValidTextLine(title=u"The name of the issuing organization.")
+    url = ValidTextLine(title=u'URL of the institution')
+    image = ValidTextLine(title=u'Issuer URL logo', required=False)
+    email = ValidTextLine(title=u"Issuer email", required=False)
+    description = ValidText(title=u"Issuer description", required=False)
+    revocationList = ValidTextLine(title=u'Issuer revocations URL', 
                                    required=False)
 
 
 class IIdentityObject(interface.Interface):
-    identity = ValidTextLine(title="identity hash or text")
+    identity = ValidTextLine(title=u"identity hash or text")
 
     type = Choice(vocabulary=ID_TYPES_VOCABULARY,
-                  title='The type of identity',
+                  title=u'The type of identity',
                   required=True, default=ID_TYPE_EMAIL)
 
-    hashed = Bool(title='Whether or not the id value is hashed',
+    hashed = Bool(title=u'Whether or not the id value is hashed',
                   required=False, default=False)
 
-    salt = ValidTextLine(title="Salt string", required=False)
+    salt = ValidTextLine(title=u"Salt string", required=False)
 
 
 class IAlignmentObject(interface.Interface):
-    name = ValidTextLine(title="The name of the alignment")
+    name = ValidTextLine(title=u"The name of the alignment")
     url = ValidTextLine(
-        title='URL linking to the official description of the standard')
-    description = ValidText(title="Short description of the standard",
+        title=u'URL linking to the official description of the standard')
+    description = ValidText(title=u"Short description of the standard",
                             required=False)
 
 
 class IBadgeClass(ITaggedContent, IBadgeMarker):
 
-    description = ValidText(title="A short description of the achievement")
+    description = ValidText(title=u"A short description of the achievement")
 
     image = ValidTextLine(
-        title="Image representing the achievement (URL/FileName/DataURI)")
+        title=u"Image representing the achievement (URL/FileName/DataURI)")
 
     criteria = ValidTextLine(
-        title='URL of the criteria for earning the achievement')
+        title=u'URL of the criteria for earning the achievement')
 
-    issuer = Variant((ValidTextLine(title='URL of the organization that issued the badge'),
-                      Object(IIssuerOrganization, title="Issuer object")),
-                     title="Image representing the achievement")
+    issuer = Variant((ValidTextLine(title=u'URL of the organization that issued the badge'),
+                      Object(IIssuerOrganization, title=u"Issuer object")),
+                     title=u"Image representing the achievement")
 
     alignment = ListOrTuple(value_type=Object(IAlignmentObject),
-                            title="Objects describing which educational standards",
+                            title=u"Objects describing which educational standards",
                             required=False,
                             min_length=0)
 
@@ -107,26 +107,26 @@ class IBadgeClass(ITaggedContent, IBadgeMarker):
 class IBadgeAssertion(IAssertionMarker):
 
     recipient = Object(IIdentityObject, 
-                       title="The recipient of the achievement")
+                       title=u"The recipient of the achievement")
 
-    badge = Variant((Object(IBadgeClass, title="Badge class"),
-                     ValidTextLine(title='Badge URL')),
-                    title="Badge being awarded")
+    badge = Variant((Object(IBadgeClass, title=u"Badge class"),
+                     ValidTextLine(title=u'Badge URL')),
+                    title=u"Badge being awarded")
 
     verify = Object(IVerificationObject,
-                    title="Data to help a third party verify this assertion")
+                    title=u"Data to help a third party verify this assertion")
 
-    issuedOn = ValidDatetime(title="date that the achievement was awarded")
+    issuedOn = ValidDatetime(title=u"date that the achievement was awarded")
 
-    image = ValidTextLine(title="Image representing this user's achievement", 
+    image = ValidTextLine(title=u"Image representing this user's achievement", 
                           required=False)
 
-    evidence = ValidTextLine(title='URL of the work that the recipient did to earn the achievement',
+    evidence = ValidTextLine(title=u'URL of the work that the recipient did to earn the achievement',
                              required=False)
 
-    expires = ValidDatetime(title="Achievment expiry", required=False)
+    expires = ValidDatetime(title=u"Achievment expiry", required=False)
 
-    exported = Bool(title="If the assertion has been exported", default=False,
+    exported = Bool(title=u"If the assertion has been exported", default=False,
                     required=False)
     exported.setTaggedValue('_ext_excluded_out', True)
 
@@ -136,10 +136,10 @@ class IBadgeAwardedEvent(IObjectEvent):
     Interface for an add assertion event
     """
     giver = Object(IPrincipal, 
-                   title="Person giving of the achievement")
+                   title=u"Person giving of the achievement")
 
     assertion = Object(IBadgeAssertion,
-                       title="Assertion added")
+                       title=u"Assertion added")
 IBadgeAssertionAddedEvent = IBadgeAwardedEvent
 
 @interface.implementer(IBadgeAwardedEvent)

@@ -37,9 +37,9 @@ class ITaggedContent(interface.Interface):
     Something that can contain tags.
     """
 
-    tags = TupleFromObject(title="Tags applied by the user.",
+    tags = TupleFromObject(title=u"Tags applied by the user.",
                            value_type=Tag(min_length=1, 
-                                          title="A single tag",
+                                          title=u"A single tag",
                                           description=Tag.__doc__, __name__='tags'),
                            unique=True,
                            default=(),
@@ -56,25 +56,25 @@ class IBadgeAssertion(interface.Interface):
     """
     marker interface for all badge assertion
     """
-    uid = ValidTextLine(title="The unique id of the assertion")
+    uid = ValidTextLine(title=u"The unique id of the assertion")
 
 
 class IBadgeClass(interface.Interface):
     """
     marker interface for all badges
     """
-    name = ValidTextLine(title="The name of the badge")
+    name = ValidTextLine(title=u"The name of the badge")
 
 
 class INTIIssuer(IBadgeIssuer,
                  ICreatedTime):
-    name = ValidTextLine(title='Issuer name')
+    name = ValidTextLine(title=u'Issuer name')
 
-    origin = ValidTextLine(title='Issuer origin')
+    origin = ValidTextLine(title=u'Issuer origin')
 
-    organization = ValidTextLine(title='Issuer organization')
+    organization = ValidTextLine(title=u'Issuer organization')
 
-    email = ValidTextLine(title="Issuer email")
+    email = ValidTextLine(title=u"Issuer email")
 
 
 class INTIBadge(ITaggedContent,
@@ -82,43 +82,43 @@ class INTIBadge(ITaggedContent,
                 ICreatedTime):
 
     issuer = Object(INTIIssuer,
-                    title="Badge Issuer",
+                    title=u"Badge Issuer",
                     required=False)
 
-    name = ValidTextLine(title="Badge name")
+    name = ValidTextLine(title=u"Badge name")
 
-    description = ValidText(title="Badge description",
+    description = ValidText(title=u"Badge description",
                             required=False,
                             default='')
 
-    image = ValidTextLine(title='Badge image identifier/URL')
+    image = ValidTextLine(title=u'Badge image identifier/URL')
 
-    criteria = ValidTextLine(title='Badge criteria identifier/URL')
+    criteria = ValidTextLine(title=u'Badge criteria identifier/URL')
 
 
 class INTIPerson(ICreatedTime):
-    name = ValidTextLine(title="Person [unique] name")
-    email = ValidTextLine(title="Person [unique] email")
+    name = ValidTextLine(title=u"Person [unique] name")
+    email = ValidTextLine(title=u"Person [unique] email")
 
 
 class INTIAssertion(IBadgeAssertion):
-    uid = ValidTextLine(title="Assertion id")
+    uid = ValidTextLine(title=u"Assertion id")
 
-    badge = Object(INTIBadge, title="Badge")
+    badge = Object(INTIBadge, title=u"Badge")
 
-    person = Variant((ValidTextLine(title="Badge recipient name/email"),
-                      Object(INTIPerson, title="Badge recipient person")),
-                     title="Badge recipient")
+    person = Variant((ValidTextLine(title=u"Badge recipient name/email"),
+                      Object(INTIPerson, title=u"Badge recipient person")),
+                     title=u"Badge recipient")
 
-    issuedOn = Number(title="Date that the achievement was awarded",
+    issuedOn = Number(title=u"Date that the achievement was awarded",
                       default=0)
 
-    recipient = ValidTextLine(title="Badge recipient email-hash", 
+    recipient = ValidTextLine(title=u"Badge recipient email-hash", 
                               required=False)
-    salt = ValidTextLine(title="One-way function to hash person", 
+    salt = ValidTextLine(title=u"One-way function to hash person", 
                          required=False)
 
-    exported = Bool(title="If the assertion has been exported", 
+    exported = Bool(title=u"If the assertion has been exported", 
                     default=False,
                     required=False)
 

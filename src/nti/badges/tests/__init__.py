@@ -17,6 +17,7 @@ from nti.testing.layers import ConfiguringLayerMixin
 
 import zope.testing.cleanup
 
+
 class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  GCLayerMixin,
                                  ConfiguringLayerMixin):
@@ -39,12 +40,14 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
     def testSetUp(cls, test=None):
         shutil.rmtree(cls.new_data_dir, True)
         os.environ['DATASERVER_DATA_DIR'] = cls.old_data_dir or '/tmp'
-        
+
     @classmethod
     def testTearDown(cls):
         pass
 
+
 import unittest
+
 
 class NTIBadgesTestCase(unittest.TestCase):
     layer = SharedConfiguringTestLayer

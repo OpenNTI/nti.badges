@@ -51,7 +51,7 @@ class TestZcml(nti.testing.base.ConfiguringTestBase):
         issuer = component.queryUtility(IIssuer, name="NTI")
         assert_that(issuer, is_not(none()))
         assert_that(issuer, has_property('name', 'NextThought'))
-        assert_that(issuer, 
+        assert_that(issuer,
                     has_property('origin', 'http://www.nextthought.com'))
         assert_that(issuer, has_property('contact', 'contact@nextthought.com'))
         assert_that(issuer, has_property('org', 'http://www.nextthought.com'))

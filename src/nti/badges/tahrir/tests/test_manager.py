@@ -64,7 +64,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
             manager = create_badge_manager(config=config_file)
             assert_that(manager, has_property('salt', 'ichigo'))
             assert_that(manager, has_property('twophase', is_(True)))
-            assert_that(manager, 
+            assert_that(manager,
                         has_property('dburi', 'mysql://Users:Users@myhost/Tahrir'))
             assert_that(manager, has_property('defaultSQLite', is_(False)))
         finally:
@@ -126,7 +126,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         issuer_id = manager.add_issuer(issuer)
         assert_that(issuer_id, is_not(none()))
 
-        assert_that(manager.get_issuer('FOSS@RIT', u'http://foss.rit.edu/badges'), 
+        assert_that(manager.get_issuer('FOSS@RIT', u'http://foss.rit.edu/badges'),
                     is_not(none()))
 
         badge = Badge()
@@ -167,7 +167,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(manager.get_all_persons(), has_length(1))
 
         eventtesting.clearEvents()
-        assert_that(manager.add_assertion('foo@example.org', 'fossbox'), 
+        assert_that(manager.add_assertion('foo@example.org', 'fossbox'),
                     is_not(False))
 
         # Events
