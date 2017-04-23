@@ -35,7 +35,7 @@ from nti.badges.openbadges.model import AlignmentObject
 from nti.badges.openbadges.model import IssuerOrganization
 from nti.badges.openbadges.model import VerificationObject
 
-from nti.base._compat import to_unicode
+from nti.base._compat import unicode_
 
 #: Default web signature serializer secret
 DEFAULT_SECRET = u'!f^#GQ5md{)Rf&Z'
@@ -45,7 +45,7 @@ VALID_SCHEMES = ('http', 'https', 'file', 'ftp', 'sftp')
 
 
 def _datetime(s):
-    if isinstance(s, basestring):
+    if isinstance(s, six.string_types):
         result = parse(s)
     else:
         result = datetime.fromtimestamp(float(s))
@@ -54,9 +54,9 @@ def _datetime(s):
 
 def mend_url(url, **kwargs):
     base = kwargs.get('base') or kwargs.get('base_url')
-    url = to_unicode(url)
+    url = unicode_(url)
     if base:
-        base = to_unicode(base)
+        base = unicode_(base)
         path = urlparse(url).path
         path = path[1:] if path.startswith('/') else path
         base = base + '/' if not base.endswith('/') else base
@@ -124,12 +124,12 @@ def json_source_to_map(source, **kwargs):
 def issuer_from_source(source, **kwargs):
     data = json_source_to_map(source, **kwargs)
     result = IssuerOrganization()
-    for field, func in (('name', to_unicode), 
-                        ('image', to_unicode), 
-                        ('url', to_unicode),
-                        ('email', to_unicode), 
-                        ('revocationList', to_unicode),
-                        ('description', to_unicode)):
+    for field, func in (('name', unicode_), 
+                        ('image', unicode_), 
+                        ('url', unicode_),
+                        ('email', unicode_), 
+                        ('revocationList', unicode_),
+                        ('description', unicode_)):
         value = data.get(field)
         value = func(value) if value else None
         setattr(result, field, value)
@@ -146,10 +146,10 @@ def badge_from_source(source, **kwargs):
     # rolling our own validation and transformation logic.
 
     # parse common single value fields
-    for field, func in (('name', to_unicode),
-                        ('description', to_unicode),
-                        ('criteria', to_unicode), 
-                        ('image', to_unicode)):
+    for field, func in (('name', unicode_),
+                        ('description', unicode_),
+                        ('criteria', unicode_), 
+                        ('image', unicode_)):
         value = data.get(field)
         value = func(value) if value else None
         setattr(result, field, value)
@@ -163,7 +163,7 @@ def badge_from_source(source, **kwargs):
         result.issuer = mend_url(issuer, **kwargs)
 
     # tags
-    tags = [to_unicode(x) for x in data.get('tags', ())]
+    tags = [unicode_(x) for x in data.get('tags', ())]
     result.tags = IBadgeClass['tags'].bind(result).fromObject(tags)
 
     # alignment objects
@@ -171,8 +171,8 @@ def badge_from_source(source, **kwargs):
     for data in data.get('alignment', ()):
         ao = AlignmentObject()
         ao.url = data['url']
-        ao.name = to_unicode(data['name'])
-        ao.description = to_unicode(data.get('description'))
+        ao.name = unicode_(data['name'])
+        ao.description = unicode_(data.get('description'))
         alignment.append(ao)
     return result
 
@@ -182,10 +182,10 @@ def assertion_from_source(source, **kwargs):
     result = BadgeAssertion()
 
     # parse common single value fields
-    for field, func in (('uid', to_unicode), 
-                        ('image', to_unicode), 
+    for field, func in (('uid', unicode_), 
+                        ('image', unicode_), 
                         ('issuedOn', _datetime),
-                        ('evidence', to_unicode), 
+                        ('evidence', unicode_), 
                         ('expires', _datetime)):
         value = data.get(field)
         value = func(value) if value else None
@@ -201,12 +201,12 @@ def assertion_from_source(source, **kwargs):
     # recipient
     recipient = data['recipient']
     if not isinstance(recipient, Mapping):
-        identity = to_unicode(recipient)
+        identity = unicode_(recipient)
         recipient = data
     else:
-        identity = to_unicode(recipient["identity"])
+        identity = unicode_(recipient["identity"])
 
-    salt = to_unicode(recipient.get("salt"))
+    salt = unicode_(recipient.get("salt"))
     hashed = recipient.get('hashed', True if salt else False)
     result.recipient = IdentityObject(type=ID_TYPE_EMAIL,
                                       identity=identity,
@@ -216,6 +216,6 @@ def assertion_from_source(source, **kwargs):
     # verify
     verify = data['verify']
     result.verify = VerificationObject(type=verify["type"],
-                                       url=to_unicode(verify['url']))
+                                       url=unicode_(verify['url']))
 
     return result
