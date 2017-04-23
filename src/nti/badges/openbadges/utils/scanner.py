@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import six
 import glob
+import codecs
 
 from zope.interface.verify import verifyObject
 
@@ -77,7 +78,7 @@ def flat_scan(path, verify=False, **kwargs):
                 continue
 
             # parse badge json file
-            with open(name, "r") as fp:
+            with codecs.open(name, "r", encoding="utf-8") as fp:
                 badge = parse_badge(fp, verify=verify, **kwargs)
             if badge is None:
                 continue
