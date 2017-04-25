@@ -14,6 +14,8 @@ import ConfigParser
 
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.sqlalchemy import ZopeTransactionExtension
 
 from sqlalchemy import func
@@ -35,8 +37,6 @@ from nti.badges.tahrir.interfaces import IBadge
 from nti.badges.tahrir.interfaces import IIssuer
 from nti.badges.tahrir.interfaces import IPerson
 from nti.badges.tahrir.interfaces import ITahrirBadgeManager
-
-from nti.property.property import Lazy
 
 @interface.implementer(ITahrirBadgeManager)
 class TahrirBadgeManager(object):
