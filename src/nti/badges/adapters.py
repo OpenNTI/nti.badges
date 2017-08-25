@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -77,7 +77,7 @@ def basestring_to_tahrir_person(source):
     result = Person()
     result.email = source
     result.nickname = source
-    result.website = result.bio = ''
+    result.website = result.bio = u''
     result.created_on = datetime.now()
     return result
 
@@ -229,7 +229,7 @@ def tahrir_issuer_to_ntiissuer(issuer):
 @component.adapter(ITahrirBadge)
 @interface.implementer(INTIBadge)
 def tahrir_badge_to_ntibadge(badge):
-    tags = badge.tags or ''
+    tags = badge.tags or u''
     tags = tuple(x.lower() for x in tags.split(',') if x)
     issuer = INTIIssuer(badge.issuer, None)
     result = NTIBadge(issuer=issuer,
@@ -365,8 +365,8 @@ def ntiperson_to_tahrir_person(nti):
     result = Person()
     result.email = nti.email
     result.nickname = nti.name
-    result.bio = getattr(nti, "bio", None) or ''
-    result.website = getattr(nti, "website", None) or ''
+    result.bio = getattr(nti, "bio", None) or u''
+    result.website = getattr(nti, "website", None) or u''
     result.created_on = datetime.fromtimestamp(nti.createdTime)
     return result
 

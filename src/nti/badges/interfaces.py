@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 from zope import interface
@@ -40,7 +40,7 @@ class ITaggedContent(interface.Interface):
     tags = TupleFromObject(title=u"Tags applied by the user.",
                            value_type=Tag(min_length=1, 
                                           title=u"A single tag",
-                                          description=Tag.__doc__, __name__='tags'),
+                                          __name__=u'tags'),
                            unique=True,
                            default=(),
                            required=False)
@@ -66,8 +66,8 @@ class IBadgeClass(interface.Interface):
     name = ValidTextLine(title=u"The name of the badge")
 
 
-class INTIIssuer(IBadgeIssuer,
-                 ICreatedTime):
+class INTIIssuer(IBadgeIssuer, ICreatedTime):
+
     name = ValidTextLine(title=u'Issuer name')
 
     origin = ValidTextLine(title=u'Issuer origin')
@@ -89,7 +89,7 @@ class INTIBadge(ITaggedContent,
 
     description = ValidText(title=u"Badge description",
                             required=False,
-                            default='')
+                            default=u'')
 
     image = ValidTextLine(title=u'Badge image identifier/URL')
 
@@ -102,6 +102,7 @@ class INTIPerson(ICreatedTime):
 
 
 class INTIAssertion(IBadgeAssertion):
+
     uid = ValidTextLine(title=u"Assertion id")
 
     badge = Object(INTIBadge, title=u"Badge")
