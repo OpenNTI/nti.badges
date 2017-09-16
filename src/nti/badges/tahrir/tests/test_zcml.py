@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -20,8 +20,8 @@ from nti.badges.tahrir.interfaces import ITahrirBadgeManager
 
 import nti.testing.base
 
-ZCML_STRING = """
-<configure     xmlns="http://namespaces.zope.org/zope"
+ZCML_STRING = u"""
+<configure  xmlns="http://namespaces.zope.org/zope"
             xmlns:zcml="http://namespaces.zope.org/zcml"
             xmlns:tdb="http://nextthought.com/ntp/tahrir"
             i18n_domain='nti.dataserver'>
@@ -35,10 +35,10 @@ ZCML_STRING = """
 
     <tdb:registerTahrirIssuer
                 id="NTI"
-                 name="NextThought"
-                 org="http://www.nextthought.com"
-                 contact="contact@nextthought.com"
-                 origin="http://www.nextthought.com"/>
+                name="NextThought"
+                org="http://www.nextthought.com"
+                contact="contact@nextthought.com"
+                origin="http://www.nextthought.com"/>
 </configure>
 """
 

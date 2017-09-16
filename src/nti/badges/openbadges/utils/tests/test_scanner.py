@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -12,16 +12,19 @@ from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
+from nti.testing.matchers import verifiably_provides
+
 import os
 import shutil
 import tempfile
+
 import simplejson
 
 from nti.badges.openbadges import interfaces
-from nti.badges.openbadges.utils.scanner import flat_scan
+
 from nti.badges.openbadges.utils.badgebakery import bake_badge
 
-from nti.testing.matchers import verifiably_provides
+from nti.badges.openbadges.utils.scanner import flat_scan
 
 from nti.badges.tests import NTIBadgesTestCase
 
@@ -32,7 +35,7 @@ class TestScanner(NTIBadgesTestCase):
         img_dir = tempfile.mkdtemp(dir="/tmp")
         try:
             # prepare issuer
-            issuer_json = os.path.join(os.path.dirname(__file__), 
+            issuer_json = os.path.join(os.path.dirname(__file__),
                                        'issuer.json')
             shutil.copy(issuer_json, os.path.join(img_dir, 'issuer.json'))
 
@@ -40,8 +43,7 @@ class TestScanner(NTIBadgesTestCase):
             badge_json = os.path.join(os.path.dirname(__file__), 'badge.json')
             with open(badge_json, "rb") as fp:
                 badge = simplejson.load(fp)
-                badge['issuer'] = 'file://' + \
-                                   os.path.join(img_dir, 'issuer.json')
+                badge['issuer'] = 'file://' + os.path.join(img_dir, 'issuer.json')
 
             badge_json = os.path.join(img_dir, 'badge.json')
             with open(badge_json, "wb") as fp:
@@ -63,7 +65,7 @@ class TestScanner(NTIBadgesTestCase):
             assert_that(badge, verifiably_provides(interfaces.IBadgeClass))
 
             issuer = data[1]
-            assert_that(issuer, 
+            assert_that(issuer,
                         verifiably_provides(interfaces.IIssuerOrganization))
         finally:
             shutil.rmtree(img_dir)

@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -40,7 +40,6 @@ Assertion.uid = alias('id')
 if not hasattr(Assertion, 'exported'):
     exported = Column('exported', Boolean(), nullable=True, unique=False)
     Assertion.exported = exported
-
 Assertion.locked = alias('exported')
 
 
@@ -81,8 +80,10 @@ class NTITahrirDatabase(TahrirDatabase):
 
     def issuer_exists(self, origin=None, name=''):
         # origin is ignored
+        __traceback_info__ = origin, name
         query = self.session.query(
-                       exists().where(func.lower(Issuer.name) == func.lower(name)))
+            exists().where(func.lower(Issuer.name) == func.lower(name))
+        )
         return query.scalar()
 
     def get_issuer(self, issuer_id):
@@ -118,7 +119,8 @@ class NTITahrirDatabase(TahrirDatabase):
                     func.lower(Person.email) == func.lower(email)))).scalar()
         elif id:
             result = self.session.query(
-                         exists().where(Person.id == id)).scalar()
+                exists().where(Person.id == id)
+            ).scalar()
 
         return result
 
@@ -162,7 +164,8 @@ class NTITahrirDatabase(TahrirDatabase):
             else:
                 result = self.session.query(exists().where(
                     and_(func.lower(Assertion.person_id) == func.lower(person.id),
-                         func.lower(Assertion.badge_id) == func.lower(badge_id)))).scalar()
+                         func.lower(Assertion.badge_id) == func.lower(badge_id)))
+                ).scalar()
         return result
 
     def get_assertion_by_id(self, assertion_id):
@@ -183,8 +186,8 @@ class NTITahrirDatabase(TahrirDatabase):
         return result
 
     def get_assertions(self, email=None, person_id=None, nickname=None):
-        person = self.get_person(person_email=email, 
-                                 id=person_id, 
+        person = self.get_person(person_email=email,
+                                 id=person_id,
                                  nickname=nickname)
         if person is not None:
             person_id = person.id

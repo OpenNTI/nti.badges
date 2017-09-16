@@ -13,8 +13,8 @@
 	<include package="nti.schema" />
 	<include package="nti.mimetype" />
 	
-	<include package=".tahrir" file="configure.zcml" />
-	<include package=".openbadges" file="configure.zcml" />
+	<include package=".tahrir" />
+	<include package=".openbadges" />
 	
 	<!-- Adpaters -->
 	<adapter factory=".adapters.basestring_to_mozilla_indentity_object"

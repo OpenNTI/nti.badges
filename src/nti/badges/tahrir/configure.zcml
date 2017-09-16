@@ -5,9 +5,7 @@
 			xmlns:tdb="http://nextthought.com/ntp/tahrir">
 
 	<include package="zope.component" file="meta.zcml" />
-	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
-	<include package="zope.security" />
 
 	<!-- Implements -->
 	<class class="tahrir_api.model.Issuer">

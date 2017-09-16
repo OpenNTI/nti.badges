@@ -111,6 +111,7 @@ def collection_to_tahrir_issuer(lst):
     result.origin = lst[1] if len(lst) > 1 else None
     return result
 
+
 # tahrir->
 
 
@@ -270,6 +271,7 @@ def tahrir_person_to_ntiperson(person):
     result.website = person.website
     return result
 
+
 # nti->
 
 
@@ -369,6 +371,7 @@ def ntiperson_to_tahrir_person(nti):
     result.website = getattr(nti, "website", None) or u''
     result.created_on = datetime.fromtimestamp(nti.createdTime)
     return result
+
 
 # mozilla->
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -23,18 +23,20 @@ from tahrir_api.model import Issuer
 from tahrir_api.model import Person
 from tahrir_api.model import Assertion
 
+from nti.badges import interfaces as badge_interfaces
+
 from nti.badges.model import NTIBadge
 from nti.badges.model import NTIIssuer
 from nti.badges.model import NTIPerson
 from nti.badges.model import NTIAssertion
 
+from nti.badges.openbadges import interfaces as open_interfaces
+
 from nti.badges.openbadges.model import BadgeClass
 from nti.badges.openbadges.model import IdentityObject
 from nti.badges.openbadges.model import IssuerOrganization
 
-from nti.badges import interfaces as badge_interfaces
 from nti.badges.tahrir import interfaces as tahrir_interfaces
-from nti.badges.openbadges import interfaces as open_interfaces
 
 from nti.badges.tests import NTIBadgesTestCase
 
@@ -48,37 +50,37 @@ class TestAdapters(NTIBadgesTestCase):
 
     def _tahrir_person(self):
         person = Person()
-        person.bio = 'I am foo'
-        person.nickname = 'foo'
-        person.email = 'foo@example.org'
+        person.bio = u'I am foo'
+        person.nickname = u'foo'
+        person.email = u'foo@example.org'
         person.created_on = self._datetime_now
         return person
 
     def _tahrir_issuer(self):
         issuer = Issuer()
-        issuer.name = 'FOSS@RIT'
-        issuer.contact = 'foss@rit.ed'
-        issuer.org = 'http://foss.rit.ed'
+        issuer.name = u'FOSS@RIT'
+        issuer.contact = u'foss@rit.ed'
+        issuer.org = u'http://foss.rit.ed'
         issuer.created_on = self._datetime_now
-        issuer.origin = 'http://foss.rit.edu/foss.json'
+        issuer.origin = u'http://foss.rit.edu/foss.json'
         return issuer
 
     def _tahrir_badge(self):
         badge = Badge()
-        badge.tags = 'fox,box,'
-        badge.name = 'fossbox'
+        badge.tags = u'fox,box,'
+        badge.name = u'fossbox'
         badge.issuer = self._tahrir_issuer()
         badge.created_on = self._datetime_now
-        badge.criteria = 'http://foss.rit.ed'
-        badge.image = 'http://foss.rit.edu/files/fossboxbadge.png'
-        badge.description = 'Welcome to the FOSSBox. A member is you!'
+        badge.criteria = u'http://foss.rit.ed'
+        badge.image = u'http://foss.rit.edu/files/fossboxbadge.png'
+        badge.description = u'Welcome to the FOSSBox. A member is you!'
         return badge
 
     def _tahrir_assertion(self):
         assertion = Assertion()
-        assertion.id = 'fossbox -> foo@example.org'
-        assertion.salt = 'a7425e'
-        assertion.recipient = 'QxLUF1bgIAdX'
+        assertion.id = u'fossbox -> foo@example.org'
+        assertion.salt = u'a7425e'
+        assertion.recipient = u'QxLUF1bgIAdX'
         assertion.issued_on = datetime.now()
         assertion.badge = self._tahrir_badge()
         assertion.person = self._tahrir_person()
@@ -184,38 +186,38 @@ class TestAdapters(NTIBadgesTestCase):
 
     def _ntiperson(self):
         person = NTIPerson()
-        person.name = 'foo'
-        person.bio = 'I am foo'
-        person.email = 'foo@example.org'
+        person.name = u'foo'
+        person.bio = u'I am foo'
+        person.email = u'foo@example.org'
         person.createdTime = self._time_now
-        person.website = 'http://example.org/foo'
+        person.website = u'http://example.org/foo'
         return person
 
     def _ntiissuer(self):
         issuer = NTIIssuer()
-        issuer.name = 'FOSS@RIT'
-        issuer.email = 'foss@rit.ed'
+        issuer.name = u'FOSS@RIT'
+        issuer.email = u'foss@rit.ed'
         issuer.createdTime = self._time_now
-        issuer.organization = 'http://foss.rit.ed'
-        issuer.origin = 'http://foss.rit.edu/foss.json'
+        issuer.organization = u'http://foss.rit.ed'
+        issuer.origin = u'http://foss.rit.edu/foss.json'
         return issuer
 
     def _ntibadge(self):
-        result = NTIBadge(name="fossbox",
+        result = NTIBadge(name=u"fossbox",
                           issuer=self._ntiissuer(),
-                          description="Welcome to the FOSSBox. A member is you!",
-                          image="http://foss.rit.edu/files/fossboxbadge.png",
-                          criteria="http://foss.rit.edu/fossbox",
+                          description=u"Welcome to the FOSSBox. A member is you!",
+                          image=u"http://foss.rit.edu/files/fossboxbadge.png",
+                          criteria=u"http://foss.rit.edu/fossbox",
                           createdTime=self._time_now,
-                          tags=(['fox', 'box']))
+                          tags=([u'fox', u'box']))
         return result
 
     def _ntiassertion(self):
-        result = NTIAssertion(uid='spadAsp4',
-                              salt="2cf24dba",
+        result = NTIAssertion(uid=u'spadAsp4',
+                              salt=u"2cf24dba",
                               badge=self._ntibadge(),
-                              person='foo@example.org',
-                              recipient="ichigobleach",
+                              person=u'foo@example.org',
+                              recipient=u"ichigobleach",
                               issuedOn=self._time_now)
         return result
 
@@ -294,25 +296,25 @@ class TestAdapters(NTIBadgesTestCase):
     # Mozilla
 
     def _open_issuer(self):
-        issuer = IssuerOrganization(name="FOSS@RIT",
-                                    image="http://foss.rit.edu/foss.png",
-                                    url="http://foss.rit.edu/foss.json",
-                                    email="foss@rit.edu",
-                                    description="example issuer",
-                                    revocationList="https://example.org/revoked.json")
+        issuer = IssuerOrganization(name=u"FOSS@RIT",
+                                    image=u"http://foss.rit.edu/foss.png",
+                                    url=u"http://foss.rit.edu/foss.json",
+                                    email=u"foss@rit.edu",
+                                    description=u"example issuer",
+                                    revocationList=u"https://example.org/revoked.json")
         return issuer
 
     def _open_identityobject(self):
-        io = IdentityObject(identity="foo@example.org", type="email",
+        io = IdentityObject(identity=u"foo@example.org", type=u"email",
                             hashed=False, salt=None)
         return io
 
     def _open_badge(self):
-        result = BadgeClass(name="fossbox",
-                            description="Welcome to the FOSSBox. A member is you!",
-                            image="http://foss.rit.edu/files/fossboxbadge.png",
-                            criteria="http://foss.rit.edu/fossbox",
-                            issuer="http://foss.rit.edu/foss.json",
+        result = BadgeClass(name=u"fossbox",
+                            description=u"Welcome to the FOSSBox. A member is you!",
+                            image=u"http://foss.rit.edu/files/fossboxbadge.png",
+                            criteria=u"http://foss.rit.edu/fossbox",
+                            issuer=u"http://foss.rit.edu/foss.json",
                             tags=(['fox', 'box']))
         return result
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -37,7 +37,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
         zope.testing.cleanup.cleanUp()
 
     @classmethod
-    def testSetUp(cls, test=None):
+    def testSetUp(cls, unused_test=None):
         shutil.rmtree(cls.new_data_dir, True)
         os.environ['DATASERVER_DATA_DIR'] = cls.old_data_dir or '/tmp'
 

@@ -21,6 +21,7 @@ from nti.badges.interfaces import INTIAssertion
 from nti.badges.utils import MetaBadgeObject
 
 from nti.externalization.persistence import NoPickle
+
 from nti.externalization.representation import WithRepr
 
 from nti.property.property import alias

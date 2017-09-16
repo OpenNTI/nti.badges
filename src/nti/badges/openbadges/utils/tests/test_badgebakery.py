@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -15,10 +15,12 @@ from hamcrest import assert_that
 does_not = is_not
 
 import os
-from six import StringIO
+from io import BytesIO
 
 from nti.badges.openbadges.utils import load_data
-from nti.badges.openbadges.utils.badgebakery import get_baked_data, bake_badge
+
+from nti.badges.openbadges.utils.badgebakery import bake_badge
+from nti.badges.openbadges.utils.badgebakery import get_baked_data
 
 from nti.badges.tests import NTIBadgesTestCase
 
@@ -30,22 +32,22 @@ class TestBadgeBakery(NTIBadgesTestCase):
         with open(path, "rb") as fp:
             PNG = fp.read()
 
-        unbaked = StringIO(PNG)
+        unbaked = BytesIO(PNG)
         assert_that(get_baked_data(unbaked), is_(none()))
 
-        baked = StringIO()
-        unbaked = StringIO(PNG)
+        baked = BytesIO()
+        unbaked = BytesIO(PNG)
         bake_badge(unbaked, baked, url='http://foo.org/assertion.json')
 
-        baked = StringIO(baked.getvalue())
-        assert_that(get_baked_data(baked), 
+        baked = BytesIO(baked.getvalue())
+        assert_that(get_baked_data(baked),
                     is_('http://foo.org/assertion.json'))
 
-        rebaked = StringIO()
-        baked = StringIO(baked.getvalue())
+        rebaked = BytesIO()
+        baked = BytesIO(baked.getvalue())
         bake_badge(baked, rebaked, 'http://another/assertion')
 
-        rebaked = StringIO(rebaked.getvalue())
+        rebaked = BytesIO(rebaked.getvalue())
         assert_that(get_baked_data(rebaked), is_('http://another/assertion'))
 
     def test_png_payload(self):
@@ -53,12 +55,12 @@ class TestBadgeBakery(NTIBadgesTestCase):
         with open(path, "rb") as fp:
             PNG = fp.read()
 
-        baked = StringIO()
-        unbaked = StringIO(PNG)
+        baked = BytesIO()
+        unbaked = BytesIO(PNG)
         payload = {'manga': 'bleach'}
         bake_badge(unbaked, baked, payload=payload)
 
-        baked = StringIO(baked.getvalue())
+        baked = BytesIO(baked.getvalue())
         baked_data = get_baked_data(baked)
         assert_that(baked_data, is_not(none()))
         baked_data = load_data(baked_data)

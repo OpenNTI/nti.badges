@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -107,11 +107,11 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         manager.db.update_badge(badge_id=badge_id,
                                 description=u'Welcome to the FOSSBox',
                                 criteria=u'http://foss.rit.org',
-                                tags="fox, box")
+                                tags=u"fox, box")
 
         badge = manager.db.get_badge(badge_id)
-        assert_that(badge, has_property(
-            'description', 'Welcome to the FOSSBox'))
+        assert_that(badge,
+                    has_property('description', 'Welcome to the FOSSBox'))
         assert_that(badge, has_property('criteria', 'http://foss.rit.org'))
         assert_that(badge, has_property('tags', 'fox, box'))
 
@@ -126,14 +126,14 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         issuer_id = manager.add_issuer(issuer)
         assert_that(issuer_id, is_not(none()))
 
-        assert_that(manager.get_issuer('FOSS@RIT', u'http://foss.rit.edu/badges'),
+        assert_that(manager.get_issuer(u'FOSS@RIT', u'http://foss.rit.edu/badges'),
                     is_not(none()))
 
         badge = Badge()
         badge.name = u'fossbox'
         badge.criteria = u'http://foss.rit.edu'
         badge.description = u'Welcome to the FOSSBox. A member is you!'
-        badge.tags = 'fox,box,'
+        badge.tags = u'fox,box,'
         badge.issuer_id = issuer_id
         badge.image = u'http://foss.rit.edu/files/fossboxbadge.png'
         badge_id = manager.add_badge(badge)
@@ -143,11 +143,11 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(db_badge, is_not(none()))
 
         person = Person()
-        person.bio = 'I am foo'
-        person.nickname = 'foo'
+        person.bio = u'I am foo'
+        person.nickname = u'foo'
         person.email = u'foo@example.org'
         person.created_on = datetime.now()
-        person.website = 'http://example.org/foo'
+        person.website = u'http://example.org/foo'
 
         pid = manager.add_person(person)
         assert_that(pid, is_('foo@example.org'))
@@ -156,7 +156,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(person, has_property('bio', 'I am foo'))
         assert_that(person, has_property('website', 'http://example.org/foo'))
 
-        update = manager.update_person(person, bio="I am foo!!!")
+        update = manager.update_person(person, bio=u"I am foo!!!")
         assert_that(update, is_(True))
 
         person = manager.get_person(pid)
@@ -221,15 +221,15 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
     def test_person_update(self):
         manager = self.new
         person = Person()
-        person.bio = 'Shinigami'
-        person.nickname = 'ichigo'
+        person.bio = u'Shinigami'
+        person.nickname = u'ichigo'
         person.email = u'ichigo@bleach.org'
         person.created_on = datetime.now()
-        person.website = 'http://bleach.com/ichigo'
+        person.website = u'http://bleach.com/ichigo'
 
         pid = manager.add_person(person)
         assert_that(pid, is_('ichigo@bleach.org'))
 
-        manager.update_person(person, email="ichigo@bleach.com")
+        manager.update_person(person, email=u"ichigo@bleach.com")
         assert_that(manager.person_exists('ichigo@bleach.com'), is_(True))
         assert_that(manager.person_exists(name='ichigo'), is_(True))

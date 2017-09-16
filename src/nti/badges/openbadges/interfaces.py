@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 from zope import interface
@@ -55,15 +55,21 @@ class IVerificationObject(interface.Interface):
 
 class IIssuerOrganization(IIssuerMarker):
     name = ValidTextLine(title=u"The name of the issuing organization.")
+
     url = ValidTextLine(title=u'URL of the institution')
+
     image = ValidTextLine(title=u'Issuer URL logo', required=False)
+
     email = ValidTextLine(title=u"Issuer email", required=False)
+
     description = ValidText(title=u"Issuer description", required=False)
-    revocationList = ValidTextLine(title=u'Issuer revocations URL', 
+
+    revocationList = ValidTextLine(title=u'Issuer revocations URL',
                                    required=False)
 
 
 class IIdentityObject(interface.Interface):
+
     identity = ValidTextLine(title=u"identity hash or text")
 
     type = Choice(vocabulary=ID_TYPES_VOCABULARY,
@@ -77,26 +83,32 @@ class IIdentityObject(interface.Interface):
 
 
 class IAlignmentObject(interface.Interface):
-    name = ValidTextLine(title=u"The name of the alignment")
-    url = ValidTextLine(
-        title=u'URL linking to the official description of the standard')
+
+    name = ValidTextLine(title=u"The name of the alignment",
+                         required=True)
+
+    url = ValidTextLine(title=u'URL linking to the official description of the standard',
+                        required=False)
+
     description = ValidText(title=u"Short description of the standard",
                             required=False)
 
 
 class IBadgeClass(ITaggedContent, IBadgeMarker):
 
-    description = ValidText(title=u"A short description of the achievement")
+    description = ValidText(title=u"A short description of the achievement",
+                            required=True)
 
-    image = ValidTextLine(
-        title=u"Image representing the achievement (URL/FileName/DataURI)")
+    image = ValidTextLine(title=u"Image representing the achievement (URL/FileName/DataURI)",
+                          required=True)
 
-    criteria = ValidTextLine(
-        title=u'URL of the criteria for earning the achievement')
+    criteria = ValidTextLine(title=u'URL of the criteria for earning the achievement',
+                             required=False)
 
     issuer = Variant((ValidTextLine(title=u'URL of the organization that issued the badge'),
                       Object(IIssuerOrganization, title=u"Issuer object")),
-                     title=u"Image representing the achievement")
+                     title=u"Image representing the achievement",
+                     required=True)
 
     alignment = ListOrTuple(value_type=Object(IAlignmentObject),
                             title=u"Objects describing which educational standards",
@@ -106,7 +118,7 @@ class IBadgeClass(ITaggedContent, IBadgeMarker):
 
 class IBadgeAssertion(IAssertionMarker):
 
-    recipient = Object(IIdentityObject, 
+    recipient = Object(IIdentityObject,
                        title=u"The recipient of the achievement")
 
     badge = Variant((Object(IBadgeClass, title=u"Badge class"),
@@ -118,7 +130,7 @@ class IBadgeAssertion(IAssertionMarker):
 
     issuedOn = ValidDatetime(title=u"date that the achievement was awarded")
 
-    image = ValidTextLine(title=u"Image representing this user's achievement", 
+    image = ValidTextLine(title=u"Image representing this user's achievement",
                           required=False)
 
     evidence = ValidTextLine(title=u'URL of the work that the recipient did to earn the achievement',
@@ -135,21 +147,25 @@ class IBadgeAwardedEvent(IObjectEvent):
     """
     Interface for an add assertion event
     """
-    giver = Object(IPrincipal, 
+    giver = Object(IPrincipal,
                    title=u"Person giving of the achievement")
 
     assertion = Object(IBadgeAssertion,
                        title=u"Assertion added")
+
+
 IBadgeAssertionAddedEvent = IBadgeAwardedEvent
+
 
 @interface.implementer(IBadgeAwardedEvent)
 class BadgeAwardedEvent(ObjectEvent):
     """
     Add assertion event
     """
+
     giver = alias('creator')
     assertion = alias('object')
-    
+
     def __init__(self, obj, creator=None):
         ObjectEvent.__init__(self, obj)
         self.creator = creator

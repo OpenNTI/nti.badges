@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -17,27 +17,29 @@ from hamcrest import assert_that
 from hamcrest import has_property
 does_not = is_not
 
-import time
+from nti.testing.matchers import verifiably_provides
 
-from nti.externalization import internalization
-from nti.externalization.externalization import toExternalObject
-from nti.externalization.tests import assert_does_not_pickle
+import time
 
 from nti.badges import model
 from nti.badges import interfaces
 
-from nti.testing.matchers import verifiably_provides
+from nti.externalization import internalization
+
+from nti.externalization.externalization import toExternalObject
 
 from nti.badges.tests import NTIBadgesTestCase
+
+from nti.externalization.tests import assert_does_not_pickle
 
 
 class TestNTIModel(NTIBadgesTestCase):
 
     def _issuer(self):
-        result = model.NTIIssuer(name="FOSS@RIT",
-                                 origin="http://foss.rit.edu/badges",
-                                 organization="http://foss.rit.edu",
-                                 email="foss@rit.edu")
+        result = model.NTIIssuer(name=u"FOSS@RIT",
+                                 origin=u"http://foss.rit.edu/badges",
+                                 organization=u"http://foss.rit.edu",
+                                 email=u"foss@rit.edu")
         assert_does_not_pickle(result)
         return result
 
@@ -55,22 +57,22 @@ class TestNTIModel(NTIBadgesTestCase):
         internalization.update_from_external_object(new_io, ext_obj)
         assert_that(new_io, has_property('name', is_('FOSS@RIT')))
         assert_that(new_io, has_property('email', is_("foss@rit.edu")))
-        assert_that(new_io, 
-					has_property('origin', is_("http://foss.rit.edu/badges")))
-        assert_that(new_io, 
-					has_property('organization', is_("http://foss.rit.edu")))
+        assert_that(new_io,
+                    has_property('origin', is_("http://foss.rit.edu/badges")))
+        assert_that(new_io,
+                    has_property('organization', is_("http://foss.rit.edu")))
 
         assert_that(io, equal_to(new_io))
 
     def _badge(self):
         issuer = self._issuer()
-        result = model.NTIBadge(name="fossbox",
+        result = model.NTIBadge(name=u"fossbox",
                                 issuer=issuer,
                                 description=u"Welcome to the FOSSBox. A member is you!",
-                                image="http://foss.rit.edu/files/fossboxbadge.png",
-                                criteria="http://foss.rit.edu/fossbox",
+                                image=u"http://foss.rit.edu/files/fossboxbadge.png",
+                                criteria=u"http://foss.rit.edu/fossbox",
                                 createdTime=time.time(),
-                                tags=(['fox', 'box']))
+                                tags=([u'fox', u'box']))
         assert_does_not_pickle(result)
         return result
 
@@ -89,12 +91,12 @@ class TestNTIModel(NTIBadgesTestCase):
         assert_that(new_bg, has_property('name', is_('fossbox')))
         assert_that(new_bg, has_property('issuer', is_not(none())))
         assert_that(new_bg, has_property('createdTime', is_not(none())))
-        assert_that(new_bg, 
-					has_property('criteria', is_("http://foss.rit.edu/fossbox")))
-        assert_that(new_bg, 
-					has_property('image', is_("http://foss.rit.edu/files/fossboxbadge.png")))
         assert_that(new_bg,
-					has_property('description', is_(u"Welcome to the FOSSBox. A member is you!")))
+                    has_property('criteria', is_("http://foss.rit.edu/fossbox")))
+        assert_that(new_bg,
+                    has_property('image', is_("http://foss.rit.edu/files/fossboxbadge.png")))
+        assert_that(new_bg,
+                    has_property('description', is_(u"Welcome to the FOSSBox. A member is you!")))
 
         assert_that(badge, equal_to(new_bg))
 
@@ -102,9 +104,9 @@ class TestNTIModel(NTIBadgesTestCase):
         badge = self._badge()
         result = model.NTIAssertion(uid=u'breyAd5u',
                                     badge=badge,
-                                    salt="2cf24dba",
-                                    person='foo@example.org',
-                                    recipient='ichigobleach',
+                                    salt=u"2cf24dba",
+                                    person=u'foo@example.org',
+                                    recipient=u'ichigobleach',
                                     issuedOn=time.time())
         assert_does_not_pickle(result)
         return result
@@ -131,8 +133,8 @@ class TestNTIModel(NTIBadgesTestCase):
         assert_that(assertion, equal_to(new_ast))
 
     def _person(self):
-        result = model.NTIPerson(name='foo',
-                                 email='foo@example.org',
+        result = model.NTIPerson(name=u'foo',
+                                 email=u'foo@example.org',
                                  createdTime=time.time())
         assert_does_not_pickle(result)
         return result

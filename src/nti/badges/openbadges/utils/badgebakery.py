@@ -10,7 +10,7 @@ https://gist.github.com/toolness/5326379
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -130,8 +130,8 @@ def process_args(args=None):
     args = arg_parser.parse_args(args=args)
 
     source = os.path.expanduser(args.source)
-    if not os.path.exists(source) or not os.path.isfile(source) or \
-            not source.lower().endswith('.png'):
+    if     not os.path.exists(source) or not os.path.isfile(source) \
+        or not source.lower().endswith('.png'):
         print("Invalid image file", source, file=sys.stderr)
         sys.exit(2)
 

@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 from zope import interface
@@ -28,71 +28,97 @@ class ITahrirModel(interface.Interface):
 
 
 class IIssuer(ITahrirModel, IBadgeIssuer):
-    id = Int(title=" Issuer id")
-    origin = ValidTextLine(title="Issuer origin")
-    name = ValidTextLine(title=" Issuer name")
-    org = ValidTextLine(title=" Issuer organization")
-    contact = ValidTextLine(title=" Issuer contact")
-    created_on = ValidDatetime(title="Created time")
+
+    id = Int(title=u"Issuer id")
+
+    origin = ValidTextLine(title=u"Issuer origin")
+
+    name = ValidTextLine(title=u" Issuer name")
+
+    org = ValidTextLine(title=u" Issuer organization")
+
+    contact = ValidTextLine(title=u" Issuer contact")
+
+    created_on = ValidDatetime(title=u"Created time")
 
 
 class IBadge(ITahrirModel, IBadgeClass):
-    name = ValidTextLine(title="Badge name")
 
-    image = ValidTextLine(title="Image name/URL")
+    name = ValidTextLine(title=u"Badge name")
 
-    description = ValidText(title="Badge description")
+    image = ValidTextLine(title=u"Image name/URL")
 
-    criteria = ValidTextLine(title="Criteria URL")
+    description = ValidText(title=u"Badge description")
 
-    issuer_id = Int(title='Issuer id')
+    criteria = ValidTextLine(title=u"Criteria URL")
 
-    created_on = ValidDatetime(title="Created time")
+    issuer_id = Int(title=u'Issuer id')
 
-    tags = ValidTextLine(title=" Badge tags")
+    created_on = ValidDatetime(title=u"Created time")
+
+    tags = ValidTextLine(title=u" Badge tags")
 
 
 class IPerson(ITahrirModel):
-    id = Int(title="Person's id")
 
-    email = ValidTextLine(title=" Person's email")
+    id = Int(title=u"Person's id")
 
-    nickname = ValidTextLine(title=" Person's nickname", required=False)
+    email = ValidTextLine(title=u" Person's email")
 
-    website = ValidTextLine(title="Image name/URL")
+    nickname = ValidTextLine(title=u" Person's nickname", required=False)
 
-    bio = ValidText(title="Person's bio", required=False)
+    website = ValidTextLine(title=u"Image name/URL")
 
-    created_on = ValidDatetime(title="Created time")
+    bio = ValidText(title=u"Person's bio", required=False)
 
-    last_login = ValidDatetime(title="Last login", required=False)
-    opt_out = Bool(title="Opt out flag", required=False)
-    rank = Int(title="Person's rank", required=False)
+    created_on = ValidDatetime(title=u"Created time")
+
+    last_login = ValidDatetime(title=u"Last login", required=False)
+
+    opt_out = Bool(title=u"Opt out flag", required=False)
+
+    rank = Int(title=u"Person's rank", required=False)
 
 
 class IInvitation(ITahrirModel):
-    id = ValidTextLine(title=" Invitation id")
-    created_on = ValidDatetime(title="Created time")
-    expires_on = ValidDatetime(title="Expiration time")
-    badge_id = Int(title='Badge id')
-    created_by = Int(title='Person id')
+
+    id = ValidTextLine(title=u" Invitation id")
+
+    created_on = ValidDatetime(title=u"Created time")
+
+    expires_on = ValidDatetime(title=u"Expiration time")
+
+    badge_id = Int(title=u'Badge id')
+
+    created_by = Int(title=u'Person id')
 
 
 class IAuthorization(ITahrirModel):
-    id = Int(title="Authorization's id")
-    badge_id = ValidTextLine(title=" Badge id")
-    person_id = Int(title="Person id")
+
+    id = Int(title=u"Authorization's id")
+
+    badge_id = ValidTextLine(title=u" Badge id")
+
+    person_id = Int(title=u"Person id")
 
 
 class IAssertion(ITahrirModel, IBadgeAssertion):
-    id = ValidTextLine(title="Assertion id")
-    badge_id = ValidTextLine(title="Badge id")
-    person_id = Int(title="Person's id")
-    salt = ValidTextLine(title="Salt")
-    issued_on = ValidDatetime(title="Issue date")
-    issued_for = ValidTextLine(title="Issue for", required=False)
-    recipient = ValidTextLine(title="Recipient ", required=False)
-    exported = Bool(title="If the assertion has been exported", 
+
+    id = ValidTextLine(title=u"Assertion id")
+
+    badge_id = ValidTextLine(title=u"Badge id")
+
+    person_id = Int(title=u"Person's id")
+
+    salt = ValidTextLine(title=u"Salt")
+
+    issued_on = ValidDatetime(title=u"Issue date")
+
+    issued_for = ValidTextLine(title=u"Issue for", required=False)
+
+    recipient = ValidTextLine(title=u"Recipient ", required=False)
+
+    exported = Bool(title=u"If the assertion has been exported",
                     default=False,
                     required=False)
 

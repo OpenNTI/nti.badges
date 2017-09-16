@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -14,6 +14,7 @@ import transaction
 
 
 def _after_transaction_end(success, manager, registry):
+    __traceback_info__ = success, manager, registry
     try:
         manager.scoped_session.remove()
     except AttributeError:

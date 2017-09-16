@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -18,8 +18,10 @@ from zope import component
 from nti.badges.openbadges import interfaces as open_interfaces
 
 from nti.badges.tahrir import get_tahrir_badge_by_id
-from nti.badges.tahrir.manager import create_badge_manager
+
 from nti.badges.tahrir import interfaces as tahrir_interfaces
+
+from nti.badges.tahrir.manager import create_badge_manager
 
 from nti.badges.tests import NTIBadgesTestCase
 
@@ -48,8 +50,8 @@ class TestTahrirAdapters(NTIBadgesTestCase):
                                         criteria=u'http://foss.rit.edu',
                                         issuer_id=issuer_id)
 
-        manager.db.add_person(email="person@site.com", nickname="person")
-        manager.add_assertion("person@site.com", 'fossbox', issued_on=None)
+        manager.db.add_person(email=u"person@site.com", nickname=u"person")
+        manager.add_assertion(u"person@site.com", u'fossbox', issued_on=None)
 
         badge = get_tahrir_badge_by_id(badge_id)
         open_badge = open_interfaces.IBadgeClass(badge, None)

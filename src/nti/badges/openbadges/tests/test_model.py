@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -21,6 +21,7 @@ import time
 from datetime import datetime
 
 from nti.externalization import internalization
+
 from nti.externalization.externalization import toExternalObject
 
 from nti.badges.openbadges import model
@@ -34,11 +35,11 @@ from nti.badges.tests import NTIBadgesTestCase
 class TestOpenBadges(NTIBadgesTestCase):
 
     def test_issuer_object(self):
-        io = model.IssuerOrganization(name="foo",
+        io = model.IssuerOrganization(name=u"foo",
                                       image=u"https://example.org/foo.png",
                                       url=u"http://example.org",
-                                      email="foo@example.org",
-                                      description="example issuer",
+                                      email=u"foo@example.org",
+                                      description=u"example issuer",
                                       revocationList=u"https://example.org/revoked.json")
         assert_that(io, verifiably_provides(interfaces.IIssuerOrganization))
         assert_does_not_pickle(io)
@@ -65,8 +66,9 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(io, equal_to(new_io))
 
     def test_verification_object(self):
-        vo = model.VerificationObject(type="hosted", url="http://foo.json")
-        assert_that(vo, verifiably_provides(interfaces.IVerificationObject))
+        vo = model.VerificationObject(type=u"hosted", url=u"http://foo.json")
+        assert_that(vo, 
+                    verifiably_provides(interfaces.IVerificationObject))
         assert_does_not_pickle(vo)
 
         ext_obj = toExternalObject(vo)
@@ -85,8 +87,8 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(vo, equal_to(new_vo))
 
     def test_identity_object(self):
-        io = model.IdentityObject(identity="my-identity", type="email",
-                                  hashed=True, salt="xyz")
+        io = model.IdentityObject(identity=u"my-identity", type=u"email",
+                                  hashed=True, salt=u"xyz")
         assert_that(io, verifiably_provides(interfaces.IIdentityObject))
         assert_does_not_pickle(io)
 
@@ -108,8 +110,8 @@ class TestOpenBadges(NTIBadgesTestCase):
         assert_that(io, equal_to(new_io))
 
     def test_alignment_object(self):
-        ao = model.AlignmentObject(name="my-alignment", url=u"http://foo.xyz",
-                                   description="foo")
+        ao = model.AlignmentObject(name=u"my-alignment", url=u"http://foo.xyz",
+                                   description=u"foo")
         assert_that(ao, verifiably_provides(interfaces.IAlignmentObject))
         assert_does_not_pickle(ao)
 
@@ -124,21 +126,21 @@ class TestOpenBadges(NTIBadgesTestCase):
         new_ao = factory()
         internalization.update_from_external_object(new_ao, ext_obj)
         assert_that(new_ao, has_property('name', is_('my-alignment')))
-        assert_that(new_ao, has_property('url', is_(b'http://foo.xyz')))
+        assert_that(new_ao, has_property('url', is_('http://foo.xyz')))
         assert_that(new_ao, has_property('description', is_('foo')))
 
         assert_that(ao, equal_to(new_ao))
 
     def test_badge_class(self):
 
-        ao1 = model.AlignmentObject(name="my-alignment-1", url=u"http://foo-1.xyz",
-                                    description="foo-1")
+        ao1 = model.AlignmentObject(name=u"my-alignment-1", url=u"http://foo-1.xyz",
+                                    description=u"foo-1")
 
-        ao2 = model.AlignmentObject(name="my-alignment-2", url=u"http://foo-2.xyz",
-                                    description="foo-2")
+        ao2 = model.AlignmentObject(name=u"my-alignment-2", url=u"http://foo-2.xyz",
+                                    description=u"foo-2")
 
-        bc = model.BadgeClass(name="my-badge",
-                              description="super badge",
+        bc = model.BadgeClass(name=u"my-badge",
+                              description=u"super badge",
                               image=u"https://badge.png",
                               criteria=u"https://badge-criteria.com",
                               issuer=u"https://badge-issuer.com",
@@ -170,10 +172,10 @@ class TestOpenBadges(NTIBadgesTestCase):
 
     def test_badge_assertion(self):
         now = datetime.fromtimestamp(int(time.time()))
-        verify = model.VerificationObject(type="hosted", url="http://foo.json")
-        recipient = model.IdentityObject(identity="my-identity", type="email",
-                                         hashed=True, salt="xyz")
-        ba = model.BadgeAssertion(uid="my-uid",
+        verify = model.VerificationObject(type=u"hosted", url=u"http://foo.json")
+        recipient = model.IdentityObject(identity=u"my-identity", type=u"email",
+                                         hashed=True, salt=u"xyz")
+        ba = model.BadgeAssertion(uid=u"my-uid",
                                   recipient=recipient,
                                   verify=verify,
                                   badge=u"http://badge.json",
