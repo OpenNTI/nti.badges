@@ -2,8 +2,8 @@
  Reference
 ===========
 
-Adpters
-=======
+Adapters
+========
 
 .. automodule:: nti.badges.adapters
 
