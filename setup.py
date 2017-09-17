@@ -5,9 +5,6 @@ entry_points = {
     'console_scripts': [
         "nti_bake_badge = nti.badges.openbadges.utils.badgebakery:main",
     ],
-    'z3c.autoinclude.plugin': [
-        'target = nti.dataserver',
-    ],
 }
 
 TESTS_REQUIRE = [
