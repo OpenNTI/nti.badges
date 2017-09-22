@@ -15,12 +15,7 @@ from datetime import datetime
 from collections import Mapping
 from dateutil.parser import parse as dateutil_parse
 
-try:
-    from urlparse import urljoin
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urljoin
-    from urllib.parse import urlparse
+from six.moves import urllib_parse
 
 import simplejson
 
@@ -71,10 +66,10 @@ def mend_url(url, **kwargs):
     url = text_(url)
     if base:
         base = text_(base)
-        path = urlparse(url).path
+        path = urllib_parse.urlparse(url).path
         path = path[1:] if path.startswith('/') else path
         base = base + '/' if not base.endswith('/') else base
-        url = urljoin(base, path)
+        url = urllib_parse.urljoin(base, path)
     return url
 
 
@@ -112,7 +107,7 @@ def process_json_source(source, **kwargs):
     if isinstance(source, six.string_types):
         # check for a remote source
         lower = source.lower()
-        result = urlparse(lower)
+        result = urllib_parse.urlparse(lower)
         if result.scheme in VALID_SCHEMES:
             __traceback_info__ = source
             logger.info('Getting json data from %s', source)

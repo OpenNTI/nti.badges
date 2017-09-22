@@ -20,10 +20,7 @@ import pprint
 import argparse
 import collections
 
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
+from six.moves import urllib_parse
 
 import simplejson
 
@@ -51,7 +48,7 @@ def get_baked_data(source, secret=None, raw=False):
         return result
 
     # # check if it's a known scheme
-    scheme = urlparse(result).scheme if result else None
+    scheme = urllib_parse.urlparse(result).scheme if result else None
     if scheme:
         return result
 
