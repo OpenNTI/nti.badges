@@ -1,2 +1,3 @@
 -e git+https://github.com/NextThought/nti.base.git@master#egg=nti.base
 -e svn+https://repos.nextthought.com/svn/nti-svn/nti.mimetype/trunk#egg=nti.mimetype
+-e git+https://github.com/NextThought/nti.externalization.git@master#egg=nti.externalization
