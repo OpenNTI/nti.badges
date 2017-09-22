@@ -4,13 +4,15 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
-import ConfigParser
+try:
+    from ConfigParser import ConfigParser
+except ImportError:
+    from configparser import ConfigParser
 
 from zope import interface
 
@@ -37,6 +39,8 @@ from nti.badges.tahrir.interfaces import IBadge
 from nti.badges.tahrir.interfaces import IIssuer
 from nti.badges.tahrir.interfaces import IPerson
 from nti.badges.tahrir.interfaces import ITahrirBadgeManager
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(ITahrirBadgeManager)
@@ -372,8 +376,8 @@ def create_badge_manager(dburi=None, twophase=False, salt=None,
         data_file = os.path.join(data_dir, 'tahrir.db')
         dburi = "sqlite:///%s" % data_file
     elif config:  # if config file is specified
+        parser = ConfigParser()
         config_name = os.path.expandvars(config)
-        parser = ConfigParser.ConfigParser()
         parser.read([config_name])
         if parser.has_option('tahrir', 'salt'):
             salt = parser.get('tahrir', 'salt')

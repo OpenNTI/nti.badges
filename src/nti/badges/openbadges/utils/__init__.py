@@ -4,19 +4,23 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import six
 import urllib
-from urlparse import urljoin
-from urlparse import urlparse
 from datetime import datetime
 from collections import Mapping
 from dateutil.parser import parse as dateutil_parse
+
+try:
+    from urlparse import urljoin
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urljoin
+    from urllib.parse import urlparse
 
 import simplejson
 
@@ -44,6 +48,8 @@ DEFAULT_SECRET = '!f^#GQ5md{)Rf&Z'
 
 #: Valid schemes
 VALID_SCHEMES = ('http', 'https', 'file', 'ftp', 'sftp')
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def parse_datetime(s):
@@ -133,8 +139,8 @@ def issuer_from_source(source, **kwargs):
     data = json_source_to_map(source, **kwargs)
     result = IssuerOrganization()
     for field, func in (('url', text_),
-                        ('name', text_), 
-                        ('email', text_), 
+                        ('name', text_),
+                        ('email', text_),
                         ('image', text_),
                         ('description', text_),
                         ('revocationList', text_)):
@@ -156,7 +162,7 @@ def badge_from_source(source, **kwargs):
     # parse common single value fields
     for field, func in (('name', text_),
                         ('image', text_),
-                        ('criteria', text_), 
+                        ('criteria', text_),
                         ('description', text_)):
         value = data.get(field)
         value = func(value) if value else None
@@ -190,9 +196,9 @@ def assertion_from_source(source, **kwargs):
     result = BadgeAssertion()
 
     # parse common single value fields
-    for field, func in (('uid', text_), 
-                        ('image', text_), 
-                        ('evidence', text_), 
+    for field, func in (('uid', text_),
+                        ('image', text_),
+                        ('evidence', text_),
                         ('expires', parse_datetime),
                         ('issuedOn', parse_datetime)):
         value = data.get(field)

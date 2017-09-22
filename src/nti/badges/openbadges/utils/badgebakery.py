@@ -10,17 +10,20 @@ https://gist.github.com/toolness/5326379
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import sys
 import pprint
 import argparse
-import urlparse
 import collections
+
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 import simplejson
 
@@ -28,6 +31,8 @@ from PIL import Image
 from PIL import PngImagePlugin
 
 from itsdangerous import JSONWebSignatureSerializer
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def get_baked_data(source, secret=None, raw=False):
@@ -46,7 +51,7 @@ def get_baked_data(source, secret=None, raw=False):
         return result
 
     # # check if it's a known scheme
-    scheme = urlparse.urlparse(result).scheme if result else None
+    scheme = urlparse(result).scheme if result else None
     if scheme:
         return result
 

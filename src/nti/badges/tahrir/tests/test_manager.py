@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -21,8 +22,12 @@ import os
 import pickle
 import shutil
 import tempfile
-import ConfigParser
 from datetime import datetime
+
+try:
+    from ConfigParser import RawConfigParser
+except ImportError:
+    from configparser import RawConfigParser
 
 from zope import component
 
@@ -51,7 +56,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
     def test_config(self):
         tmp_dir = tempfile.mkdtemp(dir="/tmp")
         try:
-            config = ConfigParser.RawConfigParser()
+            config = RawConfigParser()
             config.add_section('tahrir')
             config.set('tahrir', 'dburi', 'mysql://Users:Users@myhost/Tahrir')
             config.set('tahrir', 'twophase', 'True')
