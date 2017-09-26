@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import hashlib
 from datetime import datetime
@@ -29,7 +28,8 @@ from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
 
-from nti.base._compat import unicode_
+from nti.base._compat import text_
+from nti.base._compat import bytes_
 
 from nti.property.property import alias
 
@@ -42,9 +42,11 @@ if not hasattr(Assertion, 'exported'):
     Assertion.exported = exported
 Assertion.locked = alias('exported')
 
+logger = __import__('logging').getLogger(__name__)
+
 
 def salt_default():
-    return u'23597b11-857a-447f-8129-66b5397b0c7f'
+    return '23597b11-857a-447f-8129-66b5397b0c7f'
 
 
 def hexdigest(data, hasher=None):
@@ -57,9 +59,9 @@ def hexdigest(data, hasher=None):
 def assertion_id(person_id, badge_id):
     hasher = hashlib.md5()
     for data in (badge_id, '->', person_id):
-        hasher.update("%s" % data)
+        hasher.update(bytes_("%s" % data))
     result = hasher.hexdigest()
-    return unicode_(result)
+    return text_(result)
 
 
 class NTITahrirDatabase(TahrirDatabase):
@@ -73,7 +75,7 @@ class NTITahrirDatabase(TahrirDatabase):
         return result
 
     def recipient(self, email):
-        hexdigest = unicode_(hashlib.sha256(email + self.salt).hexdigest())
+        hexdigest = text_(hashlib.sha256(email + self.salt).hexdigest())
         return u"sha256$" + hexdigest
 
     # issuers
