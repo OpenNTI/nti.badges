@@ -46,7 +46,7 @@ logger = __import__('logging').getLogger(__name__)
 
 
 def salt_default():
-    return '23597b11-857a-447f-8129-66b5397b0c7f'
+    return u'23597b11-857a-447f-8129-66b5397b0c7f'
 
 
 def hexdigest(data, hasher=None):
