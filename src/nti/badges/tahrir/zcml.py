@@ -6,10 +6,9 @@ Directives to be used in ZCML
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import functools
 
@@ -26,6 +25,8 @@ from nti.badges.tahrir.manager import create_issuer
 from nti.badges.tahrir.manager import create_badge_manager
 
 from nti.base._compat import text_
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class IRegisterTahrirDB(interface.Interface):

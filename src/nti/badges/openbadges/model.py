@@ -4,10 +4,11 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
+import six
 
 from zope import interface
 
@@ -34,13 +35,15 @@ from nti.schema.field import SchemaConfigured
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
+logger = __import__('logging').getLogger(__name__)
+
 
 @WithRepr
 @NoPickle
 @EqHash('url', 'type')
+@six.add_metaclass(MetaBadgeObject)
 @interface.implementer(IVerificationObject, IContentTypeAware)
 class VerificationObject(SchemaConfigured):
-    __metaclass__ = MetaBadgeObject
     createDirectFieldProperties(IVerificationObject)
 
     __external_class_name__ = "Verification"
@@ -50,9 +53,9 @@ class VerificationObject(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('identity', 'type')
+@six.add_metaclass(MetaBadgeObject)
 @interface.implementer(IIdentityObject, IContentTypeAware)
 class IdentityObject(SchemaConfigured):
-    __metaclass__ = MetaBadgeObject
     createDirectFieldProperties(IIdentityObject)
 
     __external_class_name__ = "Identity"
@@ -62,9 +65,9 @@ class IdentityObject(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('url', 'name')
+@six.add_metaclass(MetaBadgeObject)
 @interface.implementer(IAlignmentObject, IContentTypeAware)
 class AlignmentObject(SchemaConfigured):
-    __metaclass__ = MetaBadgeObject
     createDirectFieldProperties(IAlignmentObject)
 
     __external_class_name__ = "Alignment"
@@ -74,9 +77,9 @@ class AlignmentObject(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('name', 'url')
+@six.add_metaclass(MetaBadgeObject)
 @interface.implementer(IIssuerOrganization, IContentTypeAware)
 class IssuerOrganization(SchemaConfigured):
-    __metaclass__ = MetaBadgeObject
     createDirectFieldProperties(IIssuerOrganization)
 
     __external_class_name__ = "Issuer"
@@ -90,9 +93,9 @@ class IssuerOrganization(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('name')
+@six.add_metaclass(MetaBadgeObject)
 @interface.implementer(IBadgeClass, IContentTypeAware)
 class BadgeClass(SchemaConfigured):
-    __metaclass__ = MetaBadgeObject
     createDirectFieldProperties(IBadgeClass)
 
     __external_class_name__ = "Badge"
@@ -107,9 +110,9 @@ class BadgeClass(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('uid', 'recipient')
+@six.add_metaclass(MetaBadgeObject)
 @interface.implementer(IBadgeAssertion, IContentTypeAware)
 class BadgeAssertion(SchemaConfigured):
-    __metaclass__ = MetaBadgeObject
     createDirectFieldProperties(IBadgeAssertion)
 
     __external_class_name__ = "Assertion"

@@ -9,10 +9,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import os
-try:
-    from ConfigParser import ConfigParser
-except ImportError:
-    from configparser import ConfigParser
+from six.moves import configparser
 
 from zope import interface
 
@@ -376,7 +373,7 @@ def create_badge_manager(dburi=None, twophase=False, salt=None,
         data_file = os.path.join(data_dir, 'tahrir.db')
         dburi = "sqlite:///%s" % data_file
     elif config:  # if config file is specified
-        parser = ConfigParser()
+        parser = configparser.ConfigParser()
         config_name = os.path.expandvars(config)
         parser.read([config_name])
         if parser.has_option('tahrir', 'salt'):

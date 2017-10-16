@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import time
 from datetime import datetime
@@ -53,6 +52,8 @@ from nti.badges.tahrir.interfaces import IBadge as ITahrirBadge
 from nti.badges.tahrir.interfaces import IIssuer as ITahrirIssuer
 from nti.badges.tahrir.interfaces import IPerson as ITahrirPerson
 from nti.badges.tahrir.interfaces import IAssertion as ITahrirAssertion
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def tag_badge_interfaces(source, target):

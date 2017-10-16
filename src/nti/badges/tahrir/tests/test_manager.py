@@ -23,11 +23,7 @@ import pickle
 import shutil
 import tempfile
 from datetime import datetime
-
-try:
-    from ConfigParser import RawConfigParser
-except ImportError:
-    from configparser import RawConfigParser
+from six.moves import configparser
 
 from zope import component
 
@@ -56,7 +52,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
     def test_config(self):
         tmp_dir = tempfile.mkdtemp(dir="/tmp")
         try:
-            config = RawConfigParser()
+            config = configparser.RawConfigParser()
             config.add_section('tahrir')
             config.set('tahrir', 'dburi', 'mysql://Users:Users@myhost/Tahrir')
             config.set('tahrir', 'twophase', 'True')
