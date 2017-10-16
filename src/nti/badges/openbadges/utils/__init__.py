@@ -10,12 +10,12 @@ from __future__ import absolute_import
 
 import os
 import six
-import urllib
 from datetime import datetime
 from collections import Mapping
+from six.moves import urllib_parse
 from dateutil.parser import parse as dateutil_parse
 
-from six.moves import urllib_parse
+import requests
 
 import simplejson
 
@@ -111,8 +111,8 @@ def process_json_source(source, **kwargs):
         if result.scheme in VALID_SCHEMES:
             __traceback_info__ = source
             logger.info('Getting json data from %s', source)
-            response = urllib.urlopen(source)
-            source = response.read()
+            response = requests.get(source)
+            source = response.content
         # check for a local file
         elif os.path.exists(source) and os.path.isfile(source):
             with open(source, "r") as fp:
