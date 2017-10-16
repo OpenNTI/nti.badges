@@ -75,7 +75,8 @@ class NTITahrirDatabase(TahrirDatabase):
         return result
 
     def recipient(self, email):
-        hexdigest = text_(hashlib.sha256(email + self.salt).hexdigest())
+        data = bytes_(email + self.salt)
+        hexdigest = text_(hashlib.sha256(data).hexdigest())
         return u"sha256$" + hexdigest
 
     # issuers
