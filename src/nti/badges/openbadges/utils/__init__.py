@@ -15,7 +15,11 @@ from collections import Mapping
 from six.moves import urllib_parse
 from dateutil.parser import parse as dateutil_parse
 
-import requests
+try:
+    from urllib.request import urlopen
+except ImportError:
+    import urllib
+    urlopen = urllib.urlopen
 
 import simplejson
 
@@ -111,8 +115,8 @@ def process_json_source(source, **kwargs):
         if result.scheme in VALID_SCHEMES:
             __traceback_info__ = source
             logger.info('Getting json data from %s', source)
-            response = requests.get(source)
-            source = response.content
+            response = urlopen(source)
+            source = response.read()
         # check for a local file
         elif os.path.exists(source) and os.path.isfile(source):
             with open(source, "r") as fp:
