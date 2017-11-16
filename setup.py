@@ -1,5 +1,6 @@
 import codecs
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools import find_packages
 
 entry_points = {
     'console_scripts': [
@@ -8,8 +9,8 @@ entry_points = {
 }
 
 TESTS_REQUIRE = [
+    'fudge',
     'nti.testing',
-    'z3c.baseregistry',
     'zope.testrunner',
 ]
 
@@ -32,8 +33,12 @@ setup(
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
+        "License :: OSI Approved :: BSD License",
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
@@ -47,12 +52,12 @@ setup(
     install_requires=[
         'setuptools',
         'itsdangerous',
-		'nti.base',
-		'nti.externalization',
-		'nti.mimetype',
-		'nti.property',
-		'nti.schema',
-		'nti.wref',
+        'nti.base',
+        'nti.externalization',
+        'nti.mimetype',
+        'nti.property',
+        'nti.schema',
+        'nti.wref',
         'Pillow',
         'python-dateutil',
         'requests',
