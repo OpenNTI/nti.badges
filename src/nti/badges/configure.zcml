@@ -18,23 +18,23 @@
 	
 	<!-- Adpaters -->
 	<adapter factory=".adapters.basestring_to_mozilla_indentity_object"
-			 for="basestring"
+			 for="nti.base.interfaces.IBasestring"
 			 provides=".openbadges.interfaces.IIdentityObject" />
 			 
 	<adapter factory=".adapters.basestring_to_tahrir_person"
-			 for="basestring"
+			 for="nti.base.interfaces.IBasestring"
 			 provides=".tahrir.interfaces.IPerson" />
 
 	<adapter factory=".adapters.basestring_to_tahrir_badge"
-			 for="basestring"
+			 for="nti.base.interfaces.IBasestring"
 			 provides=".tahrir.interfaces.IBadge" />
 			 
 	<adapter factory=".adapters.basestring_to_ntiperson"
-			 for="basestring"
+			 for="nti.base.interfaces.IBasestring"
 			 provides=".interfaces.INTIPerson" />
 		
 	<adapter factory=".adapters.basestring_to_tahrir_issuer"
-			 for="basestring"
+			 for="nti.base.interfaces.IBasestring"
 			 provides=".tahrir.interfaces.IIssuer" />
 	
 	<adapter factory=".adapters.collection_to_tahrir_issuer"

@@ -59,7 +59,7 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
             config.set('tahrir', 'salt', 'ichigo')
 
             config_file = os.path.join(tmp_dir, 'sample.cfg')
-            with open(config_file, 'wb') as configfile:
+            with open(config_file, 'w') as configfile:
                 config.write(configfile)
 
             manager = create_badge_manager(config=config_file)

@@ -43,11 +43,11 @@ class TestScanner(NTIBadgesTestCase):
             # prepare badge
             badge_json = os.path.join(os.path.dirname(__file__), 'badge.json')
             with open(badge_json, "rb") as fp:
-                badge = simplejson.load(fp)
+                badge = simplejson.load(fp, 'utf-8')
                 badge['issuer'] = 'file://' + os.path.join(img_dir, 'issuer.json')
 
             badge_json = os.path.join(img_dir, 'badge.json')
-            with open(badge_json, "wb") as fp:
+            with open(badge_json, "w") as fp:
                 simplejson.dump(badge, fp)
 
             # bake image

@@ -108,6 +108,8 @@ def load_data(source, encoding='UTF-8', secret=None):
 def process_json_source(source, **kwargs):
     if hasattr(source, "read"):
         source = source.read()
+    if isinstance(source, bytes):
+        source = source.decode("utf-8")
     if isinstance(source, six.string_types):
         # check for a remote source
         lower = source.lower()
