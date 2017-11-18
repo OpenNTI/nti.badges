@@ -28,8 +28,6 @@ ZCML_STRING = u"""
             i18n_domain='nti.dataserver'>
 
     <include package="zope.component" />
-    <include package="zope.annotation" />
-    <include package="z3c.baseregistry" file="meta.zcml" />
     <include package="." file="meta.zcml" />
 
     <tdb:registerTahrirDB defaultSQLite="True" salt="ichigo" />
