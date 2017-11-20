@@ -116,6 +116,9 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(badge, has_property('criteria', 'http://foss.rit.org'))
         assert_that(badge, has_property('tags', 'fox, box'))
 
+    def notification_callback(self, *args, **kwargs):
+        pass
+
     def test_operations(self):
         manager = self.new
 
@@ -167,6 +170,8 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 
         assert_that(manager.get_all_persons(), has_length(1))
 
+        manager.db.notification_callback = self.notification_callback
+
         eventtesting.clearEvents()
         assert_that(manager.add_assertion('foo@example.org', 'fossbox'),
                     is_not(False))
@@ -193,7 +198,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 
         assertion_from_wref = wref(allow_cached=True)
         assert_that(assertion_from_wref, is_(not_none()))
-         
+
         assertion = manager.get_assertion('foo@example.org', 'fossbox')
         assert_that(assertion, is_(not_none()))
         assert_that(assertion, is_(assertion_from_wref))
@@ -203,8 +208,17 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(manager.db.assertion_exists('fossbox', 'foo@example.org'),
                     is_(True))
 
+        assert_that(manager.db.get_assertion(assertion_id=assertion.id),
+                    is_not(none()))
+
+        assert_that(manager.db.get_assertion(badge_id=badge_id, email='foo@example.org'),
+                    is_not(none()))
+
+        assert_that(manager.update_assertion(u'xxx', exported=True),
+                    is_(False))
+
         uid = assertion.id
-        manager.update_assertion(uid, exported=True)
+        manager.update_assertion(uid, 'foo@example.org', exported=True)
         assertion = manager.get_assertion('foo@example.org', 'fossbox')
         assert_that(assertion, has_property('exported', is_(True)))
 
@@ -221,6 +235,9 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(assertions, has_length(1))
 
         assert_that(manager.delete_person(pid), is_('foo@example.org'))
+
+        assert_that(manager.db.get_assertions(email='foo@example.org'),
+                    has_length(0))
 
     def test_person_update(self):
         manager = self.new

@@ -127,6 +127,7 @@ class NTITahrirDatabase(TahrirDatabase):
         return result
 
     def get_person(self, person_email=None, id=None, nickname=None):
+        result = None
         query = self.session.query(Person)
         if nickname and self.person_exists(nickname=nickname):
             result = query.filter(
@@ -138,16 +139,14 @@ class NTITahrirDatabase(TahrirDatabase):
             ).one()
         elif id and self.person_exists(id=id):
             result = query.filter_by(id=id).one()
-        else:
-            result = None
         return result
 
     # assertions
 
     def get_assertion(self, badge_id=None, email=None, nickname=None, assertion_id=None):
-        if not self.assertion_exists(badge_id, email, assertion_id):
+        if not self.assertion_exists(badge_id, email, nickname, assertion_id):
             result = None
-        elif assertion_id is not None:
+        elif assertion_id:
             result = self.get_assertion_by_id(assertion_id)
         else:
             person = self.get_person(email, nickname=nickname)
