@@ -164,8 +164,6 @@ def tahrir_badge_to_mozilla_badge(badge):
                         description=badge.description)
     if issuer:
         result.issuer = issuer
-    else:
-        logger.warn("Could not set issuer for badge %s", result.name)
     tag_badge_interfaces(badge, result)
     return result
 

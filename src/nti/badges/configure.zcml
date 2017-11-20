@@ -115,6 +115,10 @@
 			 for=".interfaces.INTIAssertion"
 			 provides=".openbadges.interfaces.IBadgeClass" />
 			 
+	<adapter factory=".adapters.ntiissuer_to_tahrir_issuer"
+			 for=".interfaces.INTIIssuer"
+			 provides=".tahrir.interfaces.IIssuer" />
+			 
 	<!-- mozilla-to -->
 	<adapter factory=".adapters.mozilla_identity_object_to_tahrir_person"
 			 for=".openbadges.interfaces.IIdentityObject"

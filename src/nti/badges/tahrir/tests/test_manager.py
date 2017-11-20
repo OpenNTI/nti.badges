@@ -35,15 +35,19 @@ from zope.component import eventtesting
 from zope.lifecycleevent import ObjectAddedEvent
 from zope.lifecycleevent import ObjectCreatedEvent
 
-from tahrir_api.model import Badge, Person, Issuer
+from tahrir_api.model import Badge
+from tahrir_api.model import Issuer
+from tahrir_api.model import Person
 
-from nti.wref.interfaces import IWeakRef
+from nti.badges.openbadges.interfaces import IBadgeClass
 
 from nti.badges.tahrir import interfaces
 
 from nti.badges.tahrir.manager import create_badge_manager
 
 from nti.badges.tests import NTIBadgesTestCase
+
+from nti.wref.interfaces import IWeakRef
 
 pymysql.install_as_MySQLdb()
 
@@ -251,7 +255,11 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(manager.db.get_assertion(assertion_id=assertion.id),
                     is_not(none()))
 
-        assert_that(manager.db.get_assertion(badge_id=badge_id, email='foo@example.org'),
+        assertion = manager.db.get_assertion(badge_id=badge_id, email='foo@example.org')
+        assert_that(assertion,
+                    is_not(none()))
+        
+        assert_that(IBadgeClass(assertion, None),
                     is_not(none()))
 
         assert_that(manager.update_assertion(u'xxx', exported=True),
