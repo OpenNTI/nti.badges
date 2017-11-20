@@ -69,7 +69,6 @@ setup(
         'simplejson',
         'six',
         'sqlalchemy',
-        'transaction',
         'zope.component',
         'zope.interface',
         'zope.lifecycleevent',
