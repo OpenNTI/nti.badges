@@ -33,6 +33,8 @@ from nti.base._compat import bytes_
 
 from nti.property.property import alias
 
+logger = __import__('logging').getLogger(__name__)
+
 # make compliant
 Assertion.uid = alias('id')
 
@@ -41,8 +43,6 @@ if not hasattr(Assertion, 'exported'):
     exported = Column('exported', Boolean(), nullable=True, unique=False)
     Assertion.exported = exported
 Assertion.locked = alias('exported')
-
-logger = __import__('logging').getLogger(__name__)
 
 
 def salt_default():
@@ -76,8 +76,8 @@ class NTITahrirDatabase(TahrirDatabase):
 
     def recipient(self, email):
         data = bytes_(email + self.salt)
-        hexdigest = text_(hashlib.sha256(data).hexdigest())
-        return u"sha256$" + hexdigest
+        hexdigest = hashlib.sha256(data).hexdigest()
+        return u"sha256$%s" % hexdigest
 
     # issuers
 
@@ -131,50 +131,19 @@ class NTITahrirDatabase(TahrirDatabase):
         query = self.session.query(Person)
         if nickname and self.person_exists(nickname=nickname):
             result = query.filter(
-                func.lower(Person.nickname) == func.lower(nickname)).one()
+                func.lower(Person.nickname) == func.lower(nickname)
+            ).one()
         elif person_email and self.person_exists(email=person_email):
             result = query.filter(
-                func.lower(Person.email) == func.lower(person_email)).one()
+                func.lower(Person.email) == func.lower(person_email)
+            ).one()
         elif id and self.person_exists(id=id):
             result = query.filter_by(id=id).one()
         else:
             result = None
         return result
 
-    @autocommit
-    def update_person(self, person_id, email=None, nickname=None, website=None, bio=None):
-        data = {"website": website, "bio": bio}
-        if email:
-            data["email"] = email
-        if nickname:
-            data["nickname"] = nickname
-        result = self.session.query(Person) \
-                     .filter_by(id=person_id).update(data)
-        return result
-
-    # assertion
-
-    def assertion_exists(self, badge_id=None, email=None, nickname=None, assertion_id=None):
-        if assertion_id is not None:
-            query = self.session.query(
-                exists().where(Assertion.id == assertion_id))
-            result = query.scalar()
-        else:
-            assert badge_id is not None
-            person = self.get_person(email, nickname=nickname)
-            if not person:
-                result = False
-            else:
-                result = self.session.query(exists().where(
-                    and_(func.lower(Assertion.person_id) == func.lower(person.id),
-                         func.lower(Assertion.badge_id) == func.lower(badge_id)))
-                ).scalar()
-        return result
-
-    def get_assertion_by_id(self, assertion_id):
-        query = self.session.query(Assertion).filter_by(id=assertion_id)
-        result = query.scalar()
-        return result
+    # assertions
 
     def get_assertion(self, badge_id=None, email=None, nickname=None, assertion_id=None):
         if not self.assertion_exists(badge_id, email, assertion_id):
@@ -234,7 +203,7 @@ class NTITahrirDatabase(TahrirDatabase):
 
         if (   not self.person_exists(email=person_email)
             or not self.badge_exists(badge_id)):
-            return False  # TODO: Should probably be an empty tuple
+            return False
 
         if issued_on is None:
             issued_on = datetime.utcnow()
