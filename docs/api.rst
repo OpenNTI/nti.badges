@@ -2,6 +2,22 @@
  Reference
 ===========
 
+Open Badges
+===========
+
+.. toctree::
+	:maxdepth: 2
+
+	openbadges
+
+Tahrir
+======
+
+.. toctree::
+	:maxdepth: 2
+
+	tahrir
+
 Adapters
 ========
 
