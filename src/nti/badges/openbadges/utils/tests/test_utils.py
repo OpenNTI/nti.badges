@@ -11,18 +11,24 @@ from __future__ import absolute_import
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import raises
+from hamcrest import calling
+from hamcrest import contains
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
-from hamcrest import contains
 does_not = is_not
 
 from nti.testing.matchers import verifiably_provides
 
 import os
+import time
 
 from nti.badges.openbadges import interfaces
 
+from nti.badges.openbadges.utils import mend_url
+from nti.badges.openbadges.utils import load_data
+from nti.badges.openbadges.utils import parse_datetime
 from nti.badges.openbadges.utils import badge_from_source
 from nti.badges.openbadges.utils import issuer_from_source
 from nti.badges.openbadges.utils import assertion_from_source
@@ -31,6 +37,27 @@ from nti.badges.tests import NTIBadgesTestCase
 
 
 class TestUtils(NTIBadgesTestCase):
+
+    def test_parse_datetime(self):
+        now = time.time()
+        assert_that(parse_datetime(now), is_not(none()))
+
+        assert_that(parse_datetime('invalid_time'),
+                    is_(none()))
+
+    def test_mend_url(self):
+        assert_that(mend_url('http://example.com/issuer.json', base='https://nti.com'),
+                    is_('https://nti.com/issuer.json'))
+
+    def test_load_data(self):
+        assert_that(calling(load_data).with_args('{invalid', secret='2'),
+                    raises(ValueError))
+
+        assert_that(calling(load_data).with_args('{invalid'),
+                    raises(TypeError))
+
+        assert_that(calling(load_data).with_args(124),
+                    raises(ValueError))
 
     def test_issuer_from_json(self):
         path = os.path.join(os.path.dirname(__file__), 'issuer.json')

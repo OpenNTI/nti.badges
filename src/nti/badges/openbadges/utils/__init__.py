@@ -17,7 +17,7 @@ from dateutil.parser import parse as dateutil_parse
 
 try:
     from urllib.request import urlopen
-except ImportError:
+except ImportError:  # pragma: no cover
     import urllib
     urlopen = urllib.urlopen
 
@@ -92,16 +92,14 @@ def load_data(source, encoding='UTF-8', secret=None):
                 jws = JSONWebSignatureSerializer(secret)
                 try:
                     result = jws.loads(source)
-                except BadSignature:
-                    raise ValueError("Bad source signature")
-                except:
-                    raise ValueError("Cannot load source data")
+                except Exception:
+                    raise ValueError("Bad source or signature")
             else:
                 raise TypeError("Cannot process source data")
     elif isinstance(source, Mapping):
         result = source
     else:
-        raise TypeError("Cannot process source data")
+        raise ValueError("Invalid source data")
     return result
 
 
