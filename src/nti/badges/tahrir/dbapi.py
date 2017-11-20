@@ -14,7 +14,6 @@ from datetime import datetime
 from zope import lifecycleevent
 
 from sqlalchemy import or_
-from sqlalchemy import and_
 from sqlalchemy import func
 from sqlalchemy import exists
 from sqlalchemy import Column
