@@ -59,7 +59,7 @@ class AssertionWeakRef(object):
     def __eq__(self, other):
         try:
             return other is self or self.__getstate__() == other.__getstate__()
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return NotImplemented
 
     def __hash__(self):

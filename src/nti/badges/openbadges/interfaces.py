@@ -153,8 +153,6 @@ class IBadgeAwardedEvent(IObjectEvent):
 
     assertion = Object(IBadgeAssertion,
                        title=u"Assertion added")
-
-
 IBadgeAssertionAddedEvent = IBadgeAwardedEvent
 
 

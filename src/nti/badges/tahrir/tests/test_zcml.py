@@ -11,6 +11,8 @@ from __future__ import absolute_import
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import raises
+from hamcrest import calling
 from hamcrest import assert_that
 from hamcrest import has_property
 
@@ -19,7 +21,10 @@ from zope import component
 from nti.badges.tahrir.interfaces import IIssuer
 from nti.badges.tahrir.interfaces import ITahrirBadgeManager
 
+from nti.badges.tahrir.zcml import registerTahrirDB
+
 import nti.testing.base
+
 
 ZCML_STRING = u"""
 <configure  xmlns="http://namespaces.zope.org/zope"
@@ -60,3 +65,8 @@ class TestZcml(nti.testing.base.ConfiguringTestBase):
         assert_that(manager, has_property('autocommit', is_(False)))
         assert_that(manager, has_property('dburi', is_not(none())))
         assert_that(manager, has_property('salt', is_('ichigo')))
+        
+    def test_coverage(self):
+        assert_that(calling(registerTahrirDB).with_args(None),
+                    raises(ValueError))
+

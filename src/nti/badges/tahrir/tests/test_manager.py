@@ -191,6 +191,9 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(assertion_from_wref, is_(not_none()))
         assert_that(assertion_from_wref, is_(events[0].object))
 
+        assertion_from_wref = wref(allow_cached=True)
+        assert_that(assertion_from_wref, is_(not_none()))
+         
         assertion = manager.get_assertion('foo@example.org', 'fossbox')
         assert_that(assertion, is_(not_none()))
         assert_that(assertion, is_(assertion_from_wref))
