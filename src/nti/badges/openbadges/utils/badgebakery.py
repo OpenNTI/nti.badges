@@ -16,9 +16,7 @@ from __future__ import absolute_import
 
 import os
 import sys
-import pprint
 import argparse
-import collections
 
 from six.moves import urllib_parse
 
@@ -58,14 +56,16 @@ def get_baked_data(source, secret=None, raw=False):
                 jws = JSONWebSignatureSerializer(secret)
                 data = jws.loads(result)
                 result = data
-            except Exception:
-                pass
+            except Exception as e:
+                logger.error("Cannot load baked data. %s", e)
+                result = None
         else:
             try:
                 data = simplejson.loads(result, encoding="utf-8")
                 result = data
-            except Exception:
-                pass
+            except Exception as e:
+                logger.error("Cannot load baked data. %s", e)
+                result = None
     return result
 
 
@@ -98,17 +98,6 @@ def bake_badge(source, target, url=None, payload=None, secret=None):
     source.save(target, "png", pnginfo=meta)
 
 
-def verify(source, payload=None, secret=None):
-    data = get_baked_data(source, secret=secret, raw=True)
-    if payload:
-        if secret:
-            jws = JSONWebSignatureSerializer(secret)
-            data = jws.loads(data)
-        else:
-            data = simplejson.loads(payload, encoding="utf-8")
-    return data
-
-
 def process_args(args=None):
     arg_parser = argparse.ArgumentParser(description="Baked a badge")
     arg_parser.add_argument('-v', '--verbose', help="Verbose",
@@ -135,7 +124,7 @@ def process_args(args=None):
     if     not os.path.exists(source) or not os.path.isfile(source) \
         or not source.lower().endswith('.png'):
         print("Invalid image file", source, file=sys.stderr)
-        sys.exit(2)
+        return 2
 
     target = args.target
     if target is None:
@@ -144,34 +133,21 @@ def process_args(args=None):
 
     url = args.url
     payload = args.payload
-    if not url and not payload:
-        print("Must specify either an URL or JSON payload", file=sys.stderr)
-        sys.exit(2)
-
     if payload:
         if not os.path.exists(payload):
             print("Payload file does not", payload, file=sys.stderr)
-            sys.exit(2)
+            return 2
 
-        with open(payload, "rb") as fp:
+        with open(payload, "r") as fp:
             payload = simplejson.load(fp)
 
-        if not isinstance(payload, collections.Mapping):
-            print("Payload is not a json dictionary", payload, file=sys.stderr)
-            sys.exit(2)
-
     bake_badge(source, target, url=url, payload=payload, secret=args.secret)
-
-    if args.verbose:
-        data = verify(target, payload=payload, secret=args.secret)
-        pprint.pprint("Baked Data")
-        pprint.pprint(data)
+    return 0
 
 
-def main(args=None):
-    process_args(args)
-    sys.exit(0)
+def main(args=None):  # pragma: no cover
+    sys.exit(process_args(args))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()
