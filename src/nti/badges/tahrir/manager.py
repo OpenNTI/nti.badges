@@ -230,7 +230,7 @@ class TahrirBadgeManager(object):
         database = self.db  # get reference
         badge = self._get_badge(badge, database=database)
         person = self._get_person(person, database=database)
-        if badge and person:
+        if badge is not None and person is not None:
             return database.add_assertion(badge.id, person.email,
                                           issued_on=issued_on,
                                           exported=exported)

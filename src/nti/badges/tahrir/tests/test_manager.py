@@ -23,7 +23,10 @@ import pickle
 import shutil
 import tempfile
 from datetime import datetime
+
 from six.moves import configparser
+
+import pymysql
 
 from zope import component
 
@@ -42,6 +45,8 @@ from nti.badges.tahrir.manager import create_badge_manager
 
 from nti.badges.tests import NTIBadgesTestCase
 
+pymysql.install_as_MySQLdb()
+
 
 class TestTahrirBadgeManager(NTIBadgesTestCase):
 
@@ -49,13 +54,14 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
         manager = component.queryUtility(interfaces.ITahrirBadgeManager)
         assert_that(manager, is_not(none()))
 
-    def test_config(self):
+    def test_mysql_config(self):
         tmp_dir = tempfile.mkdtemp(dir="/tmp")
         try:
             config = configparser.RawConfigParser()
             config.add_section('tahrir')
             config.set('tahrir', 'dburi', 'mysql://Users:Users@myhost/Tahrir')
             config.set('tahrir', 'twophase', 'True')
+            config.set('tahrir', 'autocommit', 'True')
             config.set('tahrir', 'salt', 'ichigo')
 
             config_file = os.path.join(tmp_dir, 'sample.cfg')
@@ -65,9 +71,12 @@ class TestTahrirBadgeManager(NTIBadgesTestCase):
             manager = create_badge_manager(config=config_file)
             assert_that(manager, has_property('salt', 'ichigo'))
             assert_that(manager, has_property('twophase', is_(True)))
+            assert_that(manager, has_property('autocommit', is_(True)))
             assert_that(manager,
                         has_property('dburi', 'mysql://Users:Users@myhost/Tahrir'))
             assert_that(manager, has_property('defaultSQLite', is_(False)))
+            assert_that(manager, 
+                        has_property('scoped_session', is_not(none())))
         finally:
             shutil.rmtree(tmp_dir, True)
 
@@ -133,6 +142,14 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(manager.get_issuer(u'FOSS@RIT', u'http://foss.rit.edu/badges'),
                     is_not(none()))
 
+        assert_that(manager.get_all_issuers(),
+                    has_length(1))
+
+        fake_issuer = Issuer()
+        fake_issuer.id = u'xxx'
+        assert_that(manager.issuer_exists(fake_issuer),
+                    is_(False))
+
         badge = Badge()
         badge.name = u'fossbox'
         badge.criteria = u'http://foss.rit.edu'
@@ -145,6 +162,17 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 
         db_badge = manager.get_badge(u'fossbox')
         assert_that(db_badge, is_not(none()))
+
+        assert_that(manager.badge_exists(badge),
+                    is_(True))
+
+        fake_badge = Badge()
+        fake_badge.name = u'xxx'
+        assert_that(manager.update_badge(fake_badge, description=u'fake'),
+                    is_(False))
+
+        assert_that(manager.update_badge(badge, tags=u'fox,box'),
+                    is_(True))
 
         person = Person()
         person.bio = u'I am foo'
@@ -160,8 +188,13 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         assert_that(person, has_property('bio', 'I am foo'))
         assert_that(person, has_property('website', 'http://example.org/foo'))
 
-        update = manager.update_person(person, bio=u"I am foo!!!")
-        assert_that(update, is_(True))
+        fake_person = Person()
+        fake_person.id = 'xxx'
+        assert_that(manager.update_person(fake_person, bio=u"I am foo!!!"),
+                    is_(False))
+
+        assert_that(manager.update_person(person, bio=u"I am foo!!!"),
+                    is_(True))
 
         person = manager.get_person(pid)
         assert_that(person, has_property('bio', 'I am foo!!!'))
@@ -170,7 +203,14 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 
         assert_that(manager.get_all_persons(), has_length(1))
 
+        # assertions
         manager.db.notification_callback = self.notification_callback
+
+        assert_that(manager.get_assertion(person, fake_badge),
+                    is_(none()))
+
+        assert_that(manager.add_assertion(person, fake_badge),
+                    is_(False))
 
         eventtesting.clearEvents()
         assert_that(manager.add_assertion('foo@example.org', 'fossbox'),
@@ -233,6 +273,22 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
 
         assertions = manager.get_person_assertions('foo@example.org')
         assert_that(assertions, has_length(1))
+
+        assert_that(manager.delete_assertion(person, fake_badge),
+                    is_(False))
+
+        assert_that(manager.delete_assertion(person, badge),
+                    is_(True))
+
+        assert_that(manager.db.get_assertions(email='foo@example.org'),
+                    has_length(0))
+
+        assert_that(manager.delete_person_assertions(fake_person),
+                    is_(False))
+
+        manager.add_assertion('foo@example.org', 'fossbox')
+        assert_that(manager.delete_person_assertions(person),
+                    is_(True))
 
         assert_that(manager.delete_person(pid), is_('foo@example.org'))
 
