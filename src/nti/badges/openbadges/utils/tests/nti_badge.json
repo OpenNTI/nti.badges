@@ -1,0 +1,13 @@
+{
+	"name": "Learning Badge",
+	"description": "Learning is fun.",
+	"image": "https://nti.org/learning-badge.png",
+	"criteria": "https://nti.org/learning-badge.html",
+	"tags": ["robots", "awesome"],
+	"issuer": {
+		"name": "NTI",
+		"image": "https://nti.org/logo.png",
+		"url": "https://nti.org",
+		"email": "ken@nti.org"
+	}
+}

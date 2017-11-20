@@ -75,7 +75,7 @@ def flat_scan(path, verify=False, **kwargs):
         for name in glob.iglob(pathname):
             name = os.path.join(path, name)
             _, ext = os.path.splitext(name)
-            if ext.lower() != '.json' or not os.path.isfile(name):
+            if ext.lower() != '.json' or not os.path.isfile(name):  # pragma: no cover
                 continue
 
             # parse badge json file
