@@ -8,18 +8,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import six
-
 from zope import interface
-
-from zope.mimetype.interfaces import IContentTypeAware
 
 from nti.badges.interfaces import INTIBadge
 from nti.badges.interfaces import INTIIssuer
 from nti.badges.interfaces import INTIPerson
 from nti.badges.interfaces import INTIAssertion
 
-from nti.badges.utils import MetaBadgeObject
+from nti.badges.mixins import ContentTypeAwareMixin
 
 from nti.externalization.persistence import NoPickle
 
@@ -39,9 +35,9 @@ logger = __import__('logging').getLogger(__name__)
 @WithRepr
 @NoPickle
 @EqHash('issuer', 'name')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(INTIBadge, IContentTypeAware)
-class NTIBadge(SchemaConfigured):
+@interface.implementer(INTIBadge)
+class NTIBadge(SchemaConfigured,
+               ContentTypeAwareMixin):
     createDirectFieldProperties(INTIBadge)
 
     __external_class_name__ = "Badge"
@@ -58,9 +54,8 @@ class NTIBadge(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('name', 'email')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(INTIPerson, IContentTypeAware)
-class NTIPerson(SchemaConfigured):
+@interface.implementer(INTIPerson)
+class NTIPerson(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(INTIPerson)
 
     __external_class_name__ = "Person"
@@ -70,9 +65,8 @@ class NTIPerson(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('name', 'origin')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(INTIIssuer, IContentTypeAware)
-class NTIIssuer(SchemaConfigured):
+@interface.implementer(INTIIssuer)
+class NTIIssuer(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(INTIIssuer)
 
     __external_can_create__ = True
@@ -84,10 +78,9 @@ class NTIIssuer(SchemaConfigured):
 
 @WithRepr
 @NoPickle
-@six.add_metaclass(MetaBadgeObject)
 @EqHash('badge', 'recipient', 'issuedOn')
-@interface.implementer(INTIAssertion, IContentTypeAware)
-class NTIAssertion(SchemaConfigured):
+@interface.implementer(INTIAssertion)
+class NTIAssertion(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(INTIAssertion)
 
     __external_class_name__ = "Assertion"

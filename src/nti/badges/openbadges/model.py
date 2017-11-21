@@ -8,11 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import six
-
 from zope import interface
-
-from zope.mimetype.interfaces import IContentTypeAware
 
 from nti.badges.openbadges.interfaces import IBadgeClass
 from nti.badges.openbadges.interfaces import IBadgeAssertion
@@ -21,7 +17,7 @@ from nti.badges.openbadges.interfaces import IAlignmentObject
 from nti.badges.openbadges.interfaces import IVerificationObject
 from nti.badges.openbadges.interfaces import IIssuerOrganization
 
-from nti.badges.utils import MetaBadgeObject
+from nti.badges.mixins import ContentTypeAwareMixin
 
 from nti.externalization.persistence import NoPickle
 
@@ -41,9 +37,8 @@ logger = __import__('logging').getLogger(__name__)
 @WithRepr
 @NoPickle
 @EqHash('url', 'type')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(IVerificationObject, IContentTypeAware)
-class VerificationObject(SchemaConfigured):
+@interface.implementer(IVerificationObject)
+class VerificationObject(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(IVerificationObject)
 
     __external_class_name__ = "Verification"
@@ -53,9 +48,8 @@ class VerificationObject(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('identity', 'type')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(IIdentityObject, IContentTypeAware)
-class IdentityObject(SchemaConfigured):
+@interface.implementer(IIdentityObject)
+class IdentityObject(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(IIdentityObject)
 
     __external_class_name__ = "Identity"
@@ -65,9 +59,8 @@ class IdentityObject(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('url', 'name')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(IAlignmentObject, IContentTypeAware)
-class AlignmentObject(SchemaConfigured):
+@interface.implementer(IAlignmentObject)
+class AlignmentObject(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(IAlignmentObject)
 
     __external_class_name__ = "Alignment"
@@ -77,9 +70,8 @@ class AlignmentObject(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('name', 'url')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(IIssuerOrganization, IContentTypeAware)
-class IssuerOrganization(SchemaConfigured):
+@interface.implementer(IIssuerOrganization)
+class IssuerOrganization(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(IIssuerOrganization)
 
     __external_class_name__ = "Issuer"
@@ -93,9 +85,8 @@ class IssuerOrganization(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('name')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(IBadgeClass, IContentTypeAware)
-class BadgeClass(SchemaConfigured):
+@interface.implementer(IBadgeClass)
+class BadgeClass(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(IBadgeClass)
 
     __external_class_name__ = "Badge"
@@ -110,9 +101,8 @@ class BadgeClass(SchemaConfigured):
 @WithRepr
 @NoPickle
 @EqHash('uid', 'recipient')
-@six.add_metaclass(MetaBadgeObject)
-@interface.implementer(IBadgeAssertion, IContentTypeAware)
-class BadgeAssertion(SchemaConfigured):
+@interface.implementer(IBadgeAssertion)
+class BadgeAssertion(SchemaConfigured, ContentTypeAwareMixin):
     createDirectFieldProperties(IBadgeAssertion)
 
     __external_class_name__ = "Assertion"
