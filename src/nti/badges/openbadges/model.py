@@ -92,6 +92,7 @@ class BadgeClass(SchemaConfigured, ContentTypeAwareMixin):
     __external_class_name__ = "Badge"
     mime_type = mimeType = 'application/vnd.nextthought.openbadges.badge'
 
+    # pylint: disable=super-init-not-called
     def __init__(self, *args, **kwargs):
         if 'tags' in kwargs:
             kwargs['tags'] = IBadgeClass['tags'].fromObject(kwargs['tags'])

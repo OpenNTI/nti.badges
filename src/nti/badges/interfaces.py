@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+# pylint: disable=inherit-non-class,arguments-differ
+
 from zope import interface
 
 from nti.base.interfaces import ICreatedTime
@@ -28,9 +30,6 @@ class Tag(ValidTextLine):
 
     def fromUnicode(self, value):
         return super(Tag, self).fromUnicode(value.lower())
-
-    def constraint(self, value):
-        return super(Tag, self).constraint(value)
 
 
 class ITaggedContent(interface.Interface):

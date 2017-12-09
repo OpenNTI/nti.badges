@@ -56,14 +56,14 @@ def get_baked_data(source, secret=None, raw=False):
                 jws = JSONWebSignatureSerializer(secret)
                 data = jws.loads(result)
                 result = data
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 logger.error("Cannot load baked data. %s", e)
                 result = None
         else:
             try:
                 data = simplejson.loads(result, encoding="utf-8")
                 result = data
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 logger.error("Cannot load baked data. %s", e)
                 result = None
     return result
@@ -91,6 +91,7 @@ def bake_badge(source, target, url=None, payload=None, secret=None):
         else:
             data = simplejson.dumps(payload)
 
+    # pylint: disable=unused-variable
     __traceback_info__ = data
     source = Image.open(source)
     meta = PngImagePlugin.PngInfo()

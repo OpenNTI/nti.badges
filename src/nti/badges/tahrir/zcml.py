@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Directives to be used in ZCML
-
 .. $Id$
 """
 
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
+
+# pylint: disable=inherit-non-class
 
 import functools
 

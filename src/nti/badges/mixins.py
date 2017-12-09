@@ -20,5 +20,6 @@ class ContentTypeAwareMixin(object):
 
     parameters = dict()
 
+    # pylint: disable=useless-super-delegation
     def __init__(self, *args, **kwargs):
         super(ContentTypeAwareMixin, self).__init__(*args, **kwargs)

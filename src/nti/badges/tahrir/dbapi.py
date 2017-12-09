@@ -18,6 +18,7 @@ from sqlalchemy import func
 from sqlalchemy import exists
 from sqlalchemy import Column
 
+# pylint: disable=no-name-in-module
 from sqlalchemy.types import Boolean
 
 from tahrir_api.model import Badge
@@ -75,13 +76,14 @@ class NTITahrirDatabase(TahrirDatabase):
 
     def recipient(self, email):
         data = bytes_(email + self.salt)
-        hexdigest = hashlib.sha256(data).hexdigest()
-        return u"sha256$%s" % hexdigest
+        digest = hashlib.sha256(data).hexdigest()
+        return u"sha256$%s" % digest
 
     # issuers
 
     def issuer_exists(self, origin=None, name=''):
         # origin is ignored
+        # pylint: disable=unused-variable
         __traceback_info__ = origin, name
         query = self.session.query(
             exists().where(func.lower(Issuer.name) == func.lower(name))
@@ -142,7 +144,8 @@ class NTITahrirDatabase(TahrirDatabase):
         return result
 
     # assertions
-
+    
+    # pylint: disable=redefined-outer-name
     def get_assertion(self, badge_id=None, email=None, nickname=None, assertion_id=None):
         if not self.assertion_exists(badge_id, email, nickname, assertion_id):
             result = None
@@ -165,6 +168,7 @@ class NTITahrirDatabase(TahrirDatabase):
                        .filter_by(person_id=person_id).all()
         return ()
 
+    # pylint: disable=arguments-differ,redefined-outer-name
     @autocommit
     def add_assertion(self,
                       badge_id,
@@ -249,6 +253,7 @@ class NTITahrirDatabase(TahrirDatabase):
         self._adjust_ranks(person, old_rank)
         return (person_email, badge_id)
 
+    # pylint: disable=redefined-outer-name
     @autocommit
     def update_assertion(self, assertion_id, email=None, exported=True, notify=True):
         if not self.assertion_exists(assertion_id=assertion_id):

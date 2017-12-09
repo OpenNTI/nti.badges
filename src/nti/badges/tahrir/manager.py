@@ -114,6 +114,7 @@ class TahrirBadgeManager(object):
         badge = IBadge(badge)
         issuer = self._get_issuer(issuer, database=database) if issuer is not None else None
         issuer_id = badge.issuer_id or issuer.id
+        # pylint: disable=no-member
         result = database.add_badge(name=badge.name,
                                     image=badge.image,
                                     desc=badge.description,
@@ -139,6 +140,7 @@ class TahrirBadgeManager(object):
 
     def get_all_badges(self):
         result = []
+        # pylint: disable=no-member
         for badge in self.db.get_all_badges():
             result.append(badge)
         return result
@@ -151,6 +153,7 @@ class TahrirBadgeManager(object):
             tags = tags or source.tags or stored.tags
             criteria = criteria or source.criteria or stored.criteria
             description = description or source.description or stored.description
+            # pylint: disable=no-member
             database.update_badge(badge_id=stored.id,
                                   tags=tags,
                                   criteria=criteria,
@@ -173,6 +176,7 @@ class TahrirBadgeManager(object):
         return result
 
     def get_badge_by_id(self, badge_id):
+        # pylint: disable=no-member
         result = self.db.get_badge(badge_id)
         return result
 
@@ -187,6 +191,7 @@ class TahrirBadgeManager(object):
                              .filter_by(person_id=person.id, badge_id=badge.id) \
                              .scalar()
             if result is not None:
+                # pylint: disable=no-member
                 result.salt = self.db.salt  # Save salt
                 return result
         return None
@@ -200,6 +205,7 @@ class TahrirBadgeManager(object):
         return True if result is not None else False
 
     def update_assertion(self, uid, email=None, exported=True):
+        # pylint: disable=no-member
         result = self.db.update_assertion(uid, email=email, exported=exported)
         return True if result is not None else False
 
@@ -207,6 +213,7 @@ class TahrirBadgeManager(object):
         database = self.db  # get reference
         assertion = self._get_assertion(person, badge, database=database)
         if assertion is not None:
+            # pylint: disable=no-member
             database.session.delete(assertion)
             database.session.flush()
             return True
@@ -222,6 +229,7 @@ class TahrirBadgeManager(object):
     def get_person_assertions(self, person):
         result = []
         for assertion in self._get_person_assertions(person):
+            # pylint: disable=no-member
             assertion.salt = self.db.salt  # Save salt
             result.append(assertion)
         return result
@@ -231,6 +239,7 @@ class TahrirBadgeManager(object):
         badge = self._get_badge(badge, database=database)
         person = self._get_person(person, database=database)
         if badge is not None and person is not None:
+            # pylint: disable=no-member
             return database.add_assertion(badge.id, person.email,
                                           issued_on=issued_on,
                                           exported=exported)
@@ -249,6 +258,7 @@ class TahrirBadgeManager(object):
             email = None if email.lower() == stored.email.lower() else email
             nickname = None if nickname.lower() == stored.nickname.lower() else nickname
             # update
+            # pylint: disable=no-member
             database.update_person(person_id=stored.id,
                                    bio=bio,
                                    email=email,
@@ -271,6 +281,7 @@ class TahrirBadgeManager(object):
         return self._delete_person_assertions(person)
 
     def get_assertion_by_id(self, assertion_id):
+        # pylint: disable=no-member
         result = self.db.get_assertion_by_id(assertion_id)
         return result
 
@@ -294,6 +305,7 @@ class TahrirBadgeManager(object):
 
     def add_person(self, person):
         person = IPerson(person)
+        # pylint: disable=no-member
         result = self.db.add_person(email=person.email,
                                     nickname=person.nickname,
                                     website=person.website,
@@ -302,6 +314,7 @@ class TahrirBadgeManager(object):
 
     def person_exists(self, person=None, name=None):
         email, name, = self._person_tuple(person, name)
+        # pylint: disable=no-member
         result = self.db.person_exists(email=email, nickname=name)
         return result
 
@@ -309,15 +322,18 @@ class TahrirBadgeManager(object):
         database = self.db  # get reference
         email, _ = self._person_tuple(person)
         self._delete_person_assertions(email, database=database)
+        # pylint: disable=no-member
         result = database.delete_person(email)
         return result
 
     def get_person_by_id(self, person_id):
+        # pylint: disable=no-member
         result = self.db.get_person(person_email=person_id, id=person_id)
         return result
 
     def get_all_persons(self):
         result = []
+        # pylint: disable=no-member
         for person in self.db.get_all_persons():
             result.append(person)
         return result
@@ -326,6 +342,7 @@ class TahrirBadgeManager(object):
 
     def get_all_issuers(self):
         result = []
+        # pylint: disable=no-member
         for issuer in self.db.get_all_issuers():
             result.append(issuer)
         return result
@@ -354,6 +371,7 @@ class TahrirBadgeManager(object):
 
     def add_issuer(self, issuer):
         issuer = IIssuer(issuer)
+        # pylint: disable=no-member
         result = self.db.add_issuer(origin=issuer.origin,
                                     name=issuer.name,
                                     org=issuer.org,
@@ -361,6 +379,7 @@ class TahrirBadgeManager(object):
         return result
 
     def get_issuer_by_id(self, issuer_id):
+        # pylint: disable=no-member
         result = self.db.get_issuer(issuer_id)
         return result
 

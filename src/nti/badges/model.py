@@ -45,6 +45,7 @@ class NTIBadge(SchemaConfigured,
 
     id = alias('name')
 
+    # pylint: disable=super-init-not-called
     def __init__(self, *args, **kwargs):
         if 'tags' in kwargs:
             kwargs['tags'] = INTIBadge['tags'].fromObject(kwargs['tags'])

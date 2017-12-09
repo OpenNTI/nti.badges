@@ -30,7 +30,7 @@ def get_baked_data(name, **kwargs):
         secret = kwargs.get('secret')
         data = badgebakery.get_baked_data(name, secret=secret)
         return data
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         logger.error("Could not get baked URL from '%s'; %s", name, e)
 
 
@@ -40,7 +40,7 @@ def parse_badge(source, verify=False, **kwargs):
         if verify:
             verifyObject(IBadgeClass, badge)
         return badge
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         logger.error("Could not parse badge data; %s", e)
 
 
@@ -50,7 +50,7 @@ def parse_issuer(source, verify=False):
         if verify:
             verifyObject(IIssuerOrganization, issuer)
         return issuer
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         logger.error("Could not parse issuer from '%s'; %s", source, e)
 
 
@@ -83,6 +83,7 @@ def flat_scan(path, verify=False, **kwargs):
                 badge = parse_badge(fp, verify=verify, **kwargs)
             if badge is None:
                 continue
+            # pylint: disable=no-member
             logger.debug("Badge %s parsed", badge.name)
 
             issuer = badge.issuer

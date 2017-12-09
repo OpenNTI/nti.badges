@@ -58,7 +58,7 @@ def parse_datetime(s):
                 result = func(s)
                 if result is not None:
                     break
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 result = None
     else:
         result = datetime.fromtimestamp(float(s))
@@ -113,6 +113,7 @@ def process_json_source(source, **kwargs):
         lower = source.lower()
         result = urllib_parse.urlparse(lower)
         if result.scheme in VALID_SCHEMES:
+            # pylint: disable=unused-variable
             __traceback_info__ = source
             logger.info('Getting json data from %s', source)
             response = urlopen(source)
@@ -154,7 +155,7 @@ def badge_from_source(source, **kwargs):
     data = json_source_to_map(source, **kwargs)
     result = BadgeClass()
 
-    # XXX: This should really go through the standard
+    # This should really go through the standard
     # nti.externalization process. As it is, we are clearly
     # rolling our own validation and transformation logic.
 

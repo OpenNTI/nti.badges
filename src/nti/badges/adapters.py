@@ -288,7 +288,7 @@ def ntiissuer_to_tahrir_issuer(issuer):
 @component.adapter(INTIBadge)
 @interface.implementer(ITahrirBadge)
 def ntibadge_to_tahrir_badge(badge):
-    # XXX: Issuer is not set
+    # Issuer is not set
     tags = ','.join(badge.tags)
     result = Badge(tags=tags,
                    name=badge.name,
@@ -416,7 +416,7 @@ def mozilla_identityobject_to_ntiperson(iio):
 @component.adapter(IBadgeClass)
 @interface.implementer(ITahrirBadge)
 def mozilla_badge_to_tahrir_badge(badge):
-    # XXX: Issuer is not set
+    # Issuer is not set
     result = Badge()
     result.name = badge.name
     result.image = badge.image
@@ -430,7 +430,7 @@ def mozilla_badge_to_tahrir_badge(badge):
 @component.adapter(IBadgeClass)
 @interface.implementer(INTIBadge)
 def mozilla_badge_to_ntibadge(badge):
-    # XXX: Issuer is not set
+    # Issuer is not set
     result = NTIBadge(tags=badge.tags,
                       name=badge.name,
                       image=badge.image,
