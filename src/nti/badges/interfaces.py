@@ -8,11 +8,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-# pylint: disable=inherit-non-class,arguments-differ
+# pylint: disable=inherit-non-class,expression-not-assigned
+
+import six
 
 from zope import interface
 
-from nti.base.interfaces import ICreatedTime
+from zope.interface import classImplements
 
 from nti.schema.field import Bool
 from nti.schema.field import Number
@@ -28,6 +30,7 @@ class Tag(ValidTextLine):
     Requires its content to be only one plain text word that is lowercased.
     """
 
+    # pylint: disable=arguments-differ
     def fromUnicode(self, value):
         return super(Tag, self).fromUnicode(value.lower())
 
@@ -38,7 +41,7 @@ class ITaggedContent(interface.Interface):
     """
 
     tags = TupleFromObject(title=u"Tags applied by the user.",
-                           value_type=Tag(min_length=1, 
+                           value_type=Tag(min_length=1,
                                           title=u"A single tag",
                                           __name__=u'tags'),
                            unique=True,
@@ -64,6 +67,16 @@ class IBadgeClass(interface.Interface):
     marker interface for all badges
     """
     name = ValidTextLine(title=u"The name of the badge")
+
+
+class ICreatedTime(interface.Interface):
+    """
+    Something that (immutably) tracks its created time.
+    """
+
+    createdTime = Number(title=u"The timestamp at which this object was created.",
+                         description=u"Typically set automatically by the object.",
+                         default=0.0)
 
 
 class INTIIssuer(IBadgeIssuer, ICreatedTime):
@@ -114,12 +127,12 @@ class INTIAssertion(IBadgeAssertion):
     issuedOn = Number(title=u"Date that the achievement was awarded",
                       default=0)
 
-    recipient = ValidTextLine(title=u"Badge recipient email-hash", 
+    recipient = ValidTextLine(title=u"Badge recipient email-hash",
                               required=False)
-    salt = ValidTextLine(title=u"One-way function to hash person", 
+    salt = ValidTextLine(title=u"One-way function to hash person",
                          required=False)
 
-    exported = Bool(title=u"If the assertion has been exported", 
+    exported = Bool(title=u"If the assertion has been exported",
                     default=False,
                     required=False)
 
@@ -247,3 +260,12 @@ class IBadgeManager(interface.Interface):
         """
         add the specified :class:`.IIssuer` object.
         """
+
+# builtins
+
+
+class IBasestring(interface.Interface):
+    """
+    Marker interface for base strings.
+    """
+[classImplements(x, IBasestring) for x in six.string_types]
