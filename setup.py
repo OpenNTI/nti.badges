@@ -57,7 +57,6 @@ setup(
     install_requires=[
         'setuptools',
         'itsdangerous',
-        'nti.base',
         'nti.externalization',
         'nti.property',
         'nti.schema',
