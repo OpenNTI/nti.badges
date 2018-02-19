@@ -11,7 +11,6 @@
 	
 	<include package="nti.wref" />
 	<include package="nti.schema" />
-	<include package="nti.mimetype" />
 	
 	<include package=".tahrir" />
 	<include package=".openbadges" />

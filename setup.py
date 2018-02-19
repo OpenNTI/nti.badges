@@ -59,7 +59,6 @@ setup(
         'itsdangerous',
         'nti.base',
         'nti.externalization',
-        'nti.mimetype',
         'nti.property',
         'nti.schema',
         'nti.tahrir-api',
