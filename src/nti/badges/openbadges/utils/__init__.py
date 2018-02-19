@@ -30,6 +30,8 @@ from zope.interface.common.idatetime import IDateTime
 from itsdangerous import BadSignature
 from itsdangerous import JSONWebSignatureSerializer
 
+from nti.badges._compat import text_
+
 from nti.badges.openbadges.interfaces import IBadgeClass
 from nti.badges.openbadges.interfaces import ID_TYPE_EMAIL
 
@@ -39,8 +41,6 @@ from nti.badges.openbadges.model import IdentityObject
 from nti.badges.openbadges.model import AlignmentObject
 from nti.badges.openbadges.model import IssuerOrganization
 from nti.badges.openbadges.model import VerificationObject
-
-from nti.base._compat import text_
 
 #: Default web signature serializer secret
 DEFAULT_SECRET = '!f^#GQ5md{)Rf&Z'

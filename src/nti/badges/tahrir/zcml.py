@@ -18,13 +18,14 @@ from zope.component.zcml import utility
 
 from zope.configuration import fields
 
+from nti.badges._compat import text_
+
 from nti.badges.tahrir.interfaces import IIssuer
 from nti.badges.tahrir.interfaces import ITahrirBadgeManager
 
 from nti.badges.tahrir.manager import create_issuer
 from nti.badges.tahrir.manager import create_badge_manager
 
-from nti.base._compat import text_
 
 logger = __import__('logging').getLogger(__name__)
 

@@ -28,8 +28,8 @@ from tahrir_api.model import Assertion
 from tahrir_api.dbapi import autocommit
 from tahrir_api.dbapi import TahrirDatabase
 
-from nti.base._compat import text_
-from nti.base._compat import bytes_
+from nti.badges._compat import text_
+from nti.badges._compat import bytes_
 
 from nti.property.property import alias
 
