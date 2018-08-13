@@ -176,7 +176,7 @@ class IBadgeManager(interface.Interface):
         add the specifed badge
         """
 
-    def update_badge(badge, description=None, criteria=None):
+    def update_badge(badge, description=None, criteria=None, image=None):
         """
         update the information regarding a batch
         """
