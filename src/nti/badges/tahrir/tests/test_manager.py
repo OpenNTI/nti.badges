@@ -120,6 +120,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
         manager.db.update_badge(badge_id=badge_id,
                                 description=u'Welcome to the FOSSBox',
                                 criteria=u'http://foss.rit.org',
+                                image=u'http://foss.rit.org/badge.png',
                                 tags=u"fox, box")
 
         badge = manager.db.get_badge(badge_id)
@@ -127,6 +128,7 @@ class TestTahrirBadgeManagerOperation(NTIBadgesTestCase):
                     has_property('description', 'Welcome to the FOSSBox'))
         assert_that(badge, has_property('criteria', 'http://foss.rit.org'))
         assert_that(badge, has_property('tags', 'fox, box'))
+        assert_that(badge, has_property('image', 'http://foss.rit.org/badge.png'))
 
     def notification_callback(self, *args, **kwargs):
         pass

@@ -104,10 +104,11 @@ class NTITahrirDatabase(TahrirDatabase):
         return result
 
     @autocommit
-    def update_badge(self, badge_id, description, criteria, tags):
+    def update_badge(self, badge_id, description, criteria, image, tags):
         result = self.session.query(Badge).filter_by(id=badge_id) \
                      .update({"description": description,
                               "criteria": criteria,
+                              "image": image,
                               "tags": tags})
         return result
 

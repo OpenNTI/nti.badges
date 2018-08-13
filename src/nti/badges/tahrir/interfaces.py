@@ -140,7 +140,7 @@ class ITahrirBadgeManager(IBadgeManager):
         Update person information
         """
 
-    def update_badge(badge, description=None, criteria=None, tags=None):
+    def update_badge(badge, description=None, criteria=None, image=None, tags=None):
         """
         Update badge information
         """

@@ -145,17 +145,19 @@ class TahrirBadgeManager(object):
             result.append(badge)
         return result
 
-    def update_badge(self, badge, description=None, criteria=None, tags=None):
+    def update_badge(self, badge, description=None, criteria=None, image=None, tags=None):
         database = self.db  # get reference
         stored = self._get_badge(badge, database=database)
         if stored is not None:
             source = IBadge(badge)
             tags = tags or source.tags or stored.tags
+            image = image or source.image or stored.image
             criteria = criteria or source.criteria or stored.criteria
             description = description or source.description or stored.description
             # pylint: disable=no-member
             database.update_badge(badge_id=stored.id,
                                   tags=tags,
+                                  image=image,
                                   criteria=criteria,
                                   description=description)
             return True
