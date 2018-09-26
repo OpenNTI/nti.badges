@@ -16,7 +16,8 @@ from zope import interface
 
 from zope.component.zcml import utility
 
-from zope.configuration import fields
+from zope.schema import Bool
+from zope.schema import TextLine
 
 from nti.badges._compat import text_
 
@@ -26,7 +27,6 @@ from nti.badges.tahrir.interfaces import ITahrirBadgeManager
 from nti.badges.tahrir.manager import create_issuer
 from nti.badges.tahrir.manager import create_badge_manager
 
-
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -34,23 +34,23 @@ class IRegisterTahrirDB(interface.Interface):
     """
     The arguments needed for registering an Tahri db
     """
-    dburi = fields.TextLine(title=u"db dburi", required=False)
+    dburi = TextLine(title=u"db dburi", required=False)
 
-    salt = fields.TextLine(title=u'assertion salt', required=False)
+    salt = TextLine(title=u'assertion salt', required=False)
 
-    autocommit = fields.Bool(title=u'autocommit option',
-                             required=False,
-                             default=False)
+    autocommit = Bool(title=u'autocommit option',
+                      required=False,
+                      default=False)
 
-    twophase = fields.Bool(title=u'two phase commit protocol',
-                           required=False,
-                           default=False)
+    twophase = Bool(title=u'two phase commit protocol',
+                    required=False,
+                    default=False)
 
-    defaultSQLite = fields.Bool(title=u'default to SQLLite',
-                                required=False,
-                                default=False)
+    defaultSQLite = Bool(title=u'default to SQLLite',
+                         required=False,
+                         default=False)
 
-    config = fields.TextLine(title=u'path to a config file', required=False)
+    config = TextLine(title=u'path to a config file', required=False)
 
 
 def registerTahrirDB(_context, dburi=None, twophase=False, salt=None,
@@ -76,17 +76,17 @@ class IRegisterTahrirIssuer(interface.Interface):
     """
     The arguments needed for registering a Tahri issuer
     """
-    name = fields.TextLine(title=u"Issuer [unique] name")
+    name = TextLine(title=u"Issuer [unique] name")
 
-    origin = fields.TextLine(title=u"Issuer origin [URL]")
+    origin = TextLine(title=u"Issuer origin [URL]")
 
-    org = fields.TextLine(title=u"Issuer organization [URL]")
+    org = TextLine(title=u"Issuer organization [URL]")
 
-    contact = fields.TextLine(title=u"Issuer contact")
+    contact = TextLine(title=u"Issuer contact")
 
-    id = fields.TextLine(title=u"Issuer zcml identifier",
-                         required=False,
-                         default=u'')
+    id = TextLine(title=u"Issuer zcml identifier",
+                  required=False,
+                  default=u'')
 
 
 def registerTahrirIssuer(_context, name, origin, org, contact, id=''):
