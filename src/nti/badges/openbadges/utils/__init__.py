@@ -27,8 +27,9 @@ from requests.structures import CaseInsensitiveDict
 
 from zope.interface.common.idatetime import IDateTime
 
-from itsdangerous import BadSignature
-from itsdangerous import JSONWebSignatureSerializer
+from itsdangerous.exc import BadSignature
+
+from itsdangerous.jws import JSONWebSignatureSerializer
 
 from nti.badges._compat import text_
 
