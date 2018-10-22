@@ -25,7 +25,7 @@ import simplejson
 from PIL import Image
 from PIL import PngImagePlugin
 
-from itsdangerous import JSONWebSignatureSerializer
+from itsdangerous.jws import JSONWebSignatureSerializer
 
 logger = __import__('logging').getLogger(__name__)
 
