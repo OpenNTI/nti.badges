@@ -25,7 +25,7 @@ from nti.property.property import alias
 
 from nti.schema.eqhash import EqHash
 
-from nti.schema.field import SchemaConfigured
+from nti.schema.schema import SchemaConfigured
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
