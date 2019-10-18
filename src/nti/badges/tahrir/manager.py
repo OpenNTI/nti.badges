@@ -15,7 +15,7 @@ from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
-from zope.sqlalchemy import ZopeTransactionExtension
+from zope.sqlalchemy import register
 
 from sqlalchemy import func
 from sqlalchemy import create_engine
@@ -78,14 +78,13 @@ class TahrirBadgeManager(object):
         else:
             result = sessionmaker(bind=self.engine,
                                   autoflush=True,
-                                  twophase=self.twophase,
-                                  extension=ZopeTransactionExtension())
+                                  twophase=self.twophase)
 
         return result
 
     @Lazy
     def scoped_session(self):
-        result = scoped_session(self.sessionmaker)
+        result = register(scoped_session(self.sessionmaker))
         return result
 
     @Lazy
