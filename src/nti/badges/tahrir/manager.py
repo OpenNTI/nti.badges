@@ -84,7 +84,8 @@ class TahrirBadgeManager(object):
 
     @Lazy
     def scoped_session(self):
-        result = register(scoped_session(self.sessionmaker))
+        result = scoped_session(self.sessionmaker)
+        register(result)
         return result
 
     @Lazy
